@@ -1,25 +1,29 @@
-# STALUKOOP-WEB
+# StaLuKoop-Web
 
 A modern web application built using the VILT stack: Laravel + Inertia.js + Vue.js + Tailwind CSS. This repository is part of the StaLuKoop organization and serves as the frontend/backend monolith for our cooperative platform.
 
 ## Tech Stack
 
-- Laravel 12
-- Inertia.js
-- Vue 3
-- Tailwind CSS
-- Vite
+- Laravel 12 – Backend framework
+- Inertia.js – Server-driven SPA architecture
+- Vue 3 – Frontend framework
+- Tailwind CSS – Utility-first styling
+- Vite – Build tool and dev server
+
+<!--
+@TODO: Add Features Section
+  and ML-related Stuff used, soon, hopefully
+-->
 
 ## Installation
-
-### Applications / Services to Install
 
 <details>
 
 <summary>Expand to view recommended tools</summary>
 
-Search for `Powershell`, right-click and select Run as `Administrator`.
-Paste the shell command by right-clicking and selecting `Paste`.
+### Applications / Services to Install
+
+To quickly set up PHP and related dependencies on Windows, run the following PowerShell command:
 
 ```bash
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows'))
@@ -27,13 +31,14 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 
 Afterwards, make sure to install these:
 
-- [Laravel Herd](https://herd.laravel.com/)
-- [MySQL](https://dev.mysql.com/downloads/installer/)
-- [phpmyadmin](https://www.phpmyadmin.net/downloads/)
-- [Nodejs](https://nodejs.org/en)
-- [HeidiSQL](https://www.heidisql.com/download.php)
+- [Laravel Herd](https://herd.laravel.com/) – Laravel development environment
+- [MySQL](https://dev.mysql.com/downloads/installer/) – Relational database system
+- [phpMyAdmin](https://www.phpmyadmin.net/downloads/) – Web UI for managing MySQL databases
+- [Node.js](https://nodejs.org/en) – JavaScript runtime for building frontend assets
+- [HeidiSQL](https://www.heidisql.com/download.php) – Alternative SQL client for MySQL
 
-#### Tweaks
+
+#### Optional Tweaks
 
 ```bash
 cd path/of/phpmyadmin
@@ -49,7 +54,7 @@ git clone https://github.com/StaLuKoop/stalukoop-web.git
 cd stalukoop-web
 ```
 
-### Setup
+### Project Setup
 
 ```bash
 composer install
@@ -60,11 +65,10 @@ php artisan key:generate
 
 #### Inside .env
 
-`APP_NAME=Stalukoop`
-
-`APP_URL=http://stalukoop-web.test`
-
 ```bash
+APP_NAME=Stalukoop
+APP_URL=http://stalukoop-web.test
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -90,20 +94,6 @@ DB_PASSWORD=
 1. Commit your changes (git commit -m 'Add some feature')
 1. Push to the branch (git push origin feature/my-feature)
 1. Open a pull request
-
-### Make changes
-
-```bash
-git add .
-git commit -m "Update on [name] branch"
-git push origin [name]
-```
-
-### Create a pull request
-
-After pushing, go to: <https://github.com/StaLuKoop/stalukoop-web>
-
-GitHub will automatically show a "Compare & pull request" banner. Click it and submit PR.
 
 ## License
 
