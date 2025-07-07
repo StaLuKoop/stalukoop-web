@@ -1,57 +1,65 @@
 <script setup lang="ts">
-import NavFooter from '@/components/NavFooter.vue';
-import NavMain from '@/components/NavMain.vue';
-import NavUser from '@/components/NavUser.vue';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { BringToFront, LayoutGrid, SendToBack } from 'lucide-vue-next';
-import AppLogo from './AppLogo.vue';
+import NavFooter from '@/components/NavFooter.vue'
+import NavMain from '@/components/NavMain.vue'
+import NavUser from '@/components/NavUser.vue'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar'
+import { type NavItem } from '@/types'
+import { Link } from '@inertiajs/vue3'
+import { BringToFront, LayoutGrid, SendToBack } from 'lucide-vue-next'
+import AppLogo from './AppLogo.vue'
 
 const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
-    },
-];
+  {
+    title: 'Dashboard',
+    href: '/dashboard',
+    icon: LayoutGrid,
+  },
+]
 
 const footerNavItems: NavItem[] = [
-    {
-        title: 'Vue Docs',
-        href: 'https://vuejs.org/guide/introduction.html',
-        icon: BringToFront,
-    },
-    {
-        title: 'Laravel Docs',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: SendToBack,
-    },
-];
+  {
+    title: 'Vue Docs',
+    href: 'https://vuejs.org/guide/introduction.html',
+    icon: BringToFront,
+  },
+  {
+    title: 'Laravel Docs',
+    href: 'https://laravel.com/docs/starter-kits#vue',
+    icon: SendToBack,
+  },
+]
 </script>
 
 <template>
-    <Sidebar collapsible="icon" variant="inset">
-        <SidebarHeader>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton size="lg" as-child>
-                        <Link :href="route('dashboard')">
-                            <AppLogo />
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-        </SidebarHeader>
+  <Sidebar collapsible="icon" variant="inset">
+    <SidebarHeader>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton size="lg" as-child>
+            <Link :href="route('dashboard')">
+              <AppLogo />
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarHeader>
 
-        <SidebarContent>
-            <NavMain :items="mainNavItems" />
-        </SidebarContent>
+    <SidebarContent>
+      <NavMain :items="mainNavItems" />
+    </SidebarContent>
 
-        <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
-            <NavUser />
-        </SidebarFooter>
-    </Sidebar>
-    <slot />
+    <SidebarFooter>
+      <NavFooter :items="footerNavItems" />
+      <NavUser />
+    </SidebarFooter>
+  </Sidebar>
+  <slot />
 </template>
