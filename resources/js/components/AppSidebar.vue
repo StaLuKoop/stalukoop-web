@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import IconFacebook from '@/components/icons/IconFacebook.vue'
 import NavFooter from '@/components/NavFooter.vue'
 import NavMain from '@/components/NavMain.vue'
 import NavUser from '@/components/NavUser.vue'
@@ -13,7 +14,7 @@ import {
 } from '@/components/ui/sidebar'
 import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/vue3'
-import { BringToFront, LayoutGrid, SendToBack } from 'lucide-vue-next'
+import { Calendar, LayoutGrid } from 'lucide-vue-next'
 import AppLogo from './AppLogo.vue'
 
 const mainNavItems: NavItem[] = [
@@ -22,18 +23,18 @@ const mainNavItems: NavItem[] = [
     href: '/dashboard',
     icon: LayoutGrid,
   },
+  {
+    title: 'Calendar',
+    href: '/calendar',
+    icon: Calendar,
+  },
 ]
 
 const footerNavItems: NavItem[] = [
   {
-    title: 'Vue Docs',
-    href: 'https://vuejs.org/guide/introduction.html',
-    icon: BringToFront,
-  },
-  {
-    title: 'Laravel Docs',
-    href: 'https://laravel.com/docs/starter-kits#vue',
-    icon: SendToBack,
+    title: 'SLPMC Facebook',
+    href: 'https://www.facebook.com/SLPCC1995/',
+    icon: IconFacebook,
   },
 ]
 </script>
