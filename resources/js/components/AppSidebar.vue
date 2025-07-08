@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import IconFacebook from '@/components/icons/IconFacebook.vue'
 import NavFooter from '@/components/NavFooter.vue'
 import NavMain from '@/components/NavMain.vue'
 import NavUser from '@/components/NavUser.vue'
@@ -14,6 +13,7 @@ import {
 } from '@/components/ui/sidebar'
 import { type NavItem } from '@/types'
 import { Link } from '@inertiajs/vue3'
+import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-vue'
 import { Calendar, LayoutGrid } from 'lucide-vue-next'
 import AppLogo from './AppLogo.vue'
 
@@ -34,7 +34,12 @@ const footerNavItems: NavItem[] = [
   {
     title: 'SLPMC Facebook',
     href: 'https://www.facebook.com/SLPCC1995/',
-    icon: IconFacebook,
+    icon: IconBrandFacebook,
+  },
+  {
+    title: 'Stalukoop Github',
+    href: 'https://www.facebook.com/SLPCC1995/',
+    icon: IconBrandGithub,
   },
 ]
 </script>
