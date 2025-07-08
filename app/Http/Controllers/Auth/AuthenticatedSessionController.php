@@ -33,19 +33,19 @@ class AuthenticatedSessionController extends Controller
 
     $request->session()->regenerate();
 
-    $user = Auth::user();
+    // $user = Auth::user();
 
-    // Check if email is unverified or verification is too old
-    $needsVerification = $user->email_verified_at === null
-      || $user->email_verified_at->lt(now()->subMinutes(30));
+    // // Check if email is unverified or verification is too old
+    // $needsVerification = $user->email_verified_at === null
+    //   || $user->email_verified_at->lt(now()->subMinutes(30));
 
-    if ($needsVerification) {
-      $user->email_verified_at = null;
-      $user->save();
+    // if ($needsVerification) {
+    //   $user->email_verified_at = null;
+    //   $user->save();
 
-      // Send new verification email only after reset
-      $user->sendEmailVerificationNotification();
-    }
+    //   // Send new verification email only after reset
+    //   $user->sendEmailVerificationNotification();
+    // }
 
     return redirect()->intended(route('dashboard', absolute: false));
   }
