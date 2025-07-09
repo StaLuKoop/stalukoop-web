@@ -7,11 +7,7 @@ defineOptions({
 </script>
 
 <template>
-  <div>
-
-  </div>
+  <div></div>
 </template>
 
-<style lang="css" scoped>
-
-</style>
+<style lang="css" scoped></style>

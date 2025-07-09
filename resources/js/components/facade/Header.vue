@@ -6,6 +6,7 @@ import { ref } from 'vue'
 const isOpen = ref(false)
 
 const page = usePage()
+
 const user = page.props.auth?.user
 </script>
 
@@ -17,17 +18,59 @@ const user = page.props.auth?.user
         <img src="/images/SLPMC.png" alt="SLPMC Logo" class="h-10 w-auto" />
         <div class="leading-tight">
           <p class="text-sm font-semibold text-primary uppercase">Sta. Lucia Parish</p>
-          <p class="text-sm font-semibold tracking-wider text-gray-700 uppercase dark:text-gray-700">Multipurpose Cooperative</p>
+          <p class="text-sm font-semibold tracking-wider text-gray-700 uppercase dark:text-gray-700">
+            Multipurpose Cooperative
+          </p>
         </div>
       </div>
 
       <!-- Desktop Nav -->
       <nav class="hidden items-center gap-6 font-medium text-gray-700 md:flex">
-        <Link :href="route('home')" class="inline-flex items-center hover:text-primary">Home</Link>
-        <Link :href="route('about')" class="inline-flex items-center hover:text-primary">About</Link>
-        <Link :href="route('contact')" class="inline-flex items-center hover:text-primary">Contact</Link>
-        <Link :href="route('services')" class="inline-flex items-center hover:text-primary">Services</Link>
-        <Link :href="route('membership')" class="inline-flex items-center hover:text-primary">Membership</Link>
+        <Link
+          :href="route('home')"
+          :class="{
+            'font-semibold text-primary': route().current('home'),
+            'hover:text-primary': !route().current('home'),
+          }"
+        >
+          Home
+        </Link>
+        <Link
+          :href="route('about')"
+          :class="{
+            'font-semibold text-primary': route().current('about'),
+            'hover:text-primary': !route().current('about'),
+          }"
+        >
+          About
+        </Link>
+        <Link
+          :href="route('contact')"
+          :class="{
+            'font-semibold text-primary': route().current('contact'),
+            'hover:text-primary': !route().current('contact'),
+          }"
+        >
+          Contact
+        </Link>
+        <Link
+          :href="route('services')"
+          :class="{
+            'font-semibold text-primary': route().current('services'),
+            'hover:text-primary': !route().current('services'),
+          }"
+        >
+          Services
+        </Link>
+        <Link
+          :href="route('membership')"
+          :class="{
+            'font-semibold text-primary': route().current('membership'),
+            'hover:text-primary': !route().current('membership'),
+          }"
+        >
+          Membership
+        </Link>
 
         <template v-if="!user">
           <Link

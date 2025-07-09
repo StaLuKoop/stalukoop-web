@@ -15,11 +15,11 @@ Route::get('contact', function () {
   return Inertia::render('Contact');
 })->name('contact');
 
-Route::get('Services', function () {
+Route::get('services', function () {
   return Inertia::render('Services');
 })-> name('services');
 
-Route::get('Membership', function () {
+Route::get('membership', function () {
   return Inertia::render('Membership');
 })->name('membership');
 
