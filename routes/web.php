@@ -23,6 +23,14 @@ Route::get('membership', function () {
   return Inertia::render('Membership');
 })->name('membership');
 
+Route::get('privacy-policy', function () {
+  return Inertia::render('PrivacyPolicy');
+})->name('privacy-policy');
+
+Route::get('terms-of-service', function () {
+  return Inertia::render('TermsOfService');
+})->name('terms-of-service');
+
 Route::get('dashboard', function () {
   return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
