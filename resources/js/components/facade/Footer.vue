@@ -20,13 +20,15 @@ import { Mail } from 'lucide-vue-next'
         <a href="mailto:staluciacoop@gmail.com" class="hover:text-gray-300">
           <Mail class="h-5 w-5" />
         </a>
-        <a href="mailto:staluciacoop@gmail.com" class="hover:text-gray-300">
+        <a href="tel:+639123456789" class="hover:text-gray-300">
           <IconPhoneCall class="h-5 w-5" />
         </a>
       </div>
 
       <!-- Copyright Row -->
-      <div class="text-center text-sm">© 2025 Sta. Lucia Parish Multipurpose Cooperative. All rights reserved.</div>
+      <div class="text-center text-sm">
+        © 2025 Sta. Lucia Parish Multipurpose Cooperative. All rights reserved.
+      </div>
     </div>
   </footer>
 </template>

@@ -4,7 +4,7 @@
 
 <template>
   <div>
-    
+    <h1>You are in Member Dashboard!</h1>
   </div>
 </template>
 
