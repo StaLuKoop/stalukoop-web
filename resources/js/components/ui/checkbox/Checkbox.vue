@@ -13,6 +13,7 @@ interface ExtendedCheckboxProps extends CheckboxRootProps {
   name?: string
   value?: string
   form?: string
+  tabindex?: number
 }
 
 // --- Define props and emits ---
@@ -27,6 +28,7 @@ const delegatedProps = computed(() => {
     name,
     form,
     value,
+    tabindex,
     ...delegated
   } = props
 
@@ -36,6 +38,7 @@ const delegatedProps = computed(() => {
     name,
     form,
     value,
+    tabindex,
   }
 })
 

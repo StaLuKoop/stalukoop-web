@@ -36,12 +36,12 @@ const isPrivacyPage = computed(() => page.url === '/privacy-policy');
       <!-- Links Row -->
       <div class="text-sm flex gap-2 text-white">
         <a
-          href="/terms-of-service"
+          href="/terms-and-conditions"
           :class="{ underline: isTermsPage, 'hover:underline': !isTermsPage }"
         >
-          Terms and Conditions
+          Terms & Conditions
         </a>
-        <span>|</span>
+        <span class="mx-1">&bull;</span>
         <a
           href="/privacy-policy"
           :class="{ underline: isPrivacyPage, 'hover:underline': !isPrivacyPage }"
