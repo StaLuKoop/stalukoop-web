@@ -34,39 +34,14 @@ Route::get('privacy-policy', function () {
   return Inertia::render('PrivacyPolicy');
 })->name('privacy-policy');
 
-Route::get('terms-and-conditions', function () {
-  return Inertia::render('TermsAndConditions');
-})->name('terms-and-conditions');
-
-// Define Routes for the Service Pages
-Route::get('loan', function () {
-  return Inertia::render('Loan');
-})->name('loan');
-
-Route::get('payment', function () {
-  return Inertia::render('Payment');
-})->name('payment');
-
-Route::get('office', function () {
-  return Inertia::render('Office');
-})->name('office');
-
-Route::get('products', function () {
-  return Inertia::render('Products');
-})->name('products');
+Route::get('terms-of-service', function () {
+  return Inertia::render('TermsOfService');
+})->name('terms-of-service');
 
 // Dashboard Route
 Route::get('dashboard', function () {
   return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-<<<<<<< HEAD
-// If needed, you can add admin and user-specific routes below
-// Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
-//   // Admin Routes
-//   Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-=======
-
 
 // Route::group(['prefix' => 'admin',  'middleware' => ['auth',  'admin']], function () {
 
@@ -74,7 +49,7 @@ Route::get('dashboard', function () {
 //   Route::controller(AdminDashboardController::class)->group(function () {
 //     Route::get("/dashboard", 'index');
 //   });
->>>>>>> c7462b62887ce6a05f6da5290825947d40019237
+
 // });
 
 // Route::group(['prefix' => 'home', 'middleware' => ['auth']], function () {

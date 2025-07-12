@@ -1,5 +1,6 @@
 <script setup lang="ts">
 <<<<<<< HEAD
+<<<<<<< HEAD
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { Link } from '@inertiajs/vue3'; // Import Inertia's Link component
 
@@ -17,10 +18,22 @@ import Products from './Products.vue'
 // Track which section to display
 const currentSection = ref('')
 >>>>>>> c7462b62887ce6a05f6da5290825947d40019237
+=======
+import { ref } from 'vue'
+import Loan from './Loan.vue'
+import Membership from './MembershipStep.vue'
+import Payment from './Payment.vue'
+import Office from './Office.vue'
+import Products from './Products.vue'
+
+// Track which section to display
+const currentSection = ref('')
+>>>>>>> c7462b62887ce6a05f6da5290825947d40019237
 </script>
 
 <template>
   <div class="services-container">
+<<<<<<< HEAD
 <<<<<<< HEAD
     <!-- Initially visible content (header and description) -->
     <h2 class="title">Products and Services</h2>
@@ -95,6 +108,34 @@ const currentSection = ref('')
       <button @click="currentSection = 'products'" class="service-button products">
         <div class="icon-container"><i class="fas fa-box"></i></div>
         <p class="service-title">Products</p>
+=======
+    <h2 class="title">Products and Services</h2>
+    <p class="description">
+      Sta. Lucia Parish Cooperative, we strive to empower our members by offering reliable and accessible financial products and services.
+    </p>
+
+    <!-- Navigation Buttons -->
+    <div class="services-buttons">
+      <button @click="currentSection = 'loan'" class="service-button loan">
+        <div class="icon-container"><i class="fas fa-coins"></i></div>
+        <p class="service-title">Loan</p>
+      </button>
+      <button @click="currentSection = 'membership'" class="service-button membership">
+        <div class="icon-container"><i class="fas fa-user-plus"></i></div>
+        <p class="service-title">Membership</p>
+      </button>
+      <button @click="currentSection = 'payment'" class="service-button payment">
+        <div class="icon-container"><i class="fas fa-credit-card"></i></div>
+        <p class="service-title">Payment</p>
+      </button>
+      <button @click="currentSection = 'office'" class="service-button office">
+        <div class="icon-container"><i class="fas fa-map-marker-alt"></i></div>
+        <p class="service-title">Office</p>
+      </button>
+      <button @click="currentSection = 'products'" class="service-button products">
+        <div class="icon-container"><i class="fas fa-box"></i></div>
+        <p class="service-title">Products</p>
+>>>>>>> c7462b62887ce6a05f6da5290825947d40019237
       </button>
     </div>
 
@@ -104,6 +145,9 @@ const currentSection = ref('')
                     currentSection === 'payment' ? Payment : 
                     currentSection === 'office' ? Office : 
                     currentSection === 'products' ? Products : null" />
+<<<<<<< HEAD
+>>>>>>> c7462b62887ce6a05f6da5290825947d40019237
+=======
 >>>>>>> c7462b62887ce6a05f6da5290825947d40019237
   </div>
 </template>
@@ -188,6 +232,7 @@ const currentSection = ref('')
   text-align: left;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 /* Media Queries for Responsiveness */
 
@@ -257,6 +302,8 @@ const currentSection = ref('')
   }
 }
 
+=======
+>>>>>>> c7462b62887ce6a05f6da5290825947d40019237
 =======
 >>>>>>> c7462b62887ce6a05f6da5290825947d40019237
 </style>
