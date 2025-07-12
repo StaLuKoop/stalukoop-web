@@ -18,13 +18,18 @@ defineProps<{
   >
     <div class="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
       <div class="absolute inset-0 bg-gradient-to-tl from-primary to-[#2c186d]" />
-      <Link :href="route('home')" class="relative z-20 flex items-center text-3xl font-medium">
-        <AppLogoIcon class="mr-2 size-16 fill-current text-white" />
-        Welcome to {{ name }}!
-      </Link>
-      <div class="relative flex flex-1 items-center justify-center text-3xl font-bold">
-        <!-- We could put something here. -->
+
+      <div class="relative z-20 self-start">
+        <Link :href="route('home')" class="text-sm text-neutral-200 hover:underline"> ← Back to Home </Link>
       </div>
+
+      <div class="h-40 relative flex flex-1 flex-col items-center justify-center space-y-4 text-3xl font-bold">
+        <Link :href="route('home')" class="flex items-center text-2xl font-medium text-white">
+          <AppLogoIcon class="size-16 fill-current text-white" />
+        </Link>
+        <div class="relative z-20 text-3xl font-medium text-white">Welcome to {{ name }}-MS!</div>
+      </div>
+
       <div v-if="quote" class="relative z-20 mt-auto">
         <blockquote class="space-y-2">
           <p class="text-lg">&ldquo;{{ quote.message }}&rdquo;</p>
