@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { IconBrandFacebook, IconPhoneCall } from '@tabler/icons-vue';
 import { Mail } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 
 const currentYear = new Date().getFullYear();
+const page = usePage();
+
+const isTermsPage = computed(() => page.url === '/terms-of-service');
+const isPrivacyPage = computed(() => page.url === '/privacy-policy');
 </script>
 
 <template>
@@ -24,6 +30,23 @@ const currentYear = new Date().getFullYear();
         </a>
         <a href="tel:+639123456789" class="hover:text-gray-300">
           <IconPhoneCall class="h-5 w-5" />
+        </a>
+      </div>
+
+      <!-- Links Row -->
+      <div class="text-sm flex gap-2 text-white">
+        <a
+          href="/terms-of-service"
+          :class="{ underline: isTermsPage, 'hover:underline': !isTermsPage }"
+        >
+          Terms and Conditions
+        </a>
+        <span>|</span>
+        <a
+          href="/privacy-policy"
+          :class="{ underline: isPrivacyPage, 'hover:underline': !isPrivacyPage }"
+        >
+          Privacy Policy
         </a>
       </div>
 
