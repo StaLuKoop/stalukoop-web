@@ -5,15 +5,19 @@ defineOptions({
   layout: (h: any, page: any) => h(PublicLayout, { title: 'Loan' }, () => page),
 })
 </script>
+
 <template>
   <div class="loan-page">
     <!-- Loan Section Content -->
     <div class="service-content">
       <h1 class="loan-title">Loan</h1>
       <p class="loan-description">
-        At Sta. Lucia Parish Cooperative, we offer a variety of loan options to help you achieve your financial goals. <br>
-        Whether you’re applying for your first loan or renewing an existing one, we make the process straightforward <br>
-        and accessible. Our loans come with competitive interest rates, and repayment terms are designed to meet your needs.
+        At Sta. Lucia Parish Cooperative, we offer a variety of loan options to help you achieve your financial goals.
+        <br />
+        Whether you’re applying for your first loan or renewing an existing one, we make the process straightforward
+        <br />
+        and accessible. Our loans come with competitive interest rates, and repayment terms are designed to meet your
+        needs.
       </p>
 
       <!-- Loan Features Section -->
@@ -21,7 +25,10 @@ defineOptions({
         <div class="loan-feature">
           <i class="fas fa-clipboard-check"></i>
           <h4>Regular Loan</h4>
-          <p>This loan is for qualified members who need financial assistance. You can borrow up to 80% of your share capital.</p>
+          <p>
+            This loan is for qualified members who need financial assistance. You can borrow up to 80% of your share
+            capital.
+          </p>
         </div>
         <div class="loan-feature">
           <i class="fas fa-percent"></i>
@@ -48,7 +55,10 @@ defineOptions({
           <div class="step-text">
             <p>01</p>
             <h4>Log In to Your Account</h4>
-            <p>Access your online account using your registered email and password. Make sure your membership status is Regular Member.</p>
+            <p>
+              Access your online account using your registered email and password. Make sure your membership status is
+              Regular Member.
+            </p>
           </div>
         </div>
 
@@ -72,7 +82,10 @@ defineOptions({
           <div class="step-text">
             <p>03</p>
             <h4>Fill Out the Loan Form</h4>
-            <p>Select the loan type that suits your needs (e.g., Residential or Production loan). Fill out the required details including loan amount, purpose, and preferred payment terms.</p>
+            <p>
+              Select the loan type that suits your needs (e.g., Residential or Production loan). Fill out the required
+              details including loan amount, purpose, and preferred payment terms.
+            </p>
           </div>
         </div>
 
@@ -81,7 +94,10 @@ defineOptions({
           <div class="step-text">
             <p>04</p>
             <h4>Upload Supporting Documents</h4>
-            <p>Attach the necessary documents such as your valid ID, income proof, co-maker details (if applicable), or any required collateral based on loan policy.</p>
+            <p>
+              Attach the necessary documents such as your valid ID, income proof, co-maker details (if applicable), or
+              any required collateral based on loan policy.
+            </p>
           </div>
           <div class="step-image">
             <img src="/images/LOAN4.png" alt="Step 4 Image" />
@@ -112,7 +128,7 @@ defineOptions({
 
 .loan-title {
   font-size: 45px;
-  color: #EF233C;
+  color: #ef233c;
   margin-bottom: 20px;
   font-weight: bold;
   margin-top: 40px;
@@ -149,7 +165,7 @@ defineOptions({
   font-weight: bold;
   margin-top: 10px;
   margin-bottom: 10px;
-  color: #EF233C;
+  color: #ef233c;
 }
 
 .loan-feature p {
@@ -158,14 +174,14 @@ defineOptions({
 
 .loan-feature i {
   font-size: 5rem;
-  color: #EF233C;
+  color: #ef233c;
   margin-bottom: 15px;
   margin-top: 40px;
 }
 
 .how-it-works-title {
   font-size: 2rem;
-  color: #EF233C;
+  color: #ef233c;
   text-align: center;
   font-weight: bold;
 }
@@ -211,7 +227,7 @@ defineOptions({
   margin-bottom: 5px;
   margin-top: -45px;
   margin-left: 20px;
-  color: #EF233C;
+  color: #ef233c;
 }
 
 .step p:last-child {
@@ -341,5 +357,4 @@ defineOptions({
     height: 180px;
   }
 }
-
 </style>

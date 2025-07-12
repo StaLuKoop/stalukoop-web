@@ -11,20 +11,25 @@ defineOptions({
     <!-- Header Section -->
     <header class="header">
       <div class="header-content">
-         <h1 class="title">Empowering Your </h1>
-         <h1 class="subtitle">Journey Forward</h1>
+        <h1 class="title">Empowering Your</h1>
+        <h1 class="subtitle">Journey Forward</h1>
         <p class="one">Connection In Every Click</p>
-        <p class="two">PERFECT FOR YOUR LIFESTYLE. BUILT <br>
-          FOR THOSE WHO SEEK EASE AND <br>
-          EFFICIENCY, WE BRING SOLUTIONS <br>
-          CLOSER TO YOU.</p>
+        <p class="two">
+          PERFECT FOR YOUR LIFESTYLE. BUILT <br />
+          FOR THOSE WHO SEEK EASE AND <br />
+          EFFICIENCY, WE BRING SOLUTIONS <br />
+          CLOSER TO YOU.
+        </p>
       </div>
     </header>
 
     <!--Services Section -->
-     <section class="services">
+    <section class="services">
       <h2>How May We Assist You?</h2>
-      <h5>WE OFFER A VARIETY OF SERVICES AIMED AT PROVIDING CONVENIENCE, <br> EFFICIENCY, AND SUPPORT FOR YOUR FINANCIAL AND MEMBERSHIP NEEDS.</h5>
+      <h5>
+        WE OFFER A VARIETY OF SERVICES AIMED AT PROVIDING CONVENIENCE, <br />
+        EFFICIENCY, AND SUPPORT FOR YOUR FINANCIAL AND MEMBERSHIP NEEDS.
+      </h5>
       <div class="services-container">
         <div class="service-card">
           <img class="service-image" src="/images/LOAN.jpg" alt="Loan" />
@@ -49,7 +54,9 @@ defineOptions({
         <div class="service-card">
           <img class="service-image" src="/images/OTHERS.jpg" alt="Products" />
           <h3>Products</h3>
-          <p>Offering a variety of everyday essentials such as rice, soap, and other useful items for your daily needs.</p>
+          <p>
+            Offering a variety of everyday essentials such as rice, soap, and other useful items for your daily needs.
+          </p>
         </div>
       </div>
     </section>
@@ -62,8 +69,6 @@ defineOptions({
         <img src="/images/AWARD.png" alt="Award 1" />
       </div>
     </section>
-
-
   </div>
 </template>
 
@@ -75,7 +80,7 @@ defineOptions({
   background-position: center;
   padding: 50px 100px;
   text-align: left;
-  color: #DA251C;
+  color: #da251c;
   height: 700px;
 }
 
@@ -132,7 +137,7 @@ defineOptions({
 .service-card {
   width: 300px;
   height: 370px;
-  background-color: #EF233C;
+  background-color: #ef233c;
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Darker shadow */
@@ -232,7 +237,7 @@ defineOptions({
     height: 320px;
   }
 
-   .service-card img {
+  .service-card img {
     width: 90%; /* Adjust width on smaller screens */
     height: auto; /* Maintain aspect ratio */
   }
@@ -313,4 +318,3 @@ defineOptions({
   }
 }
 </style>
-

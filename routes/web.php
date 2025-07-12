@@ -21,12 +21,12 @@ Route::get('services', function () {
 
 // Route for Membership Page
 Route::get('membership', function () {
-    return Inertia::render('Membership');
+  return Inertia::render('Membership');
 })->name('membership');
 
 // Route for Membership Step Page (for registration steps)
 Route::get('membership-step', function () {
-    return Inertia::render('MembershipStep');  
+  return Inertia::render('MembershipStep');
 })->name('membership-step');
 
 
@@ -60,6 +60,7 @@ Route::get('dashboard', function () {
   return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
 // If needed, you can add admin and user-specific routes below
 // Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
 //   // Admin Routes
@@ -69,6 +70,7 @@ Route::get('dashboard', function () {
 // Route::group(['prefix' => 'home', 'middleware' => ['auth']], function () {
 //   // User Routes
 //   Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
+
 // });
 
 require __DIR__ . '/settings.php';

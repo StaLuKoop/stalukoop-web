@@ -47,7 +47,6 @@ defineOptions({
   max-width: 1200px;
   margin: 50px auto;
   border-radius: 15px;
-
 }
 
 .product-item {
@@ -62,16 +61,16 @@ defineOptions({
 .product-item img {
   max-width: 600px;
   height: auto;
-  margin:auto;
+  margin: auto;
   border-radius: 15px;
 }
 
 .product-item h3 {
   font-size: 1.8rem;
-  color: #EF233C;
+  color: #ef233c;
   margin-bottom: 2px;
   margin-top: 10px;
-  font-weight: bolder;  
+  font-weight: bolder;
 }
 
 .product-item p {

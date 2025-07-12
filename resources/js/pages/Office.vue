@@ -20,7 +20,7 @@ defineOptions({
           width="100%"
           height="500"
           frameborder="0"
-          style="border:0;"
+          style="border: 0"
           allowfullscreen
         ></iframe>
       </div>
@@ -32,13 +32,15 @@ defineOptions({
           <p><strong>Address:</strong> 403 Amang Rodriguez Avenue, Manggahan, Pasig City</p>
           <p><strong>Phone:</strong> 8700000</p>
           <p><strong>Email:</strong> sta.lucia@gmail.com</p>
-          <p><strong>Facebook:</strong> <a href="https://www.facebook.com/SLPCC1995/" target="_blank">www.facebook.com/SLPCC1995/</a></p>
+          <p>
+            <strong>Facebook:</strong>
+            <a href="https://www.facebook.com/SLPCC1995/" target="_blank">www.facebook.com/SLPCC1995/</a>
+          </p>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .office-title {
@@ -57,7 +59,6 @@ defineOptions({
   max-width: 1500px;
   margin: 38.3px auto;
   padding: 20px;
-
 }
 
 .office-map {
@@ -76,7 +77,7 @@ defineOptions({
 
 .office-name {
   font-size: 1.8rem;
-  color: #EF233C;
+  color: #ef233c;
   margin-bottom: 20px;
   font-weight: bolder;
   text-align: center;
@@ -92,7 +93,7 @@ defineOptions({
 }
 
 .office-info a {
-  color: #EF233C;
+  color: #ef233c;
   text-decoration: none;
   font-weight: bold;
 }
@@ -104,7 +105,7 @@ defineOptions({
 /* For screens smaller than 1024px (tablets) */
 @media (max-width: 1024px) {
   .office-title {
-    font-size: 2.2rem;  /* Adjust title size */
+    font-size: 2.2rem; /* Adjust title size */
     padding: 40px;
   }
 
@@ -180,5 +181,4 @@ defineOptions({
     font-size: 1rem; /* Adjust font size for smaller screens */
   }
 }
-
 </style>

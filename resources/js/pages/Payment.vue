@@ -7,29 +7,33 @@ defineOptions({
 </script>
 
 <template>
-<div class="service-content">
-  
-  <h1 class="payment-title bg-rose-600">Payment Services</h1>
-  
-  <div class="payment-methods">
-    <div class="payment-method">
-      <img src="/images/BANK.png" alt="Bank Transfer" class="payment-icon"/>
-      <h4>Bank Transfer</h4>
-      <p>Transfer your payment directly to our bank account. Ensure you upload the proof of payment in your account for verification.</p>
-    </div>
-    <div class="payment-method">
-      <img src="/images/GCASH.png" alt="GCash" class="payment-icon"/>
-      <h4>Online Payment</h4>
-      <p>Pay using our secure online platform. Simply log in to your account and choose the payment method that works best for you.</p>
-    </div>
-    <div class="payment-method">
-      <img src="/images/OVER.png" alt="Over-the-Counter" class="payment-icon"/>
-      <h4>Over-the-Counter Payment</h4>
-      <p>You can also pay at our office or accredited payment centers. Visit our office for more information.</p>
+  <div class="service-content">
+    <h1 class="payment-title bg-rose-600">Payment Services</h1>
+
+    <div class="payment-methods">
+      <div class="payment-method">
+        <img src="/images/BANK.png" alt="Bank Transfer" class="payment-icon" />
+        <h4>Bank Transfer</h4>
+        <p>
+          Transfer your payment directly to our bank account. Ensure you upload the proof of payment in your account for
+          verification.
+        </p>
+      </div>
+      <div class="payment-method">
+        <img src="/images/GCASH.png" alt="GCash" class="payment-icon" />
+        <h4>Online Payment</h4>
+        <p>
+          Pay using our secure online platform. Simply log in to your account and choose the payment method that works
+          best for you.
+        </p>
+      </div>
+      <div class="payment-method">
+        <img src="/images/OVER.png" alt="Over-the-Counter" class="payment-icon" />
+        <h4>Over-the-Counter Payment</h4>
+        <p>You can also pay at our office or accredited payment centers. Visit our office for more information.</p>
+      </div>
     </div>
   </div>
-</div>
-
 </template>
 
 <style scoped>
@@ -77,7 +81,7 @@ defineOptions({
 
 .payment-method h4 {
   font-size: 1.5rem;
-  color: #EF233C;
+  color: #ef233c;
   margin-top: 10px;
   font-weight: bolder;
 }
@@ -88,11 +92,9 @@ defineOptions({
   margin-top: 10px;
 }
 
-
-
 .payment-method img {
-  width: 200px; 
-  height: 200px; 
+  width: 200px;
+  height: 200px;
   margin: 20px auto;
 }
 
@@ -177,5 +179,4 @@ defineOptions({
     height: 150px;
   }
 }
-
 </style>

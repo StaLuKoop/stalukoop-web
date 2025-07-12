@@ -17,7 +17,7 @@ defineOptions({
       <div class="contact-info">
         <p class="contact-heading">Let’s talk with us</p>
         <p class="contact-description">Your journey starts with a simple connection</p>
-        
+
         <div class="contact-details">
           <div class="address">
             <i class="fas fa-map-marker-alt"></i>
@@ -67,7 +67,7 @@ defineOptions({
   justify-content: center;
   gap: 20px;
   padding: 20px;
-  margin: 30px  auto;
+  margin: 30px auto;
   max-width: 1200px; /* Adjusted max-width for better responsiveness */
 }
 
@@ -89,7 +89,7 @@ defineOptions({
 
 .contact-heading {
   font-size: 1.8rem;
-  color: #EF233C;
+  color: #ef233c;
   font-weight: bold;
   margin-bottom: 10px;
 }
@@ -114,7 +114,7 @@ defineOptions({
 
 .contact-details i {
   margin-right: 10px;
-  color: #EF233C;
+  color: #ef233c;
 }
 
 .contact-form input,
@@ -133,7 +133,7 @@ defineOptions({
   gap: 20px;
 }
 
-.contact-form input[type="text"] {
+.contact-form input[type='text'] {
   flex: 1; /* Ensures both input fields take equal space */
 }
 
@@ -144,7 +144,7 @@ defineOptions({
 
 .submit-btn {
   padding: 12px 25px;
-  background-color: #EF233C;
+  background-color: #ef233c;
   color: #fff;
   font-size: 1.1rem;
   border: none;
@@ -153,7 +153,7 @@ defineOptions({
   display: block; /* Make the button a block element */
   margin: 5px auto; /* Center the button with equal margins on top and bottom */
 }
- 
+
 .submit-btn:hover {
   background-color: #d71f31;
 }

@@ -8,99 +8,117 @@ defineOptions({
 
 <template>
   <!-- Membership Section Content -->
-    <div class="service-content">
-      <h1 class="membership-title">Membership</h1>
-      <p class="membership-description">
-        Joining Sta. Lucia Parish Cooperative opens doors to a variety of financial services, including loans, savings <br>
-        programs, and more. Our membership process is simple and can be completed online. Here’s how you can <br> 
-        apply and start enjoying the benefits of membership.
-      </p>
+  <div class="service-content">
+    <h1 class="membership-title">Membership</h1>
+    <p class="membership-description">
+      Joining Sta. Lucia Parish Cooperative opens doors to a variety of financial services, including loans, savings
+      <br />
+      programs, and more. Our membership process is simple and can be completed online. Here’s how you can <br />
+      apply and start enjoying the benefits of membership.
+    </p>
 
-      <div class="membership-types">
-        <div class="membership-type">
-          <img src="/images/INMEM.png" alt="Initial Membership Icon" />
-          <h4>Initial Membership</h4>
-          <p>Ideal for first-time members. Includes a membership fee and basic requirements.</p>
+    <div class="membership-types">
+      <div class="membership-type">
+        <img src="/images/INMEM.png" alt="Initial Membership Icon" />
+        <h4>Initial Membership</h4>
+        <p>Ideal for first-time members. Includes a membership fee and basic requirements.</p>
+      </div>
+      <div class="membership-type">
+        <img src="/images/REGUMEM.png" alt="Regular Membership Icon" />
+        <h4>Regular Membership</h4>
+        <p>Includes a membership fee and basic requirements for all our members.</p>
+      </div>
+      <div class="membership-type">
+        <img src="/images/ASSOMEM.png" alt="Associate Membership Icon" />
+        <h4>Associate Membership</h4>
+        <p>
+          Available for members who wish to support the cooperative without full participation in the profit-sharing
+          scheme.
+        </p>
+      </div>
+    </div>
+
+    <h3 class="how-member-title">How to Become a Member?</h3>
+    <p class="how-member-desc">Follow these easy steps to complete your membership application.</p>
+
+    <div class="steps">
+      <!-- Step 1 (Image on Left) -->
+      <div class="step">
+        <div class="step-image">
+          <img src="/images/MEM1.png" alt="Step 1 Image" />
         </div>
-        <div class="membership-type">
-          <img src="/images/REGUMEM.png" alt="Regular Membership Icon" />
-          <h4>Regular Membership</h4>
-          <p>Includes a membership fee and basic requirements for all our members.</p>
-        </div>
-        <div class="membership-type">
-          <img src="/images/ASSOMEM.png" alt="Associate Membership Icon" />
-          <h4>Associate Membership</h4>
-          <p>Available for members who wish to support the cooperative without full participation in the profit-sharing scheme.</p>
+        <div class="step-text">
+          <p>01</p>
+          <h4>Create an Account</h4>
+          <p>
+            Start by registering or filling out your basic personal information such as your name, email address, and
+            contact number to set up your online account.
+          </p>
         </div>
       </div>
 
-      <h3 class="how-member-title">How to Become a Member?</h3>
-      <p class="how-member-desc">
-        Follow these easy steps to complete your membership application.
-      </p>
-
-      <div class="steps">
-        <!-- Step 1 (Image on Left) -->
-        <div class="step">
-          <div class="step-image">
-            <img src="/images/MEM1.png" alt="Step 1 Image" />
-          </div>
-          <div class="step-text">
-            <p>01</p>
-            <h4>Create an Account</h4>
-            <p>Start by registering or filling out your basic personal information such as your name, email address, and contact number to set up your online account.</p>
-          </div>
+      <!-- Step 2 (Image on Right) -->
+      <div class="step reverse">
+        <div class="step-text">
+          <p>02</p>
+          <h4>Submit Initial Membership Payment</h4>
+          <p>
+            Pay a total of ₱3,000 and upload your proof of payment through your account. This includes your share
+            capital, savings deposit, membership fee, and passbook cost to be tagged as an Initial Member.
+          </p>
         </div>
-
-        <!-- Step 2 (Image on Right) -->
-        <div class="step reverse">
-          <div class="step-text">
-            <p>02</p>
-            <h4>Submit Initial Membership Payment</h4>
-            <p>Pay a total of ₱3,000 and upload your proof of payment through your account. This includes your share capital, savings deposit, membership fee, and passbook cost to be tagged as an Initial Member.</p>
-          </div>
-          <div class="step-image">
-            <img src="/images/MEM2.png" alt="Step 2 Image" />
-          </div>
+        <div class="step-image">
+          <img src="/images/MEM2.png" alt="Step 2 Image" />
         </div>
+      </div>
 
-        <!-- Step 3 (Image on Left) -->
-        <div class="step">
-          <div class="step-image">
-            <img src="/images/MEM3.png" alt="Step 3 Image" />
-          </div>
-          <div class="step-text">
-            <p>03</p>
-            <h4>Wait for Admin Approval</h4>
-            <p>Our team will carefully review your payment and submission. Once verified, you will receive an official confirmation via email or SMS, and your status will be updated to Initial Member.</p>
-          </div>
+      <!-- Step 3 (Image on Left) -->
+      <div class="step">
+        <div class="step-image">
+          <img src="/images/MEM3.png" alt="Step 3 Image" />
         </div>
-
-        <!-- Step 4 (Image on Right) -->
-        <div class="step reverse">
-          <div class="step-text">
-            <p>04</p>
-            <h4>Upgrade to Regular Membership</h4>
-            <p>To become a full Regular Member, submit the required documents through the system and attend the mandatory PMES seminar onsite at the cooperative office.</p>
-          </div>
-          <div class="step-image">
-            <img src="/images/MEM4.png" alt="Step 4 Image" />
-          </div>
+        <div class="step-text">
+          <p>03</p>
+          <h4>Wait for Admin Approval</h4>
+          <p>
+            Our team will carefully review your payment and submission. Once verified, you will receive an official
+            confirmation via email or SMS, and your status will be updated to Initial Member.
+          </p>
         </div>
+      </div>
 
-        <!-- Step 5 (Image on Left) -->
-        <div class="step">
-          <div class="step-image">
-            <img src="/images/MEM5.png" alt="Step 5 Image" />
-          </div>
-          <div class="step-text">
-            <p>05</p>
-            <h4>Get Full Access to Services</h4>
-            <p>After completing all the requirements and being approved as a Regular Member, you will receive a verification email, and your account will be granted full access to cooperative services, including loan applications.</p>
-          </div>
+      <!-- Step 4 (Image on Right) -->
+      <div class="step reverse">
+        <div class="step-text">
+          <p>04</p>
+          <h4>Upgrade to Regular Membership</h4>
+          <p>
+            To become a full Regular Member, submit the required documents through the system and attend the mandatory
+            PMES seminar onsite at the cooperative office.
+          </p>
+        </div>
+        <div class="step-image">
+          <img src="/images/MEM4.png" alt="Step 4 Image" />
+        </div>
+      </div>
+
+      <!-- Step 5 (Image on Left) -->
+      <div class="step">
+        <div class="step-image">
+          <img src="/images/MEM5.png" alt="Step 5 Image" />
+        </div>
+        <div class="step-text">
+          <p>05</p>
+          <h4>Get Full Access to Services</h4>
+          <p>
+            After completing all the requirements and being approved as a Regular Member, you will receive a
+            verification email, and your account will be granted full access to cooperative services, including loan
+            applications.
+          </p>
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <style scoped>
@@ -136,7 +154,7 @@ defineOptions({
   margin-bottom: 5px;
   margin-top: -45px;
   margin-left: 20px;
-  color: #EF233C;
+  color: #ef233c;
 }
 
 .step p:last-child {
@@ -168,7 +186,7 @@ defineOptions({
 /* Membership Section Styles */
 .membership-title {
   font-size: 45px;
-  color: #EF233C;
+  color: #ef233c;
   margin-bottom: 2px;
   font-weight: bolder;
   text-align: center;
@@ -206,7 +224,7 @@ defineOptions({
   font-weight: bold;
   margin-top: 10px;
   margin-bottom: 10px;
-  color: #EF233C;
+  color: #ef233c;
 }
 
 .membership-type p {
@@ -219,13 +237,13 @@ defineOptions({
   margin-bottom: 15px;
   margin-top: 25px;
   display: block;
-  margin-left: auto; 
-  margin-right: auto; 
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .how-member-title {
   font-size: 2rem;
-  color: #EF233C;
+  color: #ef233c;
   text-align: center;
   font-weight: bolder;
 }
@@ -346,5 +364,4 @@ defineOptions({
     font-size: 13px;
   }
 }
-
 </style>

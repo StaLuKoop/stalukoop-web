@@ -113,7 +113,7 @@ defineOptions({
 
 .membership-card h3 {
   font-size: 1.3rem;
-  color: #EF233C;
+  color: #ef233c;
   margin-bottom: 10px;
   font-weight: bolder;
   text-align: center;

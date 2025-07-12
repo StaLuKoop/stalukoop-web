@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import PublicLayout from '@/layouts/PublicLayout.vue';
-import { Link } from '@inertiajs/vue3'; // Import Inertia's Link component
+import PublicLayout from '@/layouts/PublicLayout.vue'
+import { Link } from '@inertiajs/vue3'
 
 defineOptions({
   layout: (h: any, page: any) => h(PublicLayout, { title: 'Services' }, () => page),
-});
+})
 </script>
 
 <template>
@@ -12,9 +12,9 @@ defineOptions({
     <!-- Initially visible content (header and description) -->
     <h2 class="title">Products and Services</h2>
     <p class="description">
-      Sta. Lucia Parish Cooperative, we strive to empower our members by offering reliable and <br>
-      accessible financial products and services. Our goal is to help you achieve financial stability, <br>
-      grow your investments, and support the well-being of our community through cooperative <br>
+      Sta. Lucia Parish Cooperative, we strive to empower our members by offering reliable and <br />
+      accessible financial products and services. Our goal is to help you achieve financial stability, <br />
+      grow your investments, and support the well-being of our community through cooperative <br />
       efforts and shared success.
     </p>
 
@@ -52,7 +52,9 @@ defineOptions({
       <Link href="/products" class="service-button products">
         <div class="icon-container"><i class="fas fa-box"></i></div>
         <p class="service-title">Products</p>
-        <p class="service-description">Offering a variety of everyday essentials such as rice, soap, and other useful items for your daily needs.</p>
+        <p class="service-description">
+          Offering a variety of everyday essentials such as rice, soap, and other useful items for your daily needs.
+        </p>
       </Link>
     </div>
   </div>
@@ -67,7 +69,7 @@ defineOptions({
 .title {
   font-size: 3rem;
   font-weight: bold;
-  color: #EF233C;
+  color: #ef233c;
   margin-bottom: 10px;
   margin-top: 50px;
 }
@@ -86,7 +88,7 @@ defineOptions({
 }
 
 .service-button {
-  background-color: #EF233C;
+  background-color: #ef233c;
   color: white;
   width: 250px;
   height: 320px;
