@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { IconBrandFacebook, IconPhoneCall } from '@tabler/icons-vue'
-import { Mail } from 'lucide-vue-next'
+import { IconBrandFacebook, IconPhoneCall } from '@tabler/icons-vue';
+import { Mail } from 'lucide-vue-next';
+
+const currentYear = new Date().getFullYear();
 </script>
 
 <template>
@@ -27,7 +29,7 @@ import { Mail } from 'lucide-vue-next'
 
       <!-- Copyright Row -->
       <div class="text-center text-sm">
-        © 2025 Sta. Lucia Parish Multipurpose Cooperative. All rights reserved.
+        &copy; {{ currentYear }} Sta. Lucia Parish Multipurpose Cooperative. All rights reserved.
       </div>
     </div>
   </footer>
