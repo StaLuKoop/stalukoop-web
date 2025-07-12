@@ -1,52 +1,60 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Loan from './Loan.vue'
-import Membership from './MembershipStep.vue'
-import Payment from './Payment.vue'
-import Office from './Office.vue'
-import Products from './Products.vue'
+import PublicLayout from '@/layouts/PublicLayout.vue';
+import { Link } from '@inertiajs/vue3'; // Import Inertia's Link component
 
-// Track which section to display
-const currentSection = ref('')
+defineOptions({
+  layout: (h: any, page: any) => h(PublicLayout, { title: 'Services' }, () => page),
+});
 </script>
 
 <template>
   <div class="services-container">
+    <!-- Initially visible content (header and description) -->
     <h2 class="title">Products and Services</h2>
     <p class="description">
-      Sta. Lucia Parish Cooperative, we strive to empower our members by offering reliable and accessible financial products and services.
+      Sta. Lucia Parish Cooperative, we strive to empower our members by offering reliable and <br>
+      accessible financial products and services. Our goal is to help you achieve financial stability, <br>
+      grow your investments, and support the well-being of our community through cooperative <br>
+      efforts and shared success.
     </p>
 
-    <!-- Navigation Buttons -->
+    <!-- Navigation Buttons (Link to different pages using Inertia) -->
     <div class="services-buttons">
-      <button @click="currentSection = 'loan'" class="service-button loan">
+      <!-- Link to Loan Page -->
+      <Link href="/loan" class="service-button loan">
         <div class="icon-container"><i class="fas fa-coins"></i></div>
         <p class="service-title">Loan</p>
-      </button>
-      <button @click="currentSection = 'membership'" class="service-button membership">
+        <p class="service-description">Offers a quick and easy way to apply for loans online, anytime.</p>
+      </Link>
+
+      <!-- Link to Membership Step Page -->
+      <Link href="/membership-step" class="service-button membership-step">
         <div class="icon-container"><i class="fas fa-user-plus"></i></div>
         <p class="service-title">Membership</p>
-      </button>
-      <button @click="currentSection = 'payment'" class="service-button payment">
+        <p class="service-description">Follow the steps to complete your membership registration.</p>
+      </Link>
+
+      <!-- Link to Payment Page -->
+      <Link href="/payment" class="service-button payment">
         <div class="icon-container"><i class="fas fa-credit-card"></i></div>
         <p class="service-title">Payment</p>
-      </button>
-      <button @click="currentSection = 'office'" class="service-button office">
+        <p class="service-description">Secure and convenient options to manage and complete your payments with ease.</p>
+      </Link>
+
+      <!-- Link to Office Page -->
+      <Link href="/office" class="service-button office">
         <div class="icon-container"><i class="fas fa-map-marker-alt"></i></div>
         <p class="service-title">Office</p>
-      </button>
-      <button @click="currentSection = 'products'" class="service-button products">
+        <p class="service-description">Provides direct assistance and personalized services for all your needs.</p>
+      </Link>
+
+      <!-- Link to Products Page -->
+      <Link href="/products" class="service-button products">
         <div class="icon-container"><i class="fas fa-box"></i></div>
         <p class="service-title">Products</p>
-      </button>
+        <p class="service-description">Offering a variety of everyday essentials such as rice, soap, and other useful items for your daily needs.</p>
+      </Link>
     </div>
-
-    <!-- Dynamic Component Rendering -->
-    <component :is="currentSection === 'loan' ? Loan : 
-                    currentSection === 'membership' ? Membership : 
-                    currentSection === 'payment' ? Payment : 
-                    currentSection === 'office' ? Office : 
-                    currentSection === 'products' ? Products : null" />
   </div>
 </template>
 
