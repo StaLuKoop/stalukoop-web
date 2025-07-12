@@ -1,14 +1,27 @@
 <script setup lang="ts">
+<<<<<<< HEAD
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { Link } from '@inertiajs/vue3'; // Import Inertia's Link component
 
 defineOptions({
   layout: (h: any, page: any) => h(PublicLayout, { title: 'Services' }, () => page),
 });
+=======
+import { ref } from 'vue'
+import Loan from './Loan.vue'
+import Membership from './MembershipStep.vue'
+import Payment from './Payment.vue'
+import Office from './Office.vue'
+import Products from './Products.vue'
+
+// Track which section to display
+const currentSection = ref('')
+>>>>>>> c7462b62887ce6a05f6da5290825947d40019237
 </script>
 
 <template>
   <div class="services-container">
+<<<<<<< HEAD
     <!-- Initially visible content (header and description) -->
     <h2 class="title">Products and Services</h2>
     <p class="description">
@@ -55,6 +68,43 @@ defineOptions({
         <p class="service-description">Offering a variety of everyday essentials such as rice, soap, and other useful items for your daily needs.</p>
       </Link>
     </div>
+=======
+    <h2 class="title">Products and Services</h2>
+    <p class="description">
+      Sta. Lucia Parish Cooperative, we strive to empower our members by offering reliable and accessible financial products and services.
+    </p>
+
+    <!-- Navigation Buttons -->
+    <div class="services-buttons">
+      <button @click="currentSection = 'loan'" class="service-button loan">
+        <div class="icon-container"><i class="fas fa-coins"></i></div>
+        <p class="service-title">Loan</p>
+      </button>
+      <button @click="currentSection = 'membership'" class="service-button membership">
+        <div class="icon-container"><i class="fas fa-user-plus"></i></div>
+        <p class="service-title">Membership</p>
+      </button>
+      <button @click="currentSection = 'payment'" class="service-button payment">
+        <div class="icon-container"><i class="fas fa-credit-card"></i></div>
+        <p class="service-title">Payment</p>
+      </button>
+      <button @click="currentSection = 'office'" class="service-button office">
+        <div class="icon-container"><i class="fas fa-map-marker-alt"></i></div>
+        <p class="service-title">Office</p>
+      </button>
+      <button @click="currentSection = 'products'" class="service-button products">
+        <div class="icon-container"><i class="fas fa-box"></i></div>
+        <p class="service-title">Products</p>
+      </button>
+    </div>
+
+    <!-- Dynamic Component Rendering -->
+    <component :is="currentSection === 'loan' ? Loan : 
+                    currentSection === 'membership' ? Membership : 
+                    currentSection === 'payment' ? Payment : 
+                    currentSection === 'office' ? Office : 
+                    currentSection === 'products' ? Products : null" />
+>>>>>>> c7462b62887ce6a05f6da5290825947d40019237
   </div>
 </template>
 
@@ -137,6 +187,7 @@ defineOptions({
   margin-top: 30px;
   text-align: left;
 }
+<<<<<<< HEAD
 
 /* Media Queries for Responsiveness */
 
@@ -206,4 +257,6 @@ defineOptions({
   }
 }
 
+=======
+>>>>>>> c7462b62887ce6a05f6da5290825947d40019237
 </style>

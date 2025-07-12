@@ -116,8 +116,8 @@ const submit = () => {
               I have read and agree to the
               <TextLink :href="route('privacy-policy')" class="underline underline-offset-4"> Privacy Policy </TextLink>
               and
-              <TextLink :href="route('terms-of-service')" class="underline underline-offset-4">
-                Terms of Service </TextLink
+              <TextLink :href="route('terms-and-conditions')" class="underline underline-offset-4">
+                Terms and Conditions </TextLink
               >.
             </span>
           </Label>
