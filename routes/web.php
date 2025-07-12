@@ -27,13 +27,15 @@ Route::get('privacy-policy', function () {
   return Inertia::render('PrivacyPolicy');
 })->name('privacy-policy');
 
-Route::get('terms-of-service', function () {
-  return Inertia::render('TermsOfService');
-})->name('terms-of-service');
+Route::get('terms-and-conditions', function () {
+  return Inertia::render('TermsAndConditions');
+})->name('terms-and-conditions');
 
 Route::get('dashboard', function () {
   return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+
 
 // Route::group(['prefix' => 'admin',  'middleware' => ['auth',  'admin']], function () {
 
