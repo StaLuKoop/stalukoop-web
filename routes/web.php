@@ -34,9 +34,9 @@ Route::get('privacy-policy', function () {
   return Inertia::render('PrivacyPolicy');
 })->name('privacy-policy');
 
-Route::get('terms-of-service', function () {
-  return Inertia::render('TermsOfService');
-})->name('terms-of-service');
+Route::get('terms-and-conditions', function () {
+  return Inertia::render('TermsAndConditions');
+})->name('terms-and-conditions');
 
 // Define Routes for the Service Pages
 Route::get('loan', function () {
