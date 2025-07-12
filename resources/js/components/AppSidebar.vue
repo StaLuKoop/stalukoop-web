@@ -38,14 +38,14 @@ const footerNavItems: NavItem[] = [
   },
   {
     title: 'Stalukoop Github',
-    href: 'https://www.facebook.com/SLPCC1995/',
+    href: 'https://github.com/StaLuKoop',
     icon: IconBrandGithub,
   },
 ]
 </script>
 
 <template>
-  <Sidebar collapsible="icon" variant="inset">
+  <Sidebar collapsible="icon" variant="floating">
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>
