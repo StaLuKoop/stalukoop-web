@@ -7,7 +7,7 @@ import { usePage } from '@inertiajs/vue3';
 const currentYear = new Date().getFullYear();
 const page = usePage();
 
-const isTermsPage = computed(() => page.url === '/terms-of-service');
+const isTermsPage = computed(() => page.url === '/terms-and-conditions');
 const isPrivacyPage = computed(() => page.url === '/privacy-policy');
 </script>
 
