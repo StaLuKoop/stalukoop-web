@@ -26,7 +26,7 @@ Route::get('membership', function () {
 
 // Route for Membership Step Page (for registration steps)
 Route::get('membership-step', function () {
-    return Inertia::render('MembershipStep');  // This will render MembershipStep.vue
+    return Inertia::render('MembershipStep');  
 })->name('membership-step');
 
 
@@ -38,18 +38,32 @@ Route::get('terms-of-service', function () {
   return Inertia::render('TermsOfService');
 })->name('terms-of-service');
 
+// Define Routes for the Service Pages
+Route::get('loan', function () {
+  return Inertia::render('Loan');
+})->name('loan');
+
+Route::get('payment', function () {
+  return Inertia::render('Payment');
+})->name('payment');
+
+Route::get('office', function () {
+  return Inertia::render('Office');
+})->name('office');
+
+Route::get('products', function () {
+  return Inertia::render('Products');
+})->name('products');
+
 // Dashboard Route
 Route::get('dashboard', function () {
   return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Route::group(['prefix' => 'admin',  'middleware' => ['auth',  'admin']], function () {
-
-//   //Admin Dashboard
-//   Route::controller(AdminDashboardController::class)->group(function () {
-//     Route::get("/dashboard", 'index');
-//   });
-
+// If needed, you can add admin and user-specific routes below
+// Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
+//   // Admin Routes
+//   Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 // });
 
 // Route::group(['prefix' => 'home', 'middleware' => ['auth']], function () {
