@@ -24,7 +24,10 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        // Here?
+  // Register here?
+  $middleware->alias([
+    'role' => \App\Http\Middleware\RoleMiddleware::class,
+  ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->respond(function (Response $response) {

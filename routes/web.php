@@ -19,16 +19,13 @@ Route::get('services', function () {
   return Inertia::render('Services');
 })->name('services');
 
-// Route for Membership Page
 Route::get('membership', function () {
   return Inertia::render('Membership');
 })->name('membership');
 
-// Route for Membership Step Page (for registration steps)
 Route::get('membership-step', function () {
   return Inertia::render('MembershipStep');
 })->name('membership-step');
-
 
 Route::get('privacy-policy', function () {
   return Inertia::render('PrivacyPolicy');
@@ -38,7 +35,6 @@ Route::get('terms-and-conditions', function () {
   return Inertia::render('TermsAndConditions');
 })->name('terms-and-conditions');
 
-// Define Routes for the Service Pages
 Route::get('loan', function () {
   return Inertia::render('Loan');
 })->name('loan');
@@ -55,23 +51,31 @@ Route::get('products', function () {
   return Inertia::render('Products');
 })->name('products');
 
-// Dashboard Route
-Route::get('dashboard', function () {
-  return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('dashboard', function () {
+//   return Inertia::render('Dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::middleware(['auth', 'verified'])->group(function () {
+  Route::get('/admin/dashboard', function () {
+    abort_unless(auth()->user()->role === 'admin', 403);
+    return Inertia::render('admin/Dashboard');
+  })->middleware(['auth', 'verified'])->name('admin.dashboard');
 
-// If needed, you can add admin and user-specific routes below
-// Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
-//   // Admin Routes
-//   Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-// });
+  Route::get('/member/dashboard', function () {
+    abort_unless(auth()->user()->role === 'member', 403);
+    return Inertia::render('member/Dashboard');
+  })->middleware(['auth', 'verified'])->name('member.dashboard');
 
-// Route::group(['prefix' => 'home', 'middleware' => ['auth']], function () {
-//   // User Routes
-//   Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
+  Route::get('/dashboard', function () {
+    $user = auth()->user();
 
-// });
+    if ($user->role === 'admin') {
+      return redirect()->route('admin.dashboard');
+    }
+
+    return redirect()->route('member.dashboard');
+  })->name('dashboard');
+});
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
