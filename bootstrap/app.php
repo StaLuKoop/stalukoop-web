@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\PreventBack;
@@ -27,7 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
     // Register middlewares here!
     $middleware->alias([
-      'role' => \App\Http\Middleware\RoleMiddleware::class,
+      'role' => EnsureUserHasRole::class,
       'prevent-back' => PreventBack::class
     ]);
   })

@@ -7,8 +7,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import AuthBase from '@/layouts/AuthLayout.vue'
 import { Head, useForm } from '@inertiajs/vue3'
-import { Check, LoaderCircle, X } from 'lucide-vue-next'
+import { Check, Eye, EyeOff, LoaderCircle, X } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
+
+const showPassword = ref(false)
+const showPasswordConfirmation = ref(false)
 
 const isPasswordFocused = ref(false)
 
@@ -93,17 +96,29 @@ const submit = () => {
 
         <div class="grid gap-2">
           <Label for="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            required
-            :tabindex="3"
-            autocomplete="new-password"
-            v-model="form.password"
-            placeholder="Password"
-            @focus="isPasswordFocused = true"
-            @blur="isPasswordFocused = false"
-          />
+          <div class="relative">
+            <Input
+              id="password"
+              :type="showPassword ? 'text' : 'password'"
+              required
+              :tabindex="3"
+              autocomplete="new-password"
+              v-model="form.password"
+              placeholder="Password"
+              @focus="isPasswordFocused = true"
+              @blur="isPasswordFocused = false"
+              class="pr-10"
+            />
+            <button
+              type="button"
+              @click="showPassword = !showPassword"
+              class="absolute inset-y-0 right-2 flex items-center text-muted-foreground"
+              aria-label="Toggle password visibility"
+            >
+              <Eye v-if="!showPassword" class="h-4 w-4" />
+              <EyeOff v-else class="h-4 w-4" />
+            </button>
+          </div>
           <InputError :message="form.errors.password" />
         </div>
 
@@ -138,15 +153,27 @@ const submit = () => {
 
         <div class="grid gap-2">
           <Label for="password_confirmation">Confirm password</Label>
-          <Input
-            id="password_confirmation"
-            type="password"
-            required
-            :tabindex="4"
-            autocomplete="new-password"
-            v-model="form.password_confirmation"
-            placeholder="Confirm password"
-          />
+          <div class="relative">
+            <Input
+              id="password_confirmation"
+              :type="showPasswordConfirmation ? 'text' : 'password'"
+              required
+              :tabindex="4"
+              autocomplete="new-password"
+              v-model="form.password_confirmation"
+              placeholder="Confirm password"
+              class="pr-10"
+            />
+            <button
+              type="button"
+              @click="showPasswordConfirmation = !showPasswordConfirmation"
+              class="absolute inset-y-0 right-2 flex items-center text-muted-foreground"
+              aria-label="Toggle confirm password visibility"
+            >
+              <Eye v-if="!showPasswordConfirmation" class="h-4 w-4" />
+              <EyeOff v-else class="h-4 w-4" />
+            </button>
+          </div>
           <InputError :message="form.errors.password_confirmation" />
         </div>
 
