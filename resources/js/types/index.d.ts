@@ -12,10 +12,11 @@ export interface BreadcrumbItem {
 }
 
 export interface NavItem {
-    title: string;
-    href: string;
-    icon?: Component | LucideIcon;
-    isActive?: boolean;
+  title: string
+  href: string
+  icon?: Component | LucideIcon
+  isActive?: boolean
+  items?: NavItem[]
 }
 
 export type AppPageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
@@ -27,6 +28,7 @@ export type AppPageProps<T extends Record<string, unknown> = Record<string, unkn
 };
 
 export interface User {
+    role: string;
     id: number;
     name: string;
     email: string;

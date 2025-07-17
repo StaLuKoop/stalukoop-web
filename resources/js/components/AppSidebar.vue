@@ -2,6 +2,7 @@
 import NavFooter from '@/components/NavFooter.vue'
 import NavMain from '@/components/NavMain.vue'
 import NavUser from '@/components/NavUser.vue'
+
 import {
   Sidebar,
   SidebarContent,
@@ -11,26 +12,93 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { type NavItem } from '@/types'
-import { Link } from '@inertiajs/vue3'
-import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-vue'
-import { Calendar, LayoutGrid } from 'lucide-vue-next'
+
+import { Link, usePage } from '@inertiajs/vue3'
+import {
+  IconBrandFacebook,
+  IconBrandGithub,
+} from '@tabler/icons-vue'
+
+import {
+  Calculator,
+  Calendar,
+  Download,
+  FileWarning,
+  LayoutGrid,
+  User,
+  FileText,
+} from 'lucide-vue-next'
+
 import AppLogo from './AppLogo.vue'
+import { computed } from 'vue'
 
-const mainNavItems: NavItem[] = [
-  {
-    title: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutGrid,
-  },
-  {
-    title: 'Calendar',
-    href: '/calendar',
-    icon: Calendar,
-  },
-]
+const page = usePage()
+const role = page.props.auth.user.role as 'admin' | 'member'
 
-const footerNavItems: NavItem[] = [
+const mainNavSections = computed(() => {
+  if (role === 'admin') {
+    return [
+      {
+        items: [
+          {
+            title: 'Dashboard',
+            href: '/admin/dashboard',
+            icon: LayoutGrid,
+          },
+        ],
+      },
+      {
+        label: 'Management',
+        items: [
+          { title: 'Members', href: '/admin/management/members', icon: User },
+          { title: 'Concerns', href: '/admin/management/concerns', icon: FileWarning },
+        ],
+      },
+      {
+        label: 'Tools',
+        items: [
+          { title: 'Calendar', href: '/admin/tools/calendar', icon: Calendar },
+          { title: 'Calculator', href: '/admin/tools/calculator', icon: Calculator },
+          { title: 'Export', href: '/admin/tools/export', icon: Download },
+        ],
+      },
+    ]
+  }
+
+  if (role === 'member') {
+    return [
+      {
+        items: [
+          {
+            title: 'Dashboard',
+            href: '/member/dashboard',
+            icon: LayoutGrid,
+          },
+        ],
+      },
+      {
+        items: [
+          {
+            title: 'Profile',
+            href: '/member/profile',
+            icon: User,
+          },
+        ],
+      },
+      {
+        label: 'Forms',
+        items: [
+          { title: 'Member Form', href: '/member/forms/member', icon: FileText },
+          { title: 'Loan Form', href: '/member/forms/loan', icon: FileText },
+        ],
+      },
+    ]
+  }
+
+  return []
+})
+
+const footerNavItems = [
   {
     title: 'SLPMC Facebook',
     href: 'https://www.facebook.com/SLPCC1995/',
@@ -43,6 +111,7 @@ const footerNavItems: NavItem[] = [
   },
 ]
 </script>
+
 
 <template>
   <Sidebar collapsible="icon" variant="floating">
@@ -59,7 +128,7 @@ const footerNavItems: NavItem[] = [
     </SidebarHeader>
 
     <SidebarContent>
-      <NavMain :items="mainNavItems" />
+      <NavMain :sections="mainNavSections" />
     </SidebarContent>
 
     <SidebarFooter>
@@ -67,5 +136,6 @@ const footerNavItems: NavItem[] = [
       <NavUser />
     </SidebarFooter>
   </Sidebar>
+
   <slot />
 </template>
