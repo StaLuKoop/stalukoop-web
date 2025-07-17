@@ -3,59 +3,20 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-  return Inertia::render('Home');
-})->name('home');
+  Route::get('/', fn() => Inertia::render('Home'))->name('home');
+  Route::get('about', fn() => Inertia::render('About'))->name('about');
+  Route::get('contact', fn() => Inertia::render('Contact'))->name('contact');
+  Route::get('services', fn() => Inertia::render('Services'))->name('services');
+  Route::get('membership', fn() => Inertia::render('Membership'))->name('membership');
+  Route::get('membership-step', fn() => Inertia::render('MembershipStep'))->name('membership-step');
+  Route::get('privacy-policy', fn() => Inertia::render('PrivacyPolicy'))->name('privacy-policy');
+  Route::get('terms-and-conditions', fn() => Inertia::render('TermsAndConditions'))->name('terms-and-conditions');
+  Route::get('loan', fn() => Inertia::render('Loan'))->name('loan');
+  Route::get('payment', fn() => Inertia::render('Payment'))->name('payment');
+  Route::get('office', fn() => Inertia::render('Office'))->name('office');
+  Route::get('products', fn() => Inertia::render('Products'))->name('products');
 
-Route::get('about', function () {
-  return Inertia::render('About');
-})->name('about');
-
-Route::get('contact', function () {
-  return Inertia::render('Contact');
-})->name('contact');
-
-Route::get('services', function () {
-  return Inertia::render('Services');
-})->name('services');
-
-Route::get('membership', function () {
-  return Inertia::render('Membership');
-})->name('membership');
-
-Route::get('membership-step', function () {
-  return Inertia::render('MembershipStep');
-})->name('membership-step');
-
-Route::get('privacy-policy', function () {
-  return Inertia::render('PrivacyPolicy');
-})->name('privacy-policy');
-
-Route::get('terms-and-conditions', function () {
-  return Inertia::render('TermsAndConditions');
-})->name('terms-and-conditions');
-
-Route::get('loan', function () {
-  return Inertia::render('Loan');
-})->name('loan');
-
-Route::get('payment', function () {
-  return Inertia::render('Payment');
-})->name('payment');
-
-Route::get('office', function () {
-  return Inertia::render('Office');
-})->name('office');
-
-Route::get('products', function () {
-  return Inertia::render('Products');
-})->name('products');
-
-// Route::get('dashboard', function () {
-//   return Inertia::render('Dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'prevent-back'])->group(function () {
   Route::get('/admin/dashboard', function () {
     abort_unless(auth()->user()->role === 'admin', 403);
     return Inertia::render('admin/Dashboard');
