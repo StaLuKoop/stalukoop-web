@@ -12,9 +12,7 @@ class Member extends Model
 
   protected $fillable = [
     'user_id',
-    'cdv_number',
     'membership_status',
-    'activity_status',
     'date_of_birth',
     'place_of_birth',
     'gender',

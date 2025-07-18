@@ -14,9 +14,8 @@ return new class extends Migration
     Schema::create('members', function (Blueprint $table) {
       $table->id();
       $table->foreignId('user_id')->unique()->constrained()->onDelete('cascade');
-      $table->string('cdv_number')->nullable();
+
       $table->enum('membership_status', ['pending', 'regular', 'closed'])->default('pending');
-      $table->enum('activity_status', ['active', 'inactive'])->default('active');
       $table->date('date_of_birth')->nullable();
       $table->string('place_of_birth')->nullable();
       $table->enum('gender', ['male', 'female'])->nullable();
@@ -27,6 +26,7 @@ return new class extends Migration
       $table->text('present_address')->nullable();
       $table->text('permanent_address')->nullable();
       $table->string('mobile_no')->nullable();
+
       $table->timestamps();
     });
   }

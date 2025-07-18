@@ -35,7 +35,6 @@ class AuthenticatedSessionController extends Controller
 
     $user = Auth::user();
 
-    // @BLEED
     // Check if email is unverified or verification is too old
     $needsVerification = $user->email_verified_at === null
       || $user->email_verified_at->lt(now()->subMinutes(60));

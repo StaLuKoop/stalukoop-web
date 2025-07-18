@@ -38,7 +38,6 @@ class RegisteredUserController extends Controller
       'password' => ['required', 'confirmed', Rules\Password::defaults()],
 
       // Member fields
-      'cdv_number' => 'nullable|string|max:255',
       'date_of_birth' => 'nullable|date',
       'place_of_birth' => 'nullable|string|max:255',
       'gender' => 'nullable|in:male,female',
@@ -55,12 +54,11 @@ class RegisteredUserController extends Controller
       'name' => $request->name,
       'email' => $request->email,
       'password' => Hash::make($request->password),
-      'role' => 'member', // explicitly set role
+      'role' => 'member',
     ]);
 
     Member::create([
       'user_id' => $user->id,
-      'cdv_number' => $request->cdv_number,
       'date_of_birth' => $request->date_of_birth,
       'place_of_birth' => $request->place_of_birth,
       'gender' => $request->gender,
@@ -71,7 +69,6 @@ class RegisteredUserController extends Controller
       'present_address' => $request->present_address,
       'permanent_address' => $request->permanent_address,
       'mobile_no' => $request->mobile_no,
-      // 'membership_status' and 'activity_status' default to 'pending' and 'active' respectively
     ]);
 
     event(new Registered($user));
