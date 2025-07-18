@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\MemberManagementController;
 use App\Http\Controllers\Admin\UtilityController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
 use App\Http\Controllers\Member\FormController;
-use App\Http\Controllers\Member\ProfileController;
+use App\Http\Controllers\Member\AccountController;
 
 // Public Pages
 Route::get('/', fn() => Inertia::render('Home'))->name('home');
@@ -42,7 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
   // Admin Routes
   // ------------------
   Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('management')->name('management.')->group(function () {
       Route::resource('members', MemberManagementController::class);
@@ -59,12 +59,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
   // Member Routes
   // ------------------
   Route::middleware('role:member')->prefix('member')->name('member.')->group(function () {
-    Route::get('/dashboard', [MemberDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::get('dashboard', [MemberDashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('cooperative')->group(function () {
+      Route::get('account', [AccountController::class, 'index'])->name('account');
+    });
 
     Route::prefix('forms')->group(function () {
-      Route::get('member', [FormController::class, 'memberForm'])->name('forms.member');
-      Route::get('loan', [FormController::class, 'loanForm'])->name('forms.loan');
+      Route::get('member-application', [FormController::class, 'memberForm'])->name('forms.member');
+      Route::get('loan-application', [FormController::class, 'loanForm'])->name('forms.loan');
     });
   });
 });
