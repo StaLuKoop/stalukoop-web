@@ -3,8 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\ManagementController;
-use App\Http\Controllers\Admin\ToolController;
+use App\Http\Controllers\Admin\InquiryController;
+use App\Http\Controllers\Admin\MemberManagementController;
+use App\Http\Controllers\Admin\UtilityController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
 use App\Http\Controllers\Member\FormController;
 use App\Http\Controllers\Member\ProfileController;
@@ -43,15 +44,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    Route::prefix('management')->group(function () {
-      Route::get('members', [ManagementController::class, 'members'])->name('management.members');
-      Route::get('concerns', [ManagementController::class, 'concerns'])->name('management.concerns');
+    Route::prefix('management')->name('management.')->group(function () {
+      Route::resource('members', MemberManagementController::class);
+      Route::resource('inquiries', InquiryController::class);
     });
 
-    Route::prefix('tools')->group(function () {
-      Route::get('calendar', [ToolController::class, 'calendar'])->name('tools.calendar');
-      Route::get('calculator', [ToolController::class, 'calculator'])->name('tools.calculator');
-      Route::get('export', [ToolController::class, 'export'])->name('tools.export');
+    Route::prefix('utility')->name('utility.')->group(function () {
+      Route::get('calendar', [UtilityController::class, 'calendar'])->name('calendar');
+      Route::get('calculator', [UtilityController::class, 'calculator'])->name('calculator');
     });
   });
 

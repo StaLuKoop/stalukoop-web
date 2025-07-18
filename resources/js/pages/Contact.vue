@@ -43,7 +43,7 @@ defineOptions({
           </div>
           <input type="email" placeholder="Email Address" required />
           <input type="tel" placeholder="Phone Number" required />
-          <input type="text" placeholder="Concern" required />
+          <input type="text" placeholder="Inquiry" required />
           <textarea placeholder="Your message..." required></textarea>
           <button type="submit" class="submit-btn">Send Message</button>
         </form>

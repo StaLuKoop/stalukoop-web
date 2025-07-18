@@ -51,15 +51,14 @@ const mainNavSections = computed(() => {
         label: 'Management',
         items: [
           { title: 'Members', href: '/admin/management/members', icon: User },
-          { title: 'Concerns', href: '/admin/management/concerns', icon: FileWarning },
+          { title: 'Inquiries', href: '/admin/management/inquiries', icon: FileWarning },
         ],
       },
       {
-        label: 'Tools',
+        label: 'Utilities',
         items: [
-          { title: 'Calendar', href: '/admin/tools/calendar', icon: Calendar },
-          { title: 'Calculator', href: '/admin/tools/calculator', icon: Calculator },
-          { title: 'Export', href: '/admin/tools/export', icon: Download },
+          { title: 'Calendar', href: '/admin/utility/calendar', icon: Calendar },
+          { title: 'Calculator', href: '/admin/utility/calculator', icon: Calculator },
         ],
       },
     ]
