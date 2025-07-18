@@ -11,6 +11,6 @@ test('authenticated users can visit the dashboard', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    $response = $this->get('/dashboard');
-    $response->assertStatus(200);
+  $response = $this->get('/dashboard');
+  $response->assertRedirect('/member/dashboard');
 });
