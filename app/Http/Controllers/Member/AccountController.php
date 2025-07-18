@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -10,6 +11,11 @@ class AccountController extends Controller
 {
   public function index(): Response
   {
-    return Inertia::render('member/cooperative/Account');
+    $user = Auth::user();
+    $status = $user->member?->membership_status ?? 'none';
+
+    return Inertia::render('member/cooperative/Account', [
+      'status' => $status,
+    ]);
   }
 }
