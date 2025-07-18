@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ProfileController extends Controller
+class AccountController extends Controller
 {
   public function index(): Response
   {
-    return Inertia::render('member/Profile');
+    return Inertia::render('member/cooperative/Account');
   }
 }

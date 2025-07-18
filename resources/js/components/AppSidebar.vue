@@ -76,11 +76,11 @@ const mainNavSections = computed(() => {
         ],
       },
       {
-        label: 'Account',
+        label: 'Cooperative',
         items: [
           {
-            title: 'Profile',
-            href: '/member/profile',
+            title: 'Account',
+            href: '/member/cooperative/account',
             icon: User,
           },
         ],
@@ -88,8 +88,8 @@ const mainNavSections = computed(() => {
       {
         label: 'Forms',
         items: [
-          { title: 'Member Form', href: '/member/forms/member', icon: FileText },
-          { title: 'Loan Form', href: '/member/forms/loan', icon: FileText },
+          { title: 'Member Form', href: '/member/forms/member-application', icon: FileText },
+          { title: 'Loan Form', href: '/member/forms/loan-application', icon: FileText },
         ],
       },
     ]
