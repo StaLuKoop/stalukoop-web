@@ -14,23 +14,12 @@ import {
 } from '@/components/ui/sidebar'
 
 import { Link, usePage } from '@inertiajs/vue3'
-import {
-  IconBrandFacebook,
-  IconBrandGithub,
-} from '@tabler/icons-vue'
+import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-vue'
 
-import {
-  Calculator,
-  Calendar,
-  Download,
-  FileWarning,
-  LayoutGrid,
-  User,
-  FileText,
-} from 'lucide-vue-next'
+import { Calculator, Calendar, FileText, FileWarning, Home, LayoutGrid, User } from 'lucide-vue-next'
 
-import AppLogo from './AppLogo.vue'
 import { computed } from 'vue'
+import AppLogo from './AppLogo.vue'
 
 const page = usePage()
 const role = page.props.auth.user.role as 'admin' | 'member'
@@ -40,6 +29,11 @@ const mainNavSections = computed(() => {
     return [
       {
         items: [
+          {
+            title: 'Home',
+            href: '/',
+            icon: Home,
+          },
           {
             title: 'Dashboard',
             href: '/admin/dashboard',
@@ -68,6 +62,11 @@ const mainNavSections = computed(() => {
     return [
       {
         items: [
+          {
+            title: 'Home',
+            href: '/',
+            icon: Home,
+          },
           {
             title: 'Dashboard',
             href: '/member/dashboard',
@@ -111,7 +110,6 @@ const footerNavItems = [
   },
 ]
 </script>
-
 
 <template>
   <Sidebar collapsible="icon" variant="floating">
