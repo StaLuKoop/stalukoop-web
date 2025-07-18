@@ -76,6 +76,7 @@ const mainNavSections = computed(() => {
         ],
       },
       {
+        label: 'Account',
         items: [
           {
             title: 'Profile',
