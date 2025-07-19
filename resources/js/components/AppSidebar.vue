@@ -16,7 +16,7 @@ import {
 import { Link, usePage } from '@inertiajs/vue3'
 import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-vue'
 
-import { Calculator, Calendar, FilePlus, FileSignature, FileText, FileWarning, Home, LayoutGrid, User } from 'lucide-vue-next'
+import { Calculator, Calendar, FilePlus, FileSignature, FileWarning, Home, LayoutGrid, User } from 'lucide-vue-next'
 
 import { computed } from 'vue'
 import AppLogo from './AppLogo.vue'
@@ -58,59 +58,59 @@ const mainNavSections = computed(() => {
     ]
   }
 
-if (role === 'member') {
-  return [
-    {
-      items: [
-        {
-          title: 'Home',
-          href: '/',
-          icon: Home,
-        },
-        {
-          title: 'Dashboard',
-          href: '/member/dashboard',
-          icon: LayoutGrid,
-        },
-      ],
-    },
-    {
-      label: 'Cooperative',
-      items: [
-        {
-          title: 'Account',
-          href: '/member/cooperative/account',
-          icon: User,
-        },
-      ],
-    },
-    {
-      label: 'Services',
-      items: [
-        {
-          title: 'Loan Application',
-          href: '/member/services/loan-application',
-          icon: FilePlus,
-        },
-      ],
-    },
-    {
-      label: 'Requirements',
-      items: [
-        {
-          title: 'Membership Form',
-          href: '/member/requirements/membership-form',
-          icon: FileSignature,
-        },
-        {
-          title: 'PMES',
-          href: '/member/requirements/pmes',
-          icon: FileWarning,
-        },
-      ],
-    },
-  ];
-}
+  if (role === 'member') {
+    return [
+      {
+        items: [
+          {
+            title: 'Home',
+            href: '/',
+            icon: Home,
+          },
+          {
+            title: 'Dashboard',
+            href: '/member/dashboard',
+            icon: LayoutGrid,
+          },
+        ],
+      },
+      {
+        label: 'Cooperative',
+        items: [
+          {
+            title: 'Account',
+            href: '/member/cooperative/account',
+            icon: User,
+          },
+        ],
+      },
+      {
+        label: 'Services',
+        items: [
+          {
+            title: 'Loan Application',
+            href: '/member/services/loan-application',
+            icon: FilePlus,
+          },
+        ],
+      },
+      {
+        label: 'Requirements',
+        items: [
+          {
+            title: 'Membership Form',
+            href: '/member/requirements/membership-form',
+            icon: FileSignature,
+          },
+          {
+            title: 'PMES',
+            href: '/member/requirements/pmes',
+            icon: FileWarning,
+          },
+        ],
+      },
+    ]
+  }
 
   return []
 })

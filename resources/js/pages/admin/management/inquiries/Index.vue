@@ -1,18 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Head } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { type BreadcrumbItem } from '@/types'
+import { Head } from '@inertiajs/vue3'
 
 import { Input } from '@/components/ui/input'
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell
-} from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 
 defineProps(['inquiries'])
 
