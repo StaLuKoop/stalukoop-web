@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Inquiry;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Member;
@@ -45,5 +46,7 @@ class DatabaseSeeder extends Seeder
         'membership_status' => 'pending',
       ]);
     });
+
+    Inquiry::factory(20)->create();
   }
 }

@@ -7,7 +7,7 @@ defineProps<{ status: string }>()
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/member/dashboard' },
-  { title: 'Loan Application', href: '/member/forms/loan-application' },
+  { title: 'Loan Application', href: '/member/services/loan-application' },
 ]
 </script>
 
@@ -34,7 +34,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
           <p>
             You may fill out the membership form online:
-            <a href="/member/forms/member-application" class="ml-1 text-blue-700 underline hover:text-blue-900">
+            <a href="/member/requirements/membership-form" class="ml-1 text-blue-700 underline hover:text-blue-900">
               Complete Member Form
             </a>
           </p>
@@ -44,8 +44,7 @@ const breadcrumbs: BreadcrumbItem[] = [
       </template>
 
       <template v-else>
-        <!-- Your loan application form goes here -->
-        <h1>Hello World</h1>
+        <h1 class="text-xl font-semibold">Loan Application</h1>
       </template>
     </div>
   </AppLayout>

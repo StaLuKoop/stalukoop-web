@@ -46,8 +46,7 @@ const breadcrumbs: BreadcrumbItem[] = [
       </template>
 
       <template v-else>
-        <!-- Full member dashboard content here -->
-        <h1 class="text-xl font-bold">Welcome to your Dashboard</h1>
+        <h1 class="text-xl font-semibold">Dashboard</h1>
       </template>
     </div>
   </AppLayout>

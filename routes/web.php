@@ -2,13 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Public\InquiryController as PublicInquiryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\MemberManagementController;
 use App\Http\Controllers\Admin\UtilityController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
-use App\Http\Controllers\Member\FormController;
-use App\Http\Controllers\Member\AccountController;
+use App\Http\Controllers\Member\CooperativeController;
+use App\Http\Controllers\Member\RequirementsController;
+use App\Http\Controllers\Member\ServicesController;
 
 // Public Pages
 Route::get('/', fn() => Inertia::render('Home'))->name('home');
@@ -23,6 +25,7 @@ Route::get('loan', fn() => Inertia::render('Loan'))->name('loan');
 Route::get('payment', fn() => Inertia::render('Payment'))->name('payment');
 Route::get('office', fn() => Inertia::render('Office'))->name('office');
 Route::get('products', fn() => Inertia::render('Products'))->name('products');
+Route::post('/inquiries', [PublicInquiryController::class, 'store'])->name('public.inquiries.store');
 
 // Authenticated Pages
 Route::middleware(['auth', 'verified', 'prevent-back'])->group(function () {
@@ -62,12 +65,16 @@ Route::middleware(['auth', 'verified', 'prevent-back'])->group(function () {
     Route::get('dashboard', [MemberDashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('cooperative')->group(function () {
-      Route::get('account', [AccountController::class, 'index'])->name('account');
+      Route::get('/account', [CooperativeController::class, 'account'])->name('member.cooperative.account');
     });
 
-    Route::prefix('forms')->group(function () {
-      Route::get('member-application', [FormController::class, 'memberForm'])->name('forms.member');
-      Route::get('loan-application', [FormController::class, 'loanForm'])->name('forms.loan');
+    Route::prefix('services')->group(function () {
+      Route::get('/loan-application', [ServicesController::class, 'loanApplication'])->name('member.services.loan-application');
+    });
+
+    Route::prefix('requirements')->group(function () {
+      Route::get('/membership-form', [RequirementsController::class, 'membershipForm'])->name('member.requirements.membership-form');
+      Route::get('/pmes', [RequirementsController::class, 'pmes'])->name('member.requirements.pmes');
     });
   });
 });

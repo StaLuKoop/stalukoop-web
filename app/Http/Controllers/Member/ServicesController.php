@@ -3,24 +3,20 @@
 namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class FormController extends Controller
+class ServicesController extends Controller
 {
-  public function memberForm(): Response
-  {
-    return Inertia::render('member/forms/MemberForm');
-  }
-
-  public function loanForm(): Response
+  public function loanApplication(): Response
   {
     $user = Auth::user();
     $status = $user->member?->membership_status ?? 'none';
 
-    return Inertia::render('member/forms/LoanForm', [
-      'status' => $status
+    return Inertia::render('member/services/LoanApplication', [
+      'status' => $status,
     ]);
   }
 }
