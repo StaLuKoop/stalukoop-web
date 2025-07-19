@@ -25,7 +25,7 @@ Route::get('office', fn() => Inertia::render('Office'))->name('office');
 Route::get('products', fn() => Inertia::render('Products'))->name('products');
 
 // Authenticated Pages
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'prevent-back'])->group(function () {
 
   // Universal Dashboard (redirect to role-specific dashboards)
   Route::get('/dashboard', function () {

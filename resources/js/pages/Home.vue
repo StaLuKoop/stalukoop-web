@@ -1,8 +1,18 @@
 <script setup lang="ts">
 import PublicLayout from '@/layouts/PublicLayout.vue'
+import { onMounted } from 'vue'
 
 defineOptions({
   layout: (h: any, page: any) => h(PublicLayout, { title: 'Home' }, () => page),
+})
+
+onMounted(() => {
+  if (window.history && window.history.pushState) {
+    window.history.pushState(null, '', window.location.href)
+    window.onpopstate = function () {
+      window.location.replace('/')
+    }
+  }
 })
 </script>
 

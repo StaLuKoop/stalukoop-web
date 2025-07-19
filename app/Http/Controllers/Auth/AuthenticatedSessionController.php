@@ -30,30 +30,30 @@ class AuthenticatedSessionController extends Controller
   public function store(LoginRequest $request): RedirectResponse
   {
     $request->authenticate();
-
     $request->session()->regenerate();
 
     $user = Auth::user();
 
-    // Check if email is unverified or verification is too old
-    $needsVerification = $user->email_verified_at === null
-      || $user->email_verified_at->lt(now()->subMinutes(60));
-
-    if ($needsVerification) {
+    // If not verified or verified for more than a certain time
+    if (
+      is_null($user->email_verified_at) ||
+      $user->email_verified_at->lt(now()->subMinutes(1))
+    ) {
+      // Reset and resend verification
       $user->email_verified_at = null;
       $user->save();
 
-      // Send new verification email only after reset
       $user->sendEmailVerificationNotification();
+
+      return redirect()->route('verification.notice');
     }
 
-    // return redirect()->intended(route('dashboard', absolute: false));
-
-    if ($user->role === 'admin') {
-      return redirect()->intended(route('admin.dashboard'));
-    }
-
-    return redirect()->intended(route('member.dashboard'));
+    // Proceed to the appropriate dashboard
+    return redirect()->intended(match ($user->role) {
+      'admin' => route('admin.dashboard'),
+      'member' => route('member.dashboard'),
+      default => '/',
+    });
   }
 
   /**
