@@ -34,7 +34,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
           <p>
             You may fill out the membership form online:
-            <a href="/member/forms/member-application" class="ml-1 text-blue-700 underline hover:text-blue-900">
+            <a href="/member/requirements/membership-form" class="ml-1 text-blue-700 underline hover:text-blue-900">
               Complete Member Form
             </a>
           </p>
@@ -44,9 +44,7 @@ const breadcrumbs: BreadcrumbItem[] = [
       </template>
 
       <template v-else>
-        <!-- Account details go here -->
         <h1 class="text-xl font-semibold">Account Information</h1>
-        <!-- Replace or extend with actual member account display -->
       </template>
     </div>
   </AppLayout>

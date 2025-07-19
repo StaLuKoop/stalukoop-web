@@ -16,20 +16,44 @@ class MemberManagementController extends Controller
   {
     $search = $request->input('search');
 
-    $members = Member::with('user')
+    $membersQuery = Member::with('user')
       ->when($search, function ($query, $search) {
         $query->whereHas('user', function ($q) use ($search) {
           $q->where('name', 'like', "%{$search}%")
             ->orWhere('email', 'like', "%{$search}%");
         });
       })
-      ->select('id', 'user_id', 'membership_status')
-      ->latest()
-      ->paginate(10)
-      ->withQueryString();
+      ->select(
+        'id',
+        'user_id',
+        'membership_status',
+        'date_of_birth',
+        'gender',
+        'mobile_no'
+      )
+      ->latest();
+
+    $membersPaginated = $membersQuery->paginate(10)->withQueryString();
+
+    $members = $membersPaginated->map(function ($member) {
+      return [
+        'id' => $member->id,
+        'name' => $member->user->name,
+        'email' => $member->user->email,
+        'status' => $member->membership_status,
+        'date_of_birth' => $member->date_of_birth,
+        'gender' => $member->gender,
+        'mobile_no' => $member->mobile_no,
+      ];
+    });
 
     return Inertia::render('admin/management/members/Index', [
       'members' => $members,
+      'meta' => [
+        'links' => $membersPaginated->linkCollection(),
+        'current_page' => $membersPaginated->currentPage(),
+        'last_page' => $membersPaginated->lastPage(),
+      ],
       'filters' => [
         'search' => $search,
       ],

@@ -14,7 +14,11 @@ class InquiryController extends Controller
    */
   public function index()
   {
-    return Inertia::render('admin/management/inquiries/Index');
+    $inquiries = Inquiry::latest()->get();
+
+    return Inertia::render('admin/management/inquiries/Index', [
+      'inquiries' => $inquiries
+    ]);
   }
 
   /**

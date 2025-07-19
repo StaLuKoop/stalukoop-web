@@ -1,9 +1,50 @@
 <script setup lang="ts">
 import PublicLayout from '@/layouts/PublicLayout.vue'
+import { router } from '@inertiajs/vue3'
+import { reactive } from 'vue'
+import Swal from 'sweetalert2'
 
 defineOptions({
   layout: (h: any, page: any) => h(PublicLayout, { title: 'Contact' }, () => page),
 })
+
+const form = reactive({
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone: '',
+  inquiry: '',
+  message: '',
+})
+
+function submit() {
+  router.post('/inquiries', form, {
+    onSuccess: () => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Message Sent',
+        text: 'Thank you for reaching out. We will get back to you shortly.',
+        confirmButtonColor: '#ef233c',
+      })
+
+      // Reset form
+      form.first_name = ''
+      form.last_name = ''
+      form.email = ''
+      form.phone = ''
+      form.inquiry = ''
+      form.message = ''
+    },
+    onError: () => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong. Please try again later.',
+        confirmButtonColor: '#ef233c',
+      })
+    },
+  })
+}
 </script>
 
 <template>
@@ -36,15 +77,15 @@ defineOptions({
 
       <!-- Contact Form Section -->
       <div class="contact-form">
-        <form>
+        <form @submit.prevent="submit">
           <div class="form-row">
-            <input type="text" placeholder="First Name" required />
-            <input type="text" placeholder="Last Name" required />
+            <input v-model="form.first_name" type="text" placeholder="First Name" required />
+            <input v-model="form.last_name" type="text" placeholder="Last Name" required />
           </div>
-          <input type="email" placeholder="Email Address" required />
-          <input type="tel" placeholder="Phone Number" required />
-          <input type="text" placeholder="Inquiry" required />
-          <textarea placeholder="Your message..." required></textarea>
+          <input v-model="form.email" type="email" placeholder="Email Address" required />
+          <input v-model="form.phone" type="tel" placeholder="Phone Number" required />
+          <input v-model="form.inquiry" type="text" placeholder="Inquiry" required />
+          <textarea v-model="form.message" placeholder="Your message..." required></textarea>
           <button type="submit" class="submit-btn">Send Message</button>
         </form>
       </div>

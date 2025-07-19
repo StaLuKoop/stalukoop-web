@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class AccountController extends Controller
+class CooperativeController extends Controller
 {
-  public function index(): Response
+  public function account(): Response
   {
     $user = Auth::user();
     $status = $user->member?->membership_status ?? 'none';
