@@ -111,6 +111,7 @@ const submit = () => {
             />
             <button
               type="button"
+              :tabindex="4"
               @click="showPassword = !showPassword"
               class="absolute inset-y-0 right-2 flex items-center text-muted-foreground"
               aria-label="Toggle password visibility"
@@ -141,7 +142,6 @@ const submit = () => {
           </li>
         </ul>
 
-        <!-- Success message when all are satisfied -->
         <p
           v-else-if="isPasswordFocused && allPassed"
           class="flex items-center gap-2 text-sm text-green-600"
@@ -158,7 +158,7 @@ const submit = () => {
               id="password_confirmation"
               :type="showPasswordConfirmation ? 'text' : 'password'"
               required
-              :tabindex="4"
+              :tabindex="5"
               autocomplete="new-password"
               v-model="form.password_confirmation"
               placeholder="Confirm password"
@@ -166,6 +166,7 @@ const submit = () => {
             />
             <button
               type="button"
+              :tabindex="6"
               @click="showPasswordConfirmation = !showPasswordConfirmation"
               class="absolute inset-y-0 right-2 flex items-center text-muted-foreground"
               aria-label="Toggle confirm password visibility"
@@ -179,7 +180,7 @@ const submit = () => {
 
         <div class="flex items-start gap-2 text-sm">
           <Label for="agreement" class="flex items-start gap-3">
-            <Checkbox id="agreement" v-model="form.agreement" name="agreement" :tabindex="5" />
+            <Checkbox id="agreement" v-model="form.agreement" name="agreement" :tabindex="7" />
             <span class="leading-snug text-muted-foreground">
               I have read and agree to the
               <TextLink :href="route('privacy-policy')" class="underline underline-offset-4"> Privacy Policy </TextLink>
@@ -193,7 +194,7 @@ const submit = () => {
 
         <InputError :message="form.errors.agreement" />
 
-        <Button type="submit" class="mt-2 w-full" tabindex="6" :disabled="form.processing">
+        <Button type="submit" class="mt-2 w-full" :tabindex="8" :disabled="form.processing">
           <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
           Create account
         </Button>
@@ -201,7 +202,7 @@ const submit = () => {
 
       <div class="text-center text-sm text-muted-foreground">
         Already have an account?
-        <TextLink :href="route('login')" class="underline underline-offset-4" :tabindex="7">Log in</TextLink>
+        <TextLink :href="route('login')" class="underline underline-offset-4" :tabindex="9">Log in</TextLink>
       </div>
     </form>
   </AuthBase>
