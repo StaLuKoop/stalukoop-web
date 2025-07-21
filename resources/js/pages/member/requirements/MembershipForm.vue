@@ -517,8 +517,8 @@ const submitForm = () => {
           <td class="border-b px-4 py-2"><input v-model="member.cooperativeMembership" type="text" placeholder="Membership" class="input input-bordered w-full" /></td>
           <td class="border-b px-4 py-2">
             <!-- Trash button to remove the family member -->
-            <button @click="removeFamilyMember(index)" class="text-red-500 text-5xl">
-              <i class="fas fa-trash">-</i>
+            <button @click="removeFamilyMember(index)" class="text-red-500 text-xl">
+              <i class="fas fa-trash"></i>
             </button>
           </td>
         </tr>
