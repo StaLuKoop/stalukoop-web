@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
 
     Member::create([
       'user_id' => $admin->id,
-      'membership_status' => 'pending',
+      'membership_status' => 'regular',
     ]);
 
     $daniel = User::factory()->create([
@@ -40,13 +40,13 @@ class DatabaseSeeder extends Seeder
       'membership_status' => 'pending',
     ]);
 
-    User::factory(10)->create()->each(function ($user) {
+    User::factory(25)->create()->each(function ($user) {
       Member::create([
         'user_id' => $user->id,
         'membership_status' => 'pending',
       ]);
     });
 
-    Inquiry::factory(30)->create();
+    Inquiry::factory(25)->create();
   }
 }

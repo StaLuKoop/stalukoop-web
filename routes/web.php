@@ -5,7 +5,8 @@ use Inertia\Inertia;
 use App\Http\Controllers\Public\InquiryController as PublicInquiryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\InquiryController;
-use App\Http\Controllers\Admin\MemberManagementController;
+use App\Http\Controllers\Admin\LoanController;
+use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\UtilityController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
 use App\Http\Controllers\Member\CooperativeController;
@@ -48,8 +49,9 @@ Route::middleware(['auth', 'verified', 'prevent-back'])->group(function () {
     Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('management')->name('management.')->group(function () {
-      Route::resource('members', MemberManagementController::class);
+      Route::resource('members', MemberController::class);
       Route::resource('inquiries', InquiryController::class);
+      Route::resource('loans', LoanController::class);
     });
 
     Route::prefix('utility')->name('utility.')->group(function () {
