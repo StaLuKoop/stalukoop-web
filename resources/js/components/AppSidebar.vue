@@ -16,7 +16,7 @@ import {
 import { Link, usePage } from '@inertiajs/vue3'
 import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-vue'
 
-import { Calculator, Calendar, FilePlus, FileSignature, FileWarning, Home, LayoutGrid, User } from 'lucide-vue-next'
+import { Calculator, Calendar, FilePlus, FileSignature, FileWarning, HandCoins, Home, LayoutGrid, User } from 'lucide-vue-next'
 
 import { computed } from 'vue'
 import AppLogo from './AppLogo.vue'
@@ -46,6 +46,7 @@ const mainNavSections = computed(() => {
         items: [
           { title: 'Members', href: '/admin/management/members', icon: User },
           { title: 'Inquiries', href: '/admin/management/inquiries', icon: FileWarning },
+          // { title: 'Loans', href: '/admin/management/loans', icon: HandCoins },
         ],
       },
       {

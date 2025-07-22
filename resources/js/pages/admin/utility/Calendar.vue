@@ -9,7 +9,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { DateSelectArg, EventClickArg, EventContentArg } from '@fullcalendar/core'
 
 // Modal component
-import Modal from '@/components/Modal.vue'
+import Modal from '@/components/CalendarModal.vue'
 
 const breadcrumbs = [
   { title: 'Dashboard', href: '/admin/dashboard' },

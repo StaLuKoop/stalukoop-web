@@ -7,7 +7,7 @@ use App\Models\Member;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class MemberManagementController extends Controller
+class MemberController extends Controller
 {
   /**
    * Display a listing of the resource.
@@ -16,31 +16,24 @@ class MemberManagementController extends Controller
   {
     $search = $request->input('search');
 
-    $membersQuery = Member::with('user')
+    $membersPaginated = Member::with('user')
       ->when($search, function ($query, $search) {
         $query->whereHas('user', function ($q) use ($search) {
           $q->where('name', 'like', "%{$search}%")
             ->orWhere('email', 'like', "%{$search}%");
         });
       })
-      ->select(
-        'id',
-        'user_id',
-        'membership_status',
-        'date_of_birth',
-        'gender',
-        'mobile_no'
-      )
-      ->latest();
-
-    $membersPaginated = $membersQuery->paginate(10)->withQueryString();
+      ->paginate(10)
+      ->withQueryString();
 
     $members = $membersPaginated->map(function ($member) {
       return [
         'id' => $member->id,
-        'name' => $member->user->name,
-        'email' => $member->user->email,
-        'status' => $member->membership_status,
+        'name' => $member->user?->name ?? 'N/A',
+        'email' => $member->user?->email ?? 'N/A',
+        'membership_status' => $member->membership_status
+          ? ucfirst($member->membership_status)
+          : 'N/A',
         'date_of_birth' => $member->date_of_birth,
         'gender' => $member->gender,
         'mobile_no' => $member->mobile_no,
