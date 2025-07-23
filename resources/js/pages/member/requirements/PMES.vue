@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/vue3'
+import { computed, ref } from 'vue'
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/member/dashboard' },
@@ -34,17 +34,17 @@ const isValidForm = computed(() => {
 const sanitizePhone = (event: Event) => {
   const input = event.target as HTMLInputElement;
   let value = input.value;
-  
+
   // Only allow numbers and "+63"
   value = value.replace(/[^0-9+]/g, ''); // Remove any non-numeric and non "+" characters
-  
+
   // Enforce starting with +63
   if (value.startsWith('+63')) {
     input.value = value;
   } else {
     input.value = '+63'; // Ensure that it starts with +63
   }
-  
+
   phone.value = input.value; // Update the model
 };
 
@@ -144,7 +144,7 @@ const submitForm = () => {
 
         <!-- Submit Button -->
     <div class="flex justify-end mt-6">
-      <button @click="submitForm" class="btn btn-primary bg-blue-500 text-white py-2 px-6 rounded-lg">Submit</button>
+      <button @click="submitForm" :disabled="!isValidForm" class="btn btn-primary bg-blue-500 text-white py-2 px-6 rounded-lg">Submit</button>
     </div>
       </div>
     </div>
