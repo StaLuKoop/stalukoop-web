@@ -12,12 +12,29 @@ class InquiryController extends Controller
   /**
    * Display a listing of the resource.
    */
-  public function index()
+  public function index(Request $request)
   {
-    $inquiries = Inquiry::get();
+    $search = $request->input('search');
+
+    $inquiries = Inquiry::when($search, function ($query, $search) {
+      $query->where('first_name', 'like', "%{$search}%")
+        ->orWhere('last_name', 'like', "%{$search}%")
+        ->orWhere('email', 'like', "%{$search}%")
+        ->orWhere('inquiry', 'like', "%{$search}%");
+    })
+      ->paginate(10)
+      ->withQueryString();
 
     return Inertia::render('admin/management/inquiries/Index', [
-      'inquiries' => $inquiries
+      'inquiries' => $inquiries,
+      'filters' => [
+        'search' => $search,
+      ],
+      'meta' => [
+        'links' => $inquiries->linkCollection(),
+        'current_page' => $inquiries->currentPage(),
+        'last_page' => $inquiries->lastPage(),
+      ],
     ]);
   }
 

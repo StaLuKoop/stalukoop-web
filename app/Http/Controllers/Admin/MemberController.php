@@ -26,7 +26,8 @@ class MemberController extends Controller
       ->paginate(10)
       ->withQueryString();
 
-    $members = $membersPaginated->map(function ($member) {
+    // Transform data
+    $transformed = $membersPaginated->getCollection()->map(function ($member) {
       return [
         'id' => $member->id,
         'name' => $member->user?->name ?? 'N/A',
@@ -40,8 +41,11 @@ class MemberController extends Controller
       ];
     });
 
+    // Replace collection with transformed
+    $membersPaginated->setCollection($transformed);
+
     return Inertia::render('admin/management/members/Index', [
-      'members' => $members,
+      'members' => $membersPaginated,
       'meta' => [
         'links' => $membersPaginated->linkCollection(),
         'current_page' => $membersPaginated->currentPage(),
@@ -52,6 +56,7 @@ class MemberController extends Controller
       ],
     ]);
   }
+
 
   /**
    * Show the form for creating a new resource.
