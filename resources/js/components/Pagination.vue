@@ -24,11 +24,14 @@ const navigate = (url: string | null) => {
     <button
       v-for="(link, i) in links"
       :key="i"
-      class="px-3 py-1 border rounded text-sm"
-      :class="{
-        'bg-primary text-white': link.active,
-        'text-gray-400': !link.url,
-      }"
+      class="px-3 py-1 rounded text-sm transition duration-150 border"
+      :class="[
+        link.active
+          ? 'bg-primary text-white border-primary'
+          : link.url
+            ? 'text-gray-700 border-gray-300 hover:bg-gray-100 hover:text-black cursor-pointer'
+            : 'text-gray-400 border-gray-200 cursor-not-allowed'
+      ]"
       :disabled="!link.url"
       @click="navigate(link.url)"
       v-html="link.label"
