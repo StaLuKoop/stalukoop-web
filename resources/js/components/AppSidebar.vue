@@ -76,22 +76,27 @@ const mainNavSections = computed(() => {
         ],
       },
       {
-        label: 'Cooperative',
-        items: [
-          {
-            title: 'Account',
-            href: '/member/cooperative/account',
-            icon: User,
-          },
-        ],
-      },
-      {
         label: 'Services',
         items: [
           {
             title: 'Loan Application',
             href: '/member/services/loan-application',
             icon: FilePlus,
+          },
+          {
+            title: 'Credit Scoring',
+            href: '/member/services/credit-scoring',
+            icon: FileSignature,  // You can choose an appropriate icon for Credit Scoring
+          },
+        ],
+      },
+      {
+        label: 'Loan Status',
+        items: [
+          {
+            title: 'Loan Status',
+            href: '/member/services/loan-status',
+            icon: FilePlus,  // Choose an appropriate icon for Loan Status
           },
         ],
       },

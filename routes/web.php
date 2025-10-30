@@ -60,25 +60,28 @@ Route::middleware(['auth', 'verified', 'prevent-back'])->group(function () {
     });
   });
 
-  // ------------------
-  // Member Routes
-  // ------------------
-  Route::middleware('role:member')->prefix('member')->name('member.')->group(function () {
+// ------------------
+// Member Routes
+// ------------------
+Route::middleware('role:member')->prefix('member')->name('member.')->group(function () {
     Route::get('dashboard', [MemberDashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('cooperative')->name('cooperative.')->group(function () {
-      Route::get('/account', [CooperativeController::class, 'account'])->name('account');
+        Route::get('/account', [CooperativeController::class, 'account'])->name('account');
     });
 
     Route::prefix('services')->name('services.')->group(function () {
-      Route::get('/loan-application', [ServicesController::class, 'loanApplication'])->name('loan-application');
+        Route::get('/loan-application', [ServicesController::class, 'loanApplication'])->name('loan-application');
+        Route::get('/credit-scoring', [ServicesController::class, 'creditScoring'])->name('credit-scoring');  // Added Credit Scoring route
+        Route::get('/loan-status', [ServicesController::class, 'loanStatus'])->name('loan-status');  // Added Loan Status route
     });
 
     Route::prefix('requirements')->name('requirements.')->group(function () {
-      Route::get('/membership-form', [RequirementsController::class, 'membershipForm'])->name('membership-form');
-      Route::get('/pmes', [RequirementsController::class, 'pmes'])->name('pmes');
+        Route::get('/membership-form', [RequirementsController::class, 'membershipForm'])->name('membership-form');
+        Route::get('/pmes', [RequirementsController::class, 'pmes'])->name('pmes');
     });
-  });
+});
+
 });
 
 require __DIR__ . '/settings.php';

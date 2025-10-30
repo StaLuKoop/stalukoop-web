@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue'
 import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/vue3'
-import { ref } from 'vue'
+import { ref, watch } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/member/dashboard' },
@@ -43,7 +43,6 @@ const removeFamilyMember = (index: number) => {
   familyMembers.value.splice(index, 1)
 }
 
-
 // Function to handle form submission
 const submitForm = () => {
   // Display confirmation popup
@@ -52,19 +51,113 @@ const submitForm = () => {
     alert('Form successfully submitted!');
   }
 }
+
+// Track the selected employment type
+const employmentType = ref<string>('');
+
+// Track the income options for each employment type
+const permanentJobIncome = ref('');
+const businessIncome = ref('');
+const pensionerIncome = ref('');
+const contractualIncome = ref('');
+const selfEmployedIncome = ref('');
+const governmentIncome = ref('');
+const housewifeUnemployedIncome = ref('no-income');
+
+// Define the type of the sections object
+interface EmploymentSections {
+  permanentJob: boolean;
+  business: boolean;
+  pensioner: boolean;
+  contractual: boolean;
+  selfEmployed: boolean;
+  government: boolean;
+  housewifeUnemployed: boolean;
+}
+
+// Initialize employmentSections as a ref with the correct type
+const employmentSections = ref<EmploymentSections>({
+  permanentJob: false,
+  business: false,
+  pensioner: false,
+  contractual: false,
+  selfEmployed: false,
+  government: false,
+  housewifeUnemployed: false,
+});
+
+// Watch employmentType changes to update the display of relevant sections
+watch(employmentType, (value) => {
+  // Reset all sections to hidden
+  for (let key in employmentSections.value) {
+    employmentSections.value[key as keyof EmploymentSections] = false;
+  }
+
+  // Show relevant section based on selected employment type
+  switch (value) {
+    case 'permanent-job':
+      employmentSections.value.permanentJob = true;
+      break;
+    case 'business':
+      employmentSections.value.business = true;
+      break;
+    case 'pensioner':
+    case 'retired':
+      employmentSections.value.pensioner = true;
+      break;
+    case 'contractual-minimum':
+    case 'contractual-piece-rate':
+      employmentSections.value.contractual = true;
+      break;
+    case 'self-employed':
+      employmentSections.value.selfEmployed = true;
+      break;
+    case 'government':
+      employmentSections.value.government = true;
+      break;
+    case 'housewife':
+    case 'unemployed':
+      employmentSections.value.housewifeUnemployed = true;
+      break;
+  }
+});
+
+// Declare dob and age as reactive variables
+const dob = ref('');  // For binding the user's date of birth input
+const age = ref(0);   // For storing the calculated age
+
+// Method to calculate age based on dob
+const calculateAge = () => {
+  if (dob.value) {
+    const birthDate = new Date(dob.value);
+    const today = new Date();
+    let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    // Adjust if the birthday hasn't occurred yet this year
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      calculatedAge--;
+    }
+
+    age.value = calculatedAge;
+  }
+};
+
+// Watch for changes in dob to recalculate age
+watch(dob, calculateAge);
 </script>
 
 <template>
   <Head title="Membership Form" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
-    <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
-      <h1 class="text-2xl font-semibold mb-4">Personal Information</h1>
+    <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-7">
+      <h1 class="text-2xl font-semibold mb-[-20px]">Personal Information</h1>
 
       <!-- Full Name Section -->
-      <div class="grid grid-cols-3 gap-6 mb-2">
+      <div class="grid grid-cols-3 gap-6 mb-[-30px]">
         <div class="flex flex-col col-span-3">
-          <label class="font-medium text-lg mb-2">Full Name</label>
+          <label class="input-label">Full Name</label>
           <div class="flex space-x-6">
             <div class="flex flex-col mb-4 w-1/3">
               <input type="text" placeholder="First Name" class="input border border-gray-300 rounded-lg p-2" />
@@ -80,10 +173,10 @@ const submitForm = () => {
       </div>
 
       <!-- Civil Status, Gender, Nationality, and No. of Dependents Section -->
-      <div class="grid grid-cols-4 gap-6 mb-2">
+      <div class="grid grid-cols-4 gap-6 mb-[-30px]">
         <!-- Civil Status -->
         <div class="flex flex-col">
-          <label for="civilStatus" class="font-medium text-lg mb-2">Civil Status</label>
+          <label for="civilStatus" class="input-label">Civil Status</label>
           <select id="civilStatus" class="input border border-gray-300 rounded-lg p-2">
             <option value="">Select Civil Status</option>
             <option value="single">Single</option>
@@ -95,7 +188,7 @@ const submitForm = () => {
 
         <!-- Gender -->
         <div class="flex flex-col">
-          <label for="gender" class="font-medium text-lg mb-2">Gender</label>
+          <label for="gender" class="input-label">Gender</label>
           <select id="gender" class="input border border-gray-300 rounded-lg p-2">
             <option value="">Select Gender</option>
             <option value="male">Male</option>
@@ -105,13 +198,13 @@ const submitForm = () => {
 
         <!-- Nationality -->
         <div class="flex flex-col">
-          <label for="nationality" class="font-medium text-lg mb-2">Nationality</label>
+          <label for="nationality" class="input-label">Nationality</label>
           <input type="text" id="nationality" class="input border border-gray-300 rounded-lg p-2" />
         </div>
 
         <!-- No. of Dependents -->
         <div class="flex flex-col">
-          <label for="noOfDependents" class="font-medium text-lg mb-2">No. of Dependents</label>
+          <label for="noOfDependents" class="input-label">No. of Dependents</label>
           <div class="flex flex-col">
             <input type="text" id="children" placeholder="(Children) if applicable" class="input border border-gray-300 rounded-lg p-2 mb-2" />
             <input type="text" id="others" placeholder="Others (Relationship)" class="input border border-gray-300 rounded-lg p-2" />
@@ -119,35 +212,58 @@ const submitForm = () => {
         </div>
       </div>
 
-      <!-- Date of Birth, Age, Place of Birth, and Religion in one row -->
-      <div class="grid grid-cols-4 gap-6 mb-2">
-        <div class="flex flex-col">
-          <label for="dob" class="font-medium text-lg mb-2">Date of Birth</label>
-          <input type="date" id="dob" class="input border border-gray-300 rounded-lg p-2" />
+       <!-- Date of Birth, Age, Place of Birth, and Religion in one row -->
+        <div class="grid grid-cols-4 gap-6 mb-[-10px]">
+          <div class="flex flex-col">
+            <label for="dob" class="input-label">Date of Birth</label>
+            <input
+              type="date"
+              id="dob"
+              v-model="dob" 
+              class="input border border-gray-300 rounded-lg p-2"
+            />
+          </div>
+
+          <div class="flex flex-col">
+            <label for="age" class="input-label">Age</label>
+            <input
+              type="text"
+              id="age"
+              :value="`${age} years old`"  
+              class="input border border-gray-300 rounded-lg p-2"
+              readonly 
+            />
+          </div>
+
+          <div class="flex flex-col">
+            <label for="placeOfBirth" class="input-label">Place of Birth</label>
+            <input
+              type="text"
+              id="placeOfBirth"
+              class="input border border-gray-300 rounded-lg p-2"
+            />
+          </div>
+
+          <div class="flex flex-col">
+            <label for="religion" class="input-label">Religion</label>
+            <input
+              type="text"
+              id="religion"
+              class="input border border-gray-300 rounded-lg p-2"
+            />
+          </div>
         </div>
-        <div class="flex flex-col">
-          <label for="age" class="font-medium text-lg mb-2">Age</label>
-          <input type="number" id="age" class="input border border-gray-300 rounded-lg p-2" />
-        </div>
-        <div class="flex flex-col">
-          <label for="placeOfBirth" class="font-medium text-lg mb-2">Place of Birth</label>
-          <input type="text" id="placeOfBirth" class="input border border-gray-300 rounded-lg p-2" />
-        </div>
-        <div class="flex flex-col">
-          <label for="religion" class="font-medium text-lg mb-2">Religion</label>
-          <input type="text" id="religion" class="input border border-gray-300 rounded-lg p-2" />
-        </div>
-      </div>
+
 
       <!-- Present Home Address, Housing and Renting Section in one row -->
-      <div class="grid grid-cols-4 gap-6 mb-2">
-        <div class="flex flex-col col-span-3">
-          <label for="presentHomeAddress" class="font-medium text-lg mb-2">Present Home Address</label>
+      <div class="grid grid-cols-3 gap-6 mb-[-20px]">
+        <div class="flex flex-col col-span-2">
+          <label for="presentHomeAddress" class="input-label">Present Home Address</label>
           <input type="text" id="presentHomeAddress" class="input border border-gray-300 rounded-lg p-2" />
         </div>
 
         <div class="flex flex-col col-span-1">
-          <label class="font-medium text-lg mb-2">Housing Status</label>
+          <label class="input-label">Housing Status</label>
           <div class="flex space-x-4">
             <label class="flex items-center">
               <input type="radio" name="housing" value="ownHouse" v-model="housingChoicePresent" class="mr-2" /> Own House
@@ -165,28 +281,28 @@ const submitForm = () => {
       <!-- Renting Fields (shown only if Renting is selected) -->
       <div v-if="housingChoicePresent === 'renting'" class="grid grid-cols-3 gap-6 mb-2">
         <div class="flex flex-col">
-          <label for="rentingAmount" class="font-medium text-lg mb-2">Renting How Much</label>
+          <label for="rentingAmount" class="input-label">Renting How Much</label>
           <input type="text" id="rentingAmount" class="input border border-gray-300 rounded-lg p-2" />
         </div>
         <div class="flex flex-col">
-          <label for="yearsRenting" class="font-medium text-lg mb-2">No. of Years Renting</label>
+          <label for="yearsRenting" class="input-label">No. of Years Renting</label>
           <input type="number" id="yearsRenting" class="input border border-gray-300 rounded-lg p-2" />
         </div>
         <div class="flex flex-col">
-          <label for="monthsRenting" class="font-medium text-lg mb-2">No. of Months Renting</label>
+          <label for="monthsRenting" class="input-label">No. of Months Renting</label>
           <input type="number" id="monthsRenting" class="input border border-gray-300 rounded-lg p-2" />
         </div>
       </div>
 
       <!-- Permanent Home Address, Housing and Renting Section in one row -->
-      <div class="grid grid-cols-4 gap-6 mb-2">
-        <div class="flex flex-col col-span-3">
-          <label for="permanentHomeAddress" class="font-medium text-lg mb-2">Permanent Home Address</label>
+      <div class="grid grid-cols-3 gap-6 mb-[-10px]">
+        <div class="flex flex-col col-span-2">
+          <label for="permanentHomeAddress" class="input-label">Permanent Home Address</label>
           <input type="text" id="permanentHomeAddress" class="input border border-gray-300 rounded-lg p-2" />
         </div>
 
         <div class="flex flex-col col-span-1">
-          <label class="font-medium text-lg mb-2">Permanent Housing Status</label>
+          <label class="input-label">Permanent Housing Status</label>
           <div class="flex space-x-4">
             <label class="flex items-center">
               <input type="radio" name="housingPermanent" value="ownHouse" v-model="housingChoicePermanent" class="mr-2" /> Own House
@@ -204,58 +320,58 @@ const submitForm = () => {
       <!-- Renting Fields for Permanent Address (shown only if Renting is selected) -->
       <div v-if="housingChoicePermanent === 'renting'" class="grid grid-cols-3 gap-6 mb-2">
         <div class="flex flex-col">
-          <label for="rentingAmountPermanent" class="font-medium text-lg mb-2">Renting How Much</label>
+          <label for="rentingAmountPermanent" class="input-label">Renting How Much</label>
           <input type="text" id="rentingAmountPermanent" class="input border border-gray-300 rounded-lg p-2" />
         </div>
         <div class="flex flex-col">
-          <label for="yearsRentingPermanent" class="font-medium text-lg mb-2">No. of Years Renting</label>
+          <label for="yearsRentingPermanent" class="input-label">No. of Years Renting</label>
           <input type="number" id="yearsRentingPermanent" class="input border border-gray-300 rounded-lg p-2" />
         </div>
         <div class="flex flex-col">
-          <label for="monthsRentingPermanent" class="font-medium text-lg mb-2">No. of Months Renting</label>
+          <label for="monthsRentingPermanent" class="input-label">No. of Months Renting</label>
           <input type="number" id="monthsRentingPermanent" class="input border border-gray-300 rounded-lg p-2" />
         </div>
       </div>
 
       <!-- Father Information Section -->
-      <div class="grid grid-cols-3 gap-6 mb-2">
+      <div class="grid grid-cols-3 gap-6 mb-[-30px]">
         <div class="flex flex-col col-span-3">
-          <label class="font-medium text-lg mb-2">Name of Father</label>
+          <label class="input-label">Name of Father</label>
           <div class="flex space-x-6">
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="First Name" class="border border-gray-300 rounded-lg p-2" />
+              <input type="text" placeholder="First Name" class="input border border-gray-300 rounded-lg p-2" />
             </div>
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="Middle Name" class="border border-gray-300 rounded-lg p-2" />
+              <input type="text" placeholder="Middle Name" class="input border border-gray-300 rounded-lg p-2" />
             </div>
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="Last Name" class="border border-gray-300 rounded-lg p-2" />
+              <input type="text" placeholder="Last Name" class="input border border-gray-300 rounded-lg p-2" />
             </div>
           </div>
         </div>
       </div>
 
       <!-- Mother Information Section -->
-      <div class="grid grid-cols-3 gap-6 mb-2">
+      <div class="grid grid-cols-3 gap-6 mb-[-30px]">
         <div class="flex flex-col col-span-3">
-          <label class="font-medium text-lg mb-2">Name of Mother</label>
+          <label class="input-label">Name of Mother</label>
           <div class="flex space-x-6">
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="First Name" class="border border-gray-300 rounded-lg p-2" />
+              <input type="text" placeholder="First Name" class="input border border-gray-300 rounded-lg p-2" />
             </div>
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="Middle Name" class="border border-gray-300 rounded-lg p-2" />
+              <input type="text" placeholder="Middle Name" class="input border border-gray-300 rounded-lg p-2" />
             </div>
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="Last Name" class="border border-gray-300 rounded-lg p-2" />
+              <input type="text" placeholder="Last Name" class="input border border-gray-300 rounded-lg p-2" />
             </div>
           </div>
         </div>
       </div>
       
       <!-- Contact Information Section -->
-      <div class="mb-2">
-        <h2 class="font-medium text-lg mb-2">Contact Information</h2>
+      <div class="mb-[-20px]">
+        <h2 class="input-label">Contact Information</h2>
         <div class="grid grid-cols-4 gap-6">
           <div class="flex flex-col">
             <input type="text" placeholder="Telephone No." class="border border-gray-300 rounded-lg p-2" />
@@ -273,8 +389,8 @@ const submitForm = () => {
       </div>
 
       <!-- Government ID Information Section -->
-      <div class="mb-2">
-        <h2 class="font-medium text-lg mb-2">Government ID's Information</h2>
+      <div class="mb-[-20px]">
+        <h2 class="input-label">Government ID's Information</h2>
         <div class="grid grid-cols-4 gap-6">
           <div class="flex flex-col">
             <input type="text" placeholder="Driver's License No." class="border border-gray-300 rounded-lg p-2" />
@@ -293,7 +409,7 @@ const submitForm = () => {
 
       <!-- Educational Attainment Section -->
       <div class="mb-2">
-        <h2 class="font-medium text-lg mb-2">Educational Attainment</h2>
+        <h2 class="input-label">Educational Attainment</h2>
         <div class="flex flex-col">
           <select class="border border-gray-300 rounded-lg p-2">
             <option value="">Select Educational Attainment</option>
@@ -308,182 +424,151 @@ const submitForm = () => {
       </div>
     </div>
     
-    <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
-    <h1 class="text-2xl font-semibold mb-4">Employment Information</h1>
-    <div class="grid grid-cols-2 gap-6">
-        <!-- Employer / Business Name -->
-        <div class="flex flex-col">
-            <label for="employerName" class="mb-2">Employer/Business Name</label>
+    <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-10">
+    <h1 class="text-2xl font-semibold mb-[-20px]">Employment Information</h1>
+    <div class="grid grid-cols-2 gap-6 mb-2">
+        <div class="flex flex-col mb-[-10px]">
+            <label for="employerName" class="input-label">Employer/Business Name</label>
             <input id="employerName" type="text" placeholder="Name" class="input input-bordered" />
         </div>
 
-        <!-- Employer / Business Address -->
-        <div class="flex flex-col">
-            <label for="employerAddress" class="mb-2">Employer / Business Address</label>
+        <div class="flex flex-col mb-[-10px]">
+            <label for="employerAddress" class="input-label">Employer / Business Address</label>
             <input id="employerAddress" type="text" placeholder="Address" class="input input-bordered" />
         </div>
 
         <!-- Type of Employment -->
-        <div class="flex flex-col">
-            <label for="employmentType" class="mb-2">Type of Employment</label>
-            <select id="employmentType" class="input input-bordered">
-                <option value="private">Private</option>
-                <option value="government">Government</option>
-                <option value="professional">Professional</option>
-                <option value="housewife">Housewife</option>
-                <option value="private">Self - Employed</option>
-                <option value="government">Unemployed</option>
-                <option value="selfEmployed">Retired</option>
-                <option value="professional">Others</option>
+        <div class="flex flex-col mb-[-20px]">
+            <label for="employmentType" class="input-label">Type of Employment</label>
+            <select id="employment-type" name="employment-type" v-model="employmentType" required class="input input-bordered">
+              <option value="">Select Employment Type</option>
+              <option value="permanent-job">Permanent Job</option>
+              <option value="business">Business</option> 
+              <option value="contractual-minimum">Contractual (Minimum 3 years)</option>
+              <option value="contractual-piece-rate">Contractual, Piece Rate, On Call Basis</option>
+              <option value="housewife">Housewife</option> 
+              <option value="self-employed">Self-Employed</option>
+              <option value="government">Government</option>
+              <option value="unemployed">Unemployed</option> 
+              <option value="retired">Retired</option> 
+          </select>
+        </div>
+
+        <!-- Permanent Job -->
+        <div v-show="employmentType === 'permanent-job'" class="flex flex-col">
+            <label for="permanent-job-income" class="input-label">Years of Experience & Net Income</label>
+            <select id="permanent-job-income" name="permanent-job-income" required class="input input-bordered">
+                <option value="more-than-15-years-16k-20k">More than 15 years with net income of at least ₱16,000 to ₱20,000</option>
+                <option value="less-than-10-years-11k-15k">Less than 10 years with net income of at least ₱11,000 to ₱15,000</option>
+                <option value="less-than-5-years-6k-10k">Less than 5 years with net income of at least ₱6,000 to ₱10,000</option>
+                <option value="less-than-5-years-5k-below">Less than 5 years with net income of at least ₱5,000 and below</option>
             </select>
         </div>
 
-        <!-- Employment Status -->
-        <div class="flex flex-col">
-            <label for="employmentStatus" class="mb-2">Employment Status</label>
-            <select id="employmentStatus" class="input input-bordered">
-                <option value="permanent">Permanent</option>
-                <option value="probationary">Probationary</option>
-                <option value="contractual">Contractual</option>
-                <option value="professional">Professional</option>
-                <option value="consultant">Consultant</option>
-                <option value="consultant">Others</option>
+        <!-- Business -->
+        <div v-show="employmentType === 'business'" class="flex flex-col">
+            <label for="business-income" class="input-label">Monthly Net Income</label>
+            <select id="business-income" name="business-income" required class="input input-bordered">
+                <option value="16k-20k">Monthly net income of at least ₱16,000 to ₱20,000</option>
+                <option value="11k-15k">Monthly net income of at least ₱11,000 to 15,000</option>
+                <option value="10k">Monthly net income of at least ₱10,000</option>
+                <option value="5k-below">Monthly net income of ₱5,000 and below</option>
             </select>
         </div>
 
-        <!-- Rank -->
-        <div class="flex flex-col">
-            <label for="rank" class="mb-2">Rank</label>
-            <select id="rank" class="input input-bordered">
-                <option value="rankFile">Rank & File</option>
-                <option value="juniorOfficer">Junior Officer</option>
-                <option value="middleManager">Middle Manager</option>
-                <option value="seniorExecutive">Senior Executive</option>
-                <option value="seniorExecutive">Self - Employed</option>
-                <option value="seniorExecutive">Others</option>
+        <!-- Pensioner / Retired (Same Options) -->
+        <div v-show="employmentType === 'pensioner' || employmentType === 'retired'" class="flex flex-col">
+            <label for="pensioner-retired-income" class="input-label">Pension</label>
+            <select id="pensioner-retired-income" name="pensioner-retired-income" required class="input input-bordered">
+                <option value="above-20k">Above ₱20,000</option>
+                <option value="15k-19k">₱15,000 to 19,000</option>
+                <option value="6k-14k">₱6,000 to ₱14,000</option>
+                <option value="3k-5k-below">₱3,000 to ₱5,000 and below</option>
+                <option value="2k-below">₱2,000 and below</option>
             </select>
         </div>
 
-        <!-- Position -->
-        <div class="flex flex-col">
-            <label for="position" class="mb-2">Position</label>
-            <input id="position" type="text" placeholder="Position" class="input input-bordered" />
+        <!-- Contractual -->
+        <div v-show="employmentType === 'contractual-minimum' || employmentType === 'contractual-piece-rate'"class="flex flex-col">
+            <label for="contractual-income" class="input-label">Income Level</label>
+            <select id="contractual-income" name="contractual-income" required class="input input-bordered">
+                <option value="minimum-pay">Minimum pay</option>
+                <option value="below-minimum">Below minimum</option>
+            </select>
         </div>
 
-        <!-- Total Years Working -->
-        <div class="flex flex-col">
-            <label class="mb-2">Total Years Working</label>
-            <div class="flex gap-4">
-                <input type="number" placeholder="Years" class="input input-bordered" />
-                <input type="number" placeholder="Months" class="input input-bordered" />
-            </div>
+        <!-- Self-Employed -->
+        <div v-show="employmentType === 'self-employed'" class="flex flex-col">
+            <label for="self-employed-income" class="input-label">Monthly Net Income</label>
+            <select id="self-employed-income" name="self-employed-income" required class="input input-bordered">
+                <option value="16k-20k">Monthly net income of at least ₱16,000 to ₱20,000</option>
+                <option value="11k-15k">Monthly net income of at least ₱11,000 to ₱15,000</option>
+                <option value="10k">Monthly net income of at least ₱10,000</option>
+                <option value="5k-below">Monthly net income of ₱5,000 and below</option>
+            </select>
         </div>
 
-        <!-- Immediate Supervisor/HR Contact Person -->
-        <div class="flex flex-col">
-            <label for="supervisor" class="mb-2">Immediate Supervisor/HR Contact Person</label>
-            <input id="supervisor" type="text" placeholder="Name" class="input input-bordered" />
+        <!-- Government -->
+        <div v-show="employmentType === 'government'"class="flex flex-col">
+            <label for="government-income" class="input-label">Monthly Salary Range</label>
+            <select id="government-income" name="government-income" required class="input input-bordered">
+                <option value="20k-above">Above ₱20,000</option>
+                <option value="15k-19k">₱15,000 to ₱19,000</option>
+                <option value="10k-14k">₱10,000 to ₱14,000</option>
+                <option value="below-10k">Below ₱10,000</option>
+            </select>
         </div>
 
-        <!-- Office Phone Number -->
-        <div class="flex flex-col">
-            <label for="officePhone" class="mb-2">Office Phone Number</label>
-            <input id="officePhone" type="text" placeholder="Number" class="input input-bordered" />
+        <!-- Unemployed / Housewife (Same Options) -->
+        <div v-show="employmentType === 'housewife' || employmentType === 'unemployed'" class="flex flex-col">
+            <label for="housewife-unemployed-income" class="input-label">Income Status</label>
+            <select id="housewife-unemployed-income" name="housewife-unemployed-income" required class="input input-bordered">
+                <option value="no-income">No income</option>
+            </select>
         </div>
 
-        <!-- Office Email Address -->
-        <div class="flex flex-col">
-            <label for="officeEmail" class="mb-2">Office Email Address</label>
-            <input id="officeEmail" type="email" placeholder="Email Address" class="input input-bordered" />
-        </div>
+        
     </div>
   </div>
 
- <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
-    <h1 class="text-2xl font-semibold mb-4">Business Information</h1>
-    <div class="grid grid-cols-2 gap-6">
-        <!-- Business Name -->
-        <div class="flex flex-col">
-            <label for="businessName" class="mb-2">Business Name</label>
-            <input id="businessName" type="text" placeholder="Name" class="input input-bordered" />
-        </div>
-
-        <!-- Business Address -->
-        <div class="flex flex-col">
-            <label for="businessAddress" class="mb-2">Business Address</label>
-            <input id="businessAddress" type="text" placeholder="Address" class="input input-bordered" />
-        </div>
-    </div>
-  </div>
-
-  <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
-    <h1 class="text-2xl font-semibold mb-4">Financial Information</h1>
-    <div class="grid grid-cols-4 gap-6">
-        <!-- Source of Income Funds -->
-        <div class="flex flex-col">
-            <label for="salary" class="mb-2">Salary</label>
-            <input id="salary" type="text" placeholder="Salary" class="input input-bordered" />
-        </div>
-
-        <div class="flex flex-col">
-            <label for="business" class="mb-2">Business</label>
-            <input id="business" type="text" placeholder="Business" class="input input-bordered" />
-        </div>
-
-        <div class="flex flex-col">
-            <label for="pension" class="mb-2">Pension</label>
-            <input id="pension" type="text" placeholder="Pension" class="input input-bordered" />
-        </div>
-
-        <div class="flex flex-col">
-            <label for="regularRemittance" class="mb-2">Regular Remittance</label>
-            <input id="regularRemittance" type="text" placeholder="Regular Remittance" class="input input-bordered" />
-        </div>
-
-        <div class="flex flex-col col-span-4">
-            <label for="others" class="mb-2">Others (Specify)</label>
-            <input id="others" type="text" placeholder="Specify" class="input input-bordered" />
-        </div>
-    </div>
-  </div>
-
-  <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
-    <h1 class="text-2xl font-semibold mb-4">Spouse Information</h1>
-    <div class="grid grid-cols-4 gap-6">
+  <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-10">
+    <h1 class="text-2xl font-semibold mb-[-20px]">Spouse Information</h1>
+    <div class="grid grid-cols-3 gap-6">
         <!-- First Name -->
         <div class="flex flex-col">
-            <label for="firstName" class="mb-2">First Name</label>
-            <input id="firstName" type="text" placeholder="First Name" class="input input-bordered" />
+          <label for="firstName" class="input-label">First Name</label>
+          <input id="firstName" type="text" placeholder="First Name" class="input input-bordered" />
         </div>
 
         <!-- Middle Name -->
         <div class="flex flex-col">
-            <label for="middleName" class="mb-2">Middle Name</label>
-            <input id="middleName" type="text" placeholder="Middle Name" class="input input-bordered" />
+          <label for="middleName" class="input-label">Middle Name</label>
+          <input id="middleName" type="text" placeholder="Middle Name" class="input input-bordered" />
         </div>
 
         <!-- Last Name -->
         <div class="flex flex-col">
-            <label for="lastName" class="mb-2">Last Name</label>
-            <input id="lastName" type="text" placeholder="Last Name" class="input input-bordered" />
+          <label for="lastName" class="input-label">Last Name</label>
+          <input id="lastName" type="text" placeholder="Last Name" class="input input-bordered" />
         </div>
-
+      </div>
+      <div class="grid grid-cols-2 gap-6">
         <!-- Employer / Business Name -->
         <div class="flex flex-col">
-            <label for="employerName" class="mb-2">Employer/Business Name</label>
-            <input id="employerName" type="text" placeholder="Employer/Business Name" class="input input-bordered" />
+          <label for="employerName" class="input-label">Employer/Business Name</label>
+          <input id="employerName" type="text" placeholder="Employer/Business Name" class="input input-bordered" />
         </div>
 
         <!-- Employer / Business Address -->
-        <div class="flex flex-col col-span-4">
-            <label for="employerAddress" class="mb-2">Employer / Business Address</label>
-            <input id="employerAddress" type="text" placeholder="Employer/Business Address" class="input input-bordered" />
+        <div class="flex flex-col">
+          <label for="employerAddress" class="input-label">Employer / Business Address</label>
+          <input id="employerAddress" type="text" placeholder="Employer/Business Address" class="input input-bordered" />
         </div>
-    </div>
-</div>
+      </div>
+      </div>
 
-<div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
-    <div class="flex justify-between items-center mb-4">
+    <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-10">
+    <div class="flex justify-between items-center mb-[-40px]">
         <h1 class="text-2xl font-semibold">Family Information</h1>
          <!-- Icon button to add a new family member -->
         <button @click="addFamilyMember" class="btn1 bg-transparent p-2 border border-green-500 text-green-500 rounded-lg flex items-center text-3xl">
@@ -501,7 +586,7 @@ const submitForm = () => {
                 <th class="border-b px-4 py-2">Marital Status</th>
                 <th class="border-b px-4 py-2">Education Attainment</th>
                 <th class="border-b px-4 py-2">Occupation/Income</th>
-                <th class="border-b px-4 py-2">Cooperative Membership</th>
+                <th class="border-b px-4 py-2">Cooperative Memberships</th>
                 <th class="border-b px-4 py-2"></th>
             </tr>
         </thead>
@@ -527,140 +612,119 @@ const submitForm = () => {
 </div>
     
 
-  <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
-    <h1 class="text-2xl font-semibold mb-4">Are you related to any SLPMPC Officers or Employees? If YES, kindly provide the name and relationship:</h1>
-
-    <!-- Name and Relationship Fields -->
-    <div class="grid grid-cols-2 gap-6 mb-2">
-      <div class="flex flex-col">
-        <label for="name" class="font-medium text-lg mb-2">Name</label>
-        <input type="text" id="name" placeholder="Name" class="input border border-gray-300 rounded-lg p-2" />
-      </div>
-      
-      <div class="flex flex-col">
-        <label for="relationship" class="font-medium text-lg mb-2">Relationship</label>
-        <input type="text" id="relationship" placeholder="Relationship" class="input border border-gray-300 rounded-lg p-2" />
-      </div>
-    </div>
-  </div>
-
-  <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
-    <h1 class="text-2xl font-semibold mb-4">Private Property</h1>
-
-    <!-- Car Ownership Section -->
-    <div class="grid grid-cols-3 gap-6 mb-6">
-      <div class="flex flex-col">
-        <label class="font-medium text-lg mb-2">Car Ownership</label>
-        <div class="flex space-x-4">
-          <label class="flex items-center">
-            <input type="radio" name="carOwnership" value="yes" class="mr-2" /> Yes
-          </label>
-          <label class="flex items-center">
-            <input type="radio" name="carOwnership" value="no" class="mr-2" /> No
-          </label>
-          <label class="flex items-center">
-            <input type="radio" name="carOwnership" value="owned" class="mr-2" /> Owned
-          </label>
+  <!-- Relation to SLPMPC Officers or Employees Section -->
+    <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-10">
+      <h1 class="text-1 font-semibold mb-[-20px]">Are you related to any SLPMPC Officers or Employees? If YES, kindly provide the name and relationship:</h1>
+      <div class="grid grid-cols-2 gap-6 mb-2">
+        <div class="flex flex-col">
+          <label for="name" class="input-label">Name</label>
+          <input type="text" id="name" placeholder="Name" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        
+        <div class="flex flex-col">
+          <label for="relationship" class="input-label">Relationship</label>
+          <input type="text" id="relationship" placeholder="Relationship" class="input border border-gray-300 rounded-lg p-2" />
         </div>
       </div>
+    </div>
+
+  <!-- Private Property Section -->
+    <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-10">
+      <h1 class="text-2xl font-semibold mb-[-20px]">Private Property</h1>
+
+      <!-- Car Ownership Section -->
+      <div class="grid grid-cols-3 gap-6 mb-6">
+        <div class="flex flex-col">
+          <label class="input-label">Car Ownership</label>
+          <div class="flex space-x-4">
+            <label class="flex items-center">
+              <input type="radio" name="carOwnership" value="yes" class="mr-2" /> Yes
+            </label>
+            <label class="flex items-center">
+              <input type="radio" name="carOwnership" value="no" class="mr-2" /> No
+            </label>
+            <label class="flex items-center">
+              <input type="radio" name="carOwnership" value="owned" class="mr-2" /> Owned
+            </label>
+          </div>
+        </div>
 
       <!-- Monthly Amortization (Car) -->
-      <div class="flex flex-col col-span-2">
-        <label class="font-medium text-lg mb-2">Monthly Amortization</label>
-        <input type="text" placeholder="P" class="input border border-gray-300 rounded-lg p-2" />
-      </div>
-    </div>
-
-    <!-- House and Lot Section -->
-    <div class="grid grid-cols-3 gap-6 mb-6">
-      <div class="flex flex-col">
-        <label class="font-medium text-lg mb-2">House and Lot</label>
-        <div class="flex space-x-4">
-          <label class="flex items-center">
-            <input type="radio" name="houseOwnership" value="yes" class="mr-2" /> Yes
-          </label>
-          <label class="flex items-center">
-            <input type="radio" name="houseOwnership" value="no" class="mr-2" /> No
-          </label>
-          <label class="flex items-center">
-            <input type="radio" name="houseOwnership" value="owned" class="mr-2" /> Owned
-          </label>
+        <div class="flex flex-col col-span-2 mb-[-60px]">
+          <label class="input-label">Monthly Amortization</label>
+          <input type="text" placeholder="P" class="input border border-gray-300 rounded-lg p-2" />
         </div>
       </div>
 
+      <!-- House and Lot Section -->
+      <div class="grid grid-cols-3 gap-6">
+        <div class="flex flex-col">
+          <label class="input-label">House and Lot</label>
+          <div class="flex space-x-4">
+            <label class="flex items-center">
+              <input type="radio" name="houseOwnership" value="yes" class="mr-2" /> Yes
+            </label>
+            <label class="flex items-center">
+              <input type="radio" name="houseOwnership" value="no" class="mr-2" /> No
+            </label>
+            <label class="flex items-center">
+              <input type="radio" name="houseOwnership" value="owned" class="mr-2" /> Owned
+            </label>
+          </div>
+        </div>
+
       <!-- Monthly Amortization (House) -->
-      <div class="flex flex-col col-span-2">
-        <label class="font-medium text-lg mb-2">Monthly Amortization</label>
-        <input type="text" placeholder="P" class="input border border-gray-300 rounded-lg p-2" />
-      </div>
-    </div>
-  </div>
-<div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
-    <h1 class="text-2xl font-semibold mb-4">Expenditures</h1>
-
-    <!-- Income Section -->
-    <div class="grid grid-cols-3 gap-6 mb-6">
-      <div class="flex flex-col">
-        <label for="monthlySalary" class="font-medium text-lg mb-2">Monthly Salary</label>
-        <input type="text" id="monthlySalary" placeholder="Monthly Salary" class="input border border-gray-300 rounded-lg p-2" />
-      </div>
-      <div class="flex flex-col">
-        <label for="otherIncome" class="font-medium text-lg mb-2">Other Income</label>
-        <input type="text" id="otherIncome" placeholder="Other income" class="input border border-gray-300 rounded-lg p-2" />
-      </div>
-      <div class="flex flex-col">
-        <label for="remittance" class="font-medium text-lg mb-2">Remittance</label>
-        <input type="text" id="remittance" placeholder="Remittance" class="input border border-gray-300 rounded-lg p-2" />
+        <div class="flex flex-col col-span-2">
+          <label class="input-label">Monthly Amortization</label>
+          <input type="text" placeholder="P" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
       </div>
     </div>
 
-    <!-- Total Income Section -->
-    <div class="flex flex-col mb-6">
-      <label for="totalIncome" class="font-medium text-lg mb-2">Total Income</label>
-      <input type="text" id="totalIncome" placeholder="Total Income" class="input border border-gray-300 rounded-lg p-2" />
-    </div>
+    <!-- Expenditures Section -->
+    <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-10">
+      <h1 class="text-2xl font-semibold mb-[-20px]">Expenditures</h1>
+      
 
-    <!-- Expenses Section -->
-    <div class="grid grid-cols-3 gap-6 mb-6">
-      <div class="flex flex-col">
-        <label for="food" class="font-medium text-lg mb-2">Food</label>
-        <input type="text" id="food" placeholder="Food" class="input border border-gray-300 rounded-lg p-2" />
+      <!-- Expenses Section -->
+      <div class="grid grid-cols-4 gap-6 mb-[-20px]">
+        <div class="flex flex-col">
+          <label for="food" class="input-label">Food</label>
+          <input type="text" id="food" placeholder="Food" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        <div class="flex flex-col">
+          <label for="electricBill" class="input-label">Electric Bill</label>
+          <input type="text" id="electricBill" placeholder="Electric Bill" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        <div class="flex flex-col">
+          <label for="creditCard" class="input-label">Credit Card</label>
+          <input type="text" id="creditCard" placeholder="Credit Card" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        <div class="flex flex-col">
+          <label for="waterBill" class="input-label">Water Bill</label>
+          <input type="text" id="waterBill" placeholder="Water Bill" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        <div class="flex flex-col">
+          <label for="cableInternet" class="input-label">Cable/Internet</label>
+          <input type="text" id="cableInternet" placeholder="Cable/Internet" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        <div class="flex flex-col">
+          <label for="tuitionFee" class="input-label">Tuition Fee</label>
+          <input type="text" id="tuitionFee" placeholder="Tuition Fee" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        <div class="flex flex-col">
+          <label for="Others" class="input-label">Others</label>
+          <input type="text" id="Others" placeholder="Others" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        <div class="flex flex-col mb-[-20px]">
+        <label for="totalExpenses" class="input-label">Total Expenses</label>
+        <input type="text" id="totalExpenses" placeholder="Total Expenses" class="input border border-gray-300 rounded-lg p-2" />
       </div>
-      <div class="flex flex-col">
-        <label for="electricBill" class="font-medium text-lg mb-2">Electric Bill</label>
-        <input type="text" id="electricBill" placeholder="Electric Bill" class="input border border-gray-300 rounded-lg p-2" />
       </div>
-      <div class="flex flex-col">
-        <label for="creditCard" class="font-medium text-lg mb-2">Credit Card</label>
-        <input type="text" id="creditCard" placeholder="Credit Card" class="input border border-gray-300 rounded-lg p-2" />
-      </div>
-      <div class="flex flex-col">
-        <label for="waterBill" class="font-medium text-lg mb-2">Water Bill</label>
-        <input type="text" id="waterBill" placeholder="Water Bill" class="input border border-gray-300 rounded-lg p-2" />
-      </div>
-      <div class="flex flex-col">
-        <label for="cableInternet" class="font-medium text-lg mb-2">Cable/Internet</label>
-        <input type="text" id="cableInternet" placeholder="Cable/Internet" class="input border border-gray-300 rounded-lg p-2" />
-      </div>
-      <div class="flex flex-col">
-        <label for="tuitionFee" class="font-medium text-lg mb-2">Tuition Fee</label>
-        <input type="text" id="tuitionFee" placeholder="Tuition Fee" class="input border border-gray-300 rounded-lg p-2" />
-      </div>
-       <div class="flex flex-col">
-      <label for="Others" class="font-medium text-lg mb-2">Others:</label>
-      <input type="text" id="Others" placeholder="Others" class="input border border-gray-300 rounded-lg p-2" />
-      </div>
-    </div>
-
-    <!-- Total Expenses Section -->
-    <div class="flex flex-col mb-6">
-      <label for="totalExpenses" class="font-medium text-lg mb-2">Total Expenses</label>
-      <input type="text" id="totalExpenses" placeholder="Total Expenses" class="input border border-gray-300 rounded-lg p-2" />
-    </div>
-
+      
     <!-- Submit Button -->
     <div class="flex justify-end mt-6">
-      <button @click="submitForm" class="btn btn-primary bg-blue-500 text-white py-2 px-6 rounded-lg">Submit</button>
+      <button @click="submitForm" class="btn">Submit</button>
     </div>
   </div>
 
@@ -669,10 +733,17 @@ const submitForm = () => {
 
 
 <style scoped>
+.input-label {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #000;
+}
+
 .input {
   width: 100%;
   height: 40px; /* Ensure consistent height */
-  padding: 10px;
+  padding: 5px;
   border: 1px solid #d1d5db;
   border-radius: 0.375rem;
   font-size: 1rem;
