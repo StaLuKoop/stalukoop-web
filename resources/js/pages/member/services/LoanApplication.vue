@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue'
 import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/vue3'
+
 
 defineProps<{ status: string }>()
 
@@ -19,6 +20,76 @@ const handleCollateralChange = (event: Event) => {
   const selectedValue = (event.target as HTMLSelectElement).value;
   showOtherCollateral.value = selectedValue === 'other';
 }
+
+// Track the selected employment type
+const employmentType = ref<string>('');
+
+// Track the income options for each employment type
+const permanentJobIncome = ref('');
+const businessIncome = ref('');
+const pensionerIncome = ref('');
+const contractualIncome = ref('');
+const selfEmployedIncome = ref('');
+const governmentIncome = ref('');
+const housewifeUnemployedIncome = ref('no-income');
+
+// Define the type of the sections object
+interface EmploymentSections {
+  permanentJob: boolean;
+  business: boolean;
+  pensioner: boolean;
+  contractual: boolean;
+  selfEmployed: boolean;
+  government: boolean;
+  housewifeUnemployed: boolean;
+}
+
+// Initialize employmentSections as a ref with the correct type
+const employmentSections = ref<EmploymentSections>({
+  permanentJob: false,
+  business: false,
+  pensioner: false,
+  contractual: false,
+  selfEmployed: false,
+  government: false,
+  housewifeUnemployed: false,
+});
+
+// Watch employmentType changes to update the display of relevant sections
+watch(employmentType, (value) => {
+  // Reset all sections to hidden
+  for (let key in employmentSections.value) {
+    employmentSections.value[key as keyof EmploymentSections] = false;
+  }
+
+  // Show relevant section based on selected employment type
+  switch (value) {
+    case 'permanent-job':
+      employmentSections.value.permanentJob = true;
+      break;
+    case 'business':
+      employmentSections.value.business = true;
+      break;
+    case 'pensioner':
+    case 'retired':
+      employmentSections.value.pensioner = true;
+      break;
+    case 'contractual-minimum':
+    case 'contractual-piece-rate':
+      employmentSections.value.contractual = true;
+      break;
+    case 'self-employed':
+      employmentSections.value.selfEmployed = true;
+      break;
+    case 'government':
+      employmentSections.value.government = true;
+      break;
+    case 'housewife':
+    case 'unemployed':
+      employmentSections.value.housewifeUnemployed = true;
+      break;
+  }
+});
 </script>
 
 
@@ -97,6 +168,112 @@ const handleCollateralChange = (event: Event) => {
             </div>
             </div>
           </div>
+
+    <div class="space-y-4">
+    <div class="grid grid-cols-2 gap-2 mb-2">
+        <div class="flex flex-col mb-[-5px]">
+            <label for="employerName" class="input-label">Employer/Business Name</label>
+            <input id="employerName" type="text" placeholder="Name" class="input-field input-bordered" />
+        </div>
+
+        <div class="flex flex-col mb-[-5px]">
+            <label for="employerAddress" class="input-label">Employer / Business Address</label>
+            <input id="employerAddress" type="text" placeholder="Address" class="input-field input-bordered" />
+        </div>
+
+        <!-- Type of Employment -->
+        <div class="flex flex-col mb-[-5px]">
+            <label for="employmentType" class="input-label">Type of Employment</label>
+            <select id="employment-type" name="employment-type" v-model="employmentType" required class="input-field input-bordered">
+              <option value="">Select Employment Type</option>
+              <option value="permanent-job">Permanent Job</option>
+              <option value="business">Business</option> 
+              <option value="contractual-minimum">Contractual (Minimum 3 years)</option>
+              <option value="contractual-piece-rate">Contractual, Piece Rate, On Call Basis</option>
+              <option value="housewife">Housewife</option> 
+              <option value="self-employed">Self-Employed</option>
+              <option value="government">Government</option>
+              <option value="unemployed">Unemployed</option> 
+              <option value="retired">Retired</option> 
+          </select>
+        </div>
+
+        <!-- Permanent Job -->
+        <div v-show="employmentType === 'permanent-job'" class="flex flex-col">
+            <label for="permanent-job-income" class="input-label">Years of Experience & Net Income</label>
+            <select id="permanent-job-income" name="permanent-job-income" required class="input-field input-bordered">
+                <option value="more-than-15-years-16k-20k">More than 15 years with net income of at least ₱16,000 to ₱20,000</option>
+                <option value="less-than-10-years-11k-15k">Less than 10 years with net income of at least ₱11,000 to ₱15,000</option>
+                <option value="less-than-5-years-6k-10k">Less than 5 years with net income of at least ₱6,000 to ₱10,000</option>
+                <option value="less-than-5-years-5k-below">Less than 5 years with net income of at least ₱5,000 and below</option>
+            </select>
+        </div>
+
+        <!-- Business -->
+        <div v-show="employmentType === 'business'" class="flex flex-col">
+            <label for="business-income" class="input-label">Monthly Net Income</label>
+            <select id="business-income" name="business-income" required class="input-field input-bordered">
+                <option value="16k-20k">Monthly net income of at least ₱16,000 to ₱20,000</option>
+                <option value="11k-15k">Monthly net income of at least ₱11,000 to 15,000</option>
+                <option value="10k">Monthly net income of at least ₱10,000</option>
+                <option value="5k-below">Monthly net income of ₱5,000 and below</option>
+            </select>
+        </div>
+
+        <!-- Pensioner / Retired (Same Options) -->
+        <div v-show="employmentType === 'pensioner' || employmentType === 'retired'" class="flex flex-col">
+            <label for="pensioner-retired-income" class="input-label">Pension</label>
+            <select id="pensioner-retired-income" name="pensioner-retired-income" required class="input-field input-bordered">
+                <option value="above-20k">Above ₱20,000</option>
+                <option value="15k-19k">₱15,000 to 19,000</option>
+                <option value="6k-14k">₱6,000 to ₱14,000</option>
+                <option value="3k-5k-below">₱3,000 to ₱5,000 and below</option>
+                <option value="2k-below">₱2,000 and below</option>
+            </select>
+        </div>
+
+        <!-- Contractual -->
+        <div v-show="employmentType === 'contractual-minimum' || employmentType === 'contractual-piece-rate'"class="flex flex-col">
+            <label for="contractual-income" class="input-label">Income Level</label>
+            <select id="contractual-income" name="contractual-income" required class="input-field input-bordered">
+                <option value="minimum-pay">Minimum pay</option>
+                <option value="below-minimum">Below minimum</option>
+            </select>
+        </div>
+
+        <!-- Self-Employed -->
+        <div v-show="employmentType === 'self-employed'" class="flex flex-col">
+            <label for="self-employed-income" class="input-label">Monthly Net Income</label>
+            <select id="self-employed-income" name="self-employed-income" required class="input-field input-bordered">
+                <option value="16k-20k">Monthly net income of at least ₱16,000 to ₱20,000</option>
+                <option value="11k-15k">Monthly net income of at least ₱11,000 to ₱15,000</option>
+                <option value="10k">Monthly net income of at least ₱10,000</option>
+                <option value="5k-below">Monthly net income of ₱5,000 and below</option>
+            </select>
+        </div>
+
+        <!-- Government -->
+        <div v-show="employmentType === 'government'"class="flex flex-col">
+            <label for="government-income" class="input-label">Monthly Salary Range</label>
+            <select id="government-income" name="government-income" required class="input-field input-bordered">
+                <option value="20k-above">Above ₱20,000</option>
+                <option value="15k-19k">₱15,000 to ₱19,000</option>
+                <option value="10k-14k">₱10,000 to ₱14,000</option>
+                <option value="below-10k">Below ₱10,000</option>
+            </select>
+        </div>
+
+        <!-- Unemployed / Housewife (Same Options) -->
+        <div v-show="employmentType === 'housewife' || employmentType === 'unemployed'" class="flex flex-col">
+            <label for="housewife-unemployed-income" class="input-label">Income Status</label>
+            <select id="housewife-unemployed-income" name="housewife-unemployed-income" required class="input-field input-bordered">
+                <option value="no-income">No income</option>
+            </select>
+        </div>
+
+        
+    </div>
+  </div>
           
           <!-- Membership, Capital, Type of Loan -->
         <div class="space-y-4">
@@ -172,12 +349,14 @@ const handleCollateralChange = (event: Event) => {
                 <option value="3-months">3 months</option>
                 <option value="6-months">6 months</option>
                 <option value="monthly">1 year</option>
+                <option value="monthly">2 years</option>
+                <option value="monthly">3 years</option>
               </select>
             </div>
 
             <!-- Paraan ng Pagbabayad -->
             <div>
-              <label for="residence-duration" class="input-label">Paraan ng Pagbabayad</label>
+              <label for="residence-duration" class="input-label">Method of Payment</label>
               <select id="payment-method" name="payment_method" required class="input-field w-full">
                 <option value="monthly">Monthly</option>
                 <option value="weekly">Weekly</option>

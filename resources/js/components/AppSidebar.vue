@@ -76,6 +76,16 @@ const mainNavSections = computed(() => {
         ],
       },
       {
+        label: 'Cooperative',
+        items: [
+          {
+            title: 'Account',
+            href: '/member/cooperative/account',
+            icon: User,
+          },
+        ],
+      },
+      {
         label: 'Services',
         items: [
           {

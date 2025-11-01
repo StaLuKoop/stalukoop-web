@@ -2,109 +2,198 @@
 import AppLayout from '@/layouts/AppLayout.vue'
 import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
 
-// Breadcrumbs for navigation
+defineProps<{ status: string }>()
+
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/member/dashboard' },
-  { title: 'Credit Scoring', href: '/member/services/credit-scoring' },
+  { title: 'Credit Scoring', href: '/member/cooperative/credit-scoring' },
 ]
+
+// Mock data
+const averageScore = ref<number>(86)
+const rating = ref<string>('Very Good')
+
+const creditHistory = ref([
+  {
+    loanId: 'L-1023',
+    date: 'Oct 5, 2025',
+    type: 'Regular Loan',
+    score: 88,
+    remarks: 'Good repayment record',
+  },
+  {
+    loanId: 'L-0950',
+    date: 'Mar 2, 2025',
+    type: 'Regular Loan',
+    score: 79,
+    remarks: 'Late 1 month payment',
+  },
+  {
+    loanId: 'L-0801',
+    date: 'Aug 10, 2024',
+    type: 'Regular Loan',
+    score: 72,
+    remarks: 'Fully paid',
+  },
+])
+
+// Compute circle progress color
+const scoreStyle = computed(() => {
+  const degree = averageScore.value * 3.6
+  return {
+    background: `conic-gradient(#b91c1c ${degree}deg, #e5e7eb ${degree}deg 360deg)`,
+  }
+})
 </script>
 
 <template>
-  <Head title="Credit Scoring"/>
+  <Head title="Credit Scoring" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
-    <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-      <h1 class="text-xl font-semibold">Credit Scoring</h1>
+    <div class="credit-container">
+      <!-- Overall Score Section -->
+      <div class="score-summary">
+        <div class="score-circle" :style="scoreStyle">
+          <div class="inner-circle">
+            <p class="score-value">{{ averageScore }}</p>
+            <p class="score-label">Credit Score</p>
+          </div>
+        </div>
 
-      <div class="space-y-4 p-6">
-        <p>Current Credit Score: <span class="font-semibold text-lg">750</span></p> <!-- Replace this with dynamic data if necessary -->
-        
-        <h2 class="font-semibold text-md">Breakdown</h2>
-        <ul class="list-inside list-disc space-y-1">
-          <li>Payment History: Excellent</li>
-          <li>Loan-to-Savings Ratio: 50%</li>
-          <li>Outstanding Balance: $5000</li>
-        </ul>
+        <div class="score-details">
+          <h2>Overall Rating: <span>{{ rating }}</span></h2>
+          <p>
+            Your credit score reflects your payment history, share capital, and savings record. 
+            A higher score increases your loan eligibility and approval speed.
+          </p>
+        </div>
+      </div>
 
-        <h2 class="font-semibold text-md">Tips to Improve Your Score</h2>
-        <ul class="list-inside list-disc space-y-1">
-          <li>Pay bills on time</li>
-          <li>Reduce credit utilization</li>
-          <li>Maintain a good credit mix</li>
-        </ul>
+      <!-- Credit History Table -->
+      <div class="history-section">
+        <h3>Credit Score History per Loan</h3>
+        <div class="table-container">
+          <table class="score-table">
+            <thead>
+              <tr>
+                <th>Loan ID</th>
+                <th>Date</th>
+                <th>Loan Type</th>
+                <th>Score</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(record, index) in creditHistory" :key="index">
+                <td>{{ record.loanId }}</td>
+                <td>{{ record.date }}</td>
+                <td>{{ record.type }}</td>
+                <td>{{ record.score }}</td>
+                <td>{{ record.remarks }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </AppLayout>
 </template>
 
 <style scoped>
-/* Styles for the Credit Scoring page */
-.space-y-4 {
-  margin-bottom: 16px;
-}
-
-.font-semibold {
-  font-weight: 600;
-}
-
-.text-lg {
-  font-size: 1.125rem;
-}
-
-.text-md {
-  font-size: 1rem;
-}
-
-.text-sm {
-  font-size: 0.875rem;
-}
-
-.text-yellow-800 {
-  color: #9c7e00;
-}
-
-.bg-yellow-100 {
-  background-color: #fef8c7;
-}
-
-.border-yellow-400 {
-  border-color: #fbbf24;
-}
-
-.shadow {
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.rounded-lg {
-  border-radius: 8px;
-}
-
-.p-6 {
+.credit-container {
   padding: 1.5rem;
+  background: #fff;
+  border-radius: 1rem;
 }
 
-.ml-1 {
-  margin-left: 0.25rem;
+/* Overall Score */
+.score-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
-.text-blue-700 {
-  color: #1d4ed8;
+/* Score Circle */
+.score-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+.inner-circle {
+  width: 110px;
+  height: 110px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #b91c1c;
+  text-align: center;
+}
+.score-value {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+.score-label {
+  font-size: 0.9rem;
+  color: #555;
 }
 
-.underline {
-  text-decoration: underline;
+/* Details */
+.score-details h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+.score-details h2 span {
+  color: #b91c1c;
+}
+.score-details p {
+  font-size: 0.95rem;
+  color: #444;
+  margin-top: 0.3rem;
+  line-height: 1.4;
 }
 
-.hover\:text-blue-900:hover {
-  color: #1e40af;
+/* History Table */
+.history-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #1f2937;
 }
-
-.list-inside {
-  list-style-position: inside;
+.table-container {
+  overflow-x: auto;
+  border: 1px solid #eee;
+  border-radius: 1rem;
 }
-
-.list-disc {
-  list-style-type: disc;
+.score-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.score-table th,
+.score-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.95rem;
+}
+.score-table th {
+  background-color: #fafafa;
+  font-weight: 600;
+  border-bottom: 2px solid #eee;
+}
+.score-table tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 </style>
