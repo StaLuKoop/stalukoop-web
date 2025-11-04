@@ -6,6 +6,9 @@ use App\Http\Controllers\Public\InquiryController as PublicInquiryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\LoanController;
+use App\Http\Controllers\Admin\LoanApplicationController;
+use App\Http\Controllers\Admin\PMESController;
+use App\Http\Controllers\Admin\CreditScoreController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\UtilityController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
@@ -52,11 +55,16 @@ Route::middleware(['auth', 'verified', 'prevent-back'])->group(function () {
       Route::resource('members', MemberController::class);
       Route::resource('inquiries', InquiryController::class);
       Route::resource('loans', LoanController::class);
+      Route::resource('loanapplication', LoanApplicationController::class);
+      Route::resource('pmes', PMESController::class);
+      Route::resource('creditscoring', CreditScoreController::class);
+ 
     });
 
     Route::prefix('utility')->name('utility.')->group(function () {
       Route::get('calendar', [UtilityController::class, 'calendar'])->name('calendar');
       Route::get('calculator', [UtilityController::class, 'calculator'])->name('calculator');
+      Route::get('reports', [UtilityController::class, 'reports'])->name('reports');
     });
   });
 

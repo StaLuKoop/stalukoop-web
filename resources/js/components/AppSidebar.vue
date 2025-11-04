@@ -46,12 +46,21 @@ const mainNavSections = computed(() => {
         items: [
           { title: 'Members', href: '/admin/management/members', icon: User },
           { title: 'Inquiries', href: '/admin/management/inquiries', icon: FileWarning },
-          // { title: 'Loans', href: '/admin/management/loans', icon: HandCoins },
+        ],
+      },
+      {
+        label: 'Records',
+        items: [
+          { title: 'Loans', href: '/admin/management/loans', icon: HandCoins },
+          { title: 'Loan Applications', href: '/admin/management/loanapplication', icon: FilePlus },
+          { title: 'PMES Scheduling', href: '/admin/management/pmes', icon: FileWarning },
+          { title: 'Credit Scoring', href: '/admin/management/creditscoring', icon: FileSignature },
         ],
       },
       {
         label: 'Utilities',
         items: [
+          { title: 'Reports', href: '/admin/utility/reports', icon: FileText },
           { title: 'Calendar', href: '/admin/utility/calendar', icon: Calendar },
           { title: 'Calculator', href: '/admin/utility/calculator', icon: Calculator },
         ],
