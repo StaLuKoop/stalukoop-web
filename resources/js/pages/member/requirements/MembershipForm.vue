@@ -16,6 +16,7 @@ const housingChoicePermanent = ref(''); // Track the user's housing choice for P
 const maritalStatus = ref(''); // Track the selected marital status
 const carOwnership = ref(''); // Tracks Car Ownership selection
 const houseOwnership = ref(''); // Tracks House Ownership selection
+const govIdType = ref('');
 
 // Create a reactive array to store family members' data
 const familyMembers = ref([
@@ -138,30 +139,6 @@ watch(employmentType, (value) => {
   }
 });
 
-// Declare dob and age as reactive variables
-const dob = ref('');  // For binding the user's date of birth input
-const age = ref(0);   // For storing the calculated age
-
-// Method to calculate age based on dob
-const calculateAge = () => {
-  if (dob.value) {
-    const birthDate = new Date(dob.value);
-    const today = new Date();
-    let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-
-    // Adjust if the birthday hasn't occurred yet this year
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-      calculatedAge--;
-    }
-
-    age.value = calculatedAge;
-  }
-};
-
-// Watch for changes in dob to recalculate age
-watch(dob, calculateAge);
-
 const monthlyAmortization = ref('') // For storing and formatting the amortization input
 
 // Method to format the amortization input as currency
@@ -200,21 +177,6 @@ const formatCurrencyHouse = () => {
   monthlyAmortizationHouse.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 } 
 
-const submitForm = async () => {
-  const formData = {
-    marital_status: maritalStatus.value,
-    housing_choice_present: housingChoicePresent.value,
-    housing_choice_permanent: housingChoicePermanent.value,
-    car_ownership: carOwnership.value,
-    house_ownership: houseOwnership.value,
-    employment_type: employmentType.value,
-  }
-
-  await axios.post('/member/membership-form', formData)
-}
-
-
-
 // ADD: helpers (no UI changes)
 const mapHousing = (v: string) =>
   v === 'ownHouse' ? 'own_house'
@@ -230,15 +192,134 @@ const moneyToNumber = (v: string | number | null) => {
 
 const toNull = (v: string | null | undefined) => (v === '' || v == null ? null : v)
 
+// Track the phone number input
+const phone = ref('');
 
+// Method to sanitize the mobile number
+const sanitizePhone = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  let value = input.value;
+
+  // Only allow numbers and "+"
+  value = value.replace(/[^0-9+]/g, ''); // Remove any non-numeric and non "+" characters
+
+  // Ensure the value starts with "+63"
+  if (value.startsWith('+63')) {
+    input.value = value; // If it starts with +63, keep it
+  } else {
+    input.value = '+63'; // Otherwise, default to +63
+  }
+
+  // Ensure that the value does not exceed 13 characters
+  if (input.value.length > 13) {
+    input.value = input.value.slice(0, 13);
+  }
+
+  // Update the model with the sanitized value
+  phone.value = input.value;
+};
+
+// --- Added reactive state and handlers to satisfy template references ---
+const currentStep = ref<number>(1)
+const totalSteps = 3
+
+const form = ref({
+  paymentReference: ''
+})
+
+// store uploaded files by key
+const fileUploads = ref<Record<string, File | null>>({
+  idFront: null,
+  idBack: null,
+  proofOfAddress: null,
+  paymentProof: null
+})
+
+/**
+ * submitForm - simple client-side handler to avoid TS compile errors.
+ * You can replace the implementation with actual POST (axios or Inertia) as needed.
+ */
+const submitForm = async () => {
+  // Example: gather minimal payload
+  const payload = {
+    paymentReference: form.value.paymentReference,
+    phone: phone.value,
+    maritalStatus: maritalStatus.value,
+    // map other needed fields here...
+  }
+
+  console.log('Submitting form', payload, fileUploads.value)
+
+  // Example: If you want to submit, uncomment and adjust the route:
+  // const data = new FormData()
+  // data.append('paymentReference', form.value.paymentReference)
+  // if (fileUploads.value.paymentProof) data.append('paymentProof', fileUploads.value.paymentProof)
+  // await axios.post('/your-endpoint', data)
+}
+
+/**
+ * handleFileUpload - called from template when a file input changes.
+ * Template calls with an id string (e.g. 'idFront'), so we read the input by id.
+ */
+const handleFileUpload = (key: string) => {
+  // try to find the input element by id and read its files
+  const el = document.getElementById(key) as HTMLInputElement | null
+  if (!el || !el.files || el.files.length === 0) {
+    fileUploads.value[key] = null
+    return
+  }
+  fileUploads.value[key] = el.files[0]
+}
+
+/** Step navigation helpers used by template buttons */
+const goToNextStep = () => {
+  if (currentStep.value < totalSteps) currentStep.value++
+}
+const goToPreviousStep = () => {
+  if (currentStep.value > 1) currentStep.value--
+}
 </script>
 
 <template>
   <Head title="Membership Form" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
-    <form @submit.prevent="submitForm">
-    <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-7">
+  <form @submit.prevent="submitForm">
+  <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-7">
+    
+  <div class="w-full mb-6">
+    <!-- Step Labels (floating above bar) -->
+    <div class="relative flex justify-between text-l font-semibold mt-5 mb-1">
+      <div class="flex-1 text-center mb-5">
+        <span :class="{'text-red-600': currentStep >= 1, 'text-gray-500': currentStep < 1}">
+          Personal Information
+        </span>
+      </div>
+      <div class="flex-1 text-center">
+        <span :class="{'text-red-600': currentStep >= 2, 'text-gray-500': currentStep < 2}">
+          Document Uploads
+        </span>
+      </div>
+      <div class="flex-1 text-center">
+        <span :class="{'text-red-600': currentStep >= 3, 'text-gray-500': currentStep < 3}">
+          Membership Payment
+        </span>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+      <div
+        class="absolute top-0 left-0 h-full bg-red-500 rounded-full transition-all duration-500"
+        :style="{ width: `${(currentStep / totalSteps) * 100}%` }"
+      ></div>
+    </div>
+  </div>
+
+
+    <!-- Step 1: Personal Information -->
+    <div v-if="currentStep === 1">
+      <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-1 mt-[-30px]">
       <h1 class="text-2xl font-semibold mb-[-20px]">Personal Information</h1>
 
       <!-- Full Name Section -->
@@ -300,26 +381,14 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
       </div>
 
        <!-- Date of Birth, Age, Place of Birth, and Religion in one row -->
-        <div class="grid grid-cols-4 gap-6 mb-[-10px]">
+        <div class="grid grid-cols-3 gap-6 mb-[-10px]">
           <div class="flex flex-col">
             <label for="dob" class="input-label" required>Date of Birth</label>
             <input
               type="date"
               id="dob"
-              v-model="dob" 
               class="input border border-gray-300 rounded-lg p-2"
               name="dob"
-            />
-          </div>
-
-          <div class="flex flex-col">
-            <label for="age" class="input-label">Age</label>
-            <input
-              type="text"
-              id="age"
-              :value="`${age} years old`"  
-              class="input border border-gray-300 rounded-lg p-2"
-              readonly 
             />
           </div>
 
@@ -329,7 +398,7 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
               type="text"
               id="placeOfBirth"
               class="input border border-gray-300 rounded-lg p-2"
-              name="dob"
+              name="place_of_birth"
             />
           </div>
 
@@ -371,7 +440,7 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
       <!-- Renting Fields (shown only if Renting is selected) -->
       <div v-if="housingChoicePresent === 'renting'" class="grid grid-cols-3 gap-6 mb-2">
         <div class="flex flex-col">
-        <label for="rentingAmountPermanent" class="input-label" >Renting How Much</label>
+        <label for="rentingAmountPermanent" class="input-label" >Monthly Rent</label>
         <input
           type="text"
           id="rentingAmountPermanent"
@@ -385,10 +454,6 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
           pattern="^\d{1,3}(,\d{3})*(\.\d{1,2})?$"
         />
       </div>
-        <div class="flex flex-col">
-          <label for="yearsRenting" class="input-label">No. of Years Renting</label>
-          <input type="number" id="yearsRenting" class="input border border-gray-300 rounded-lg p-2" required />
-        </div>
         <div class="flex flex-col">
           <label for="monthsRenting" class="input-label">No. of Months Renting</label>
           <input type="number" id="monthsRenting" class="input border border-gray-300 rounded-lg p-2"required />
@@ -421,7 +486,7 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
       <!-- Renting Fields for Permanent Address (shown only if Renting is selected) -->
       <div v-if="housingChoicePermanent === 'renting'" class="grid grid-cols-3 gap-6 mb-2">
         <div class="flex flex-col">
-        <label for="rentingAmountPermanent" class="input-label">Renting How Much</label>
+        <label for="rentingAmountPermanent" class="input-label">Monthly Rent</label>
         <input
           type="text"
           id="rentingAmountPermanent"
@@ -431,11 +496,6 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
           @input="formatCurrency"
           placeholder="₱0.00"
         />
-      </div>
-
-        <div class="flex flex-col">
-          <label for="yearsRentingPermanent" class="input-label">No. of Years Renting</label>
-          <input type="number" id="yearsRentingPermanent" class="input border border-gray-300 rounded-lg p-2" required/>
         </div>
         <div class="flex flex-col">
           <label for="monthsRentingPermanent" class="input-label">No. of Months Renting</label>
@@ -462,7 +522,7 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
       </div>
 
       <!-- Mother Information Section -->
-      <div class="grid grid-cols-3 gap-6 mb-[-30px]">
+      <div class="grid grid-cols-3 gap-6 mb-[-10px]">
         <div class="flex flex-col col-span-3">
           <label class="input-label">Name of Mother</label>
           <div class="flex space-x-6">
@@ -481,46 +541,29 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
       
       <!-- Contact Information Section -->
       <div class="mb-[-20px]">
-        <h2 class="input-label">Contact Information</h2>
-        <div class="grid grid-cols-4 gap-6">
+        <h1 class="text-2xl font-semibold mb-[10px]">Contact Information</h1>
+        <div class="grid grid-cols-4 gap-6 mb-[20px]">
           <div class="flex flex-col">
+            <label for="mobile" class="input-label">Mobile Number</label>
+            <input 
+              type="tel" 
+              id="mobile"
+              placeholder="+63XXXXXXXXX"
+              class="border border-gray-300 rounded-lg p-2"
+              v-model="phone"
+              @input="sanitizePhone"
+            />
+          </div>
+          <div class="flex flex-col">
+            <label for="mobile" class="input-label">Telephone Number</label>
             <input type="number" name="landline" placeholder="e.g., (02) 1234 5678" class="border border-gray-300 rounded-lg p-2" />
           </div>
           <div class="flex flex-col">
-            <input type="number" name="mobile" placeholder="e.g., +63 912 345 6789" class="border border-gray-300 rounded-lg p-2" required />
-          </div>
-          <div class="flex flex-col">
+            <label for="mobile" class="input-label">Email Address</label>
             <input type="email" name="email" placeholder="Enter your email address" class="border border-gray-300 rounded-lg p-2" required />
           </div>
           <div class="flex flex-col">
-            <input type="text" name="other_contact" placeholder="Others (Please Specify)" class="border border-gray-300 rounded-lg p-2" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Government ID Information Section -->
-      <div class="mb-[-20px]">
-        <h2 class="input-label">Government ID's Information</h2>
-        <div class="grid grid-cols-4 gap-6">
-          <div class="flex flex-col">
-            <input type="text" name="drivers_license_no" placeholder="Driver's License No." class="border border-gray-300 rounded-lg p-2" />
-          </div>
-          <div class="flex flex-col">
-            <input type="text" name="sss_no" placeholder="SSS No." class="border border-gray-300 rounded-lg p-2" />
-          </div>
-          <div class="flex flex-col">
-            <input type="text" name="tin_no" placeholder="TIN No." class="border border-gray-300 rounded-lg p-2" />
-          </div>
-          <div class="flex flex-col">
-            <input type="text" name="other_id_type" placeholder="Others (Please Specify)" class="border border-gray-300 rounded-lg p-2" required/>
-          </div>
-        </div>
-      </div>
-
-      <!-- Educational Attainment Section -->
-      <div class="mb-2">
-        <h2 class="input-label">Educational Attainment</h2>
-        <div class="flex flex-col">
+          <label for="gov_id_type" class="input-label">Educational Attainment</label>
           <select class="border border-gray-300 rounded-lg p-2" name="highest_education" r required>
             <option value="">Select Educational Attainment</option>
             <option value="collegeDegree">College Degree</option>
@@ -531,8 +574,9 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
             <option value="noFormalSchooling">No Formal Schooling</option>
           </select>
         </div>
+        </div>
       </div>
-    
+
     <div>
     <h1 class="text-2xl font-semibold mb-5">Employment Information</h1>
     <div class="grid grid-cols-2 gap-6 mb-2">
@@ -547,7 +591,7 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
         </div>
 
         <!-- Type of Employment -->
-        <div class="flex flex-col mb-5">
+        <div class="flex flex-col mb-[-10px]">
             <label for="employmentType" class="input-label">Type of Employment</label>
             <select id="employment-type" name="employment-type" v-model="employmentType" required class="input input-bordered">
               <option value="">Select Employment Type</option>
@@ -694,20 +738,44 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
                 <th class="border-b px-4 py-2">Relationship to Member</th>
                 <th class="border-b px-4 py-2">Marital Status</th>
                 <th class="border-b px-4 py-2">Education Attainment</th>
-                <th class="border-b px-4 py-2">Occupation/Income</th>
+                <th class="border-b px-4 py-2">Occupation</th>
                 <th class="border-b px-4 py-2"></th>
             </tr>
         </thead>
          <tbody>
         <!-- Loop through the familyMembers array and display data dynamically -->
         <tr v-for="(member, index) in familyMembers" :key="index">
-          <td class="border-b px-4 py-2"><input v-model="member.name" type="text" placeholder="Name" class="input input-bordered w-full" /></td>
-          <td class="border-b px-4 py-2"><input v-model="member.gender" type="text" placeholder="Gender" class="input input-bordered w-full" /></td>
-          <td class="border-b px-4 py-2"><input v-model="member.relationship" type="text" placeholder="Relationship" class="input input-bordered w-full" /></td>
-          <td class="border-b px-4 py-2"><input v-model="member.maritalStatus" type="text" placeholder="Status" class="input input-bordered w-full" /></td>
-          <td class="border-b px-4 py-2"><input v-model="member.educationAttainment" type="text" placeholder="Attainment" class="input input-bordered w-full" /></td>
-          <td class="border-b px-4 py-2"><input v-model="member.occupation" type="text" placeholder="Occupation" class="input input-bordered w-full" /></td>
-          <td class="border-b px-4 py-2">
+          <td class="border-b px-1 py-2"><input v-model="member.name" type="text" placeholder="Name" class="input input-bordered w-full" /></td>
+          <td class="border-b px-2 py-2">
+            <select v-model="member.gender" class="input input-bordered w-full">
+              <option value="">Select Gender</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+            </select>
+          </td>
+          <td class="border-b px-2 py-2"><input v-model="member.relationship" type="text" placeholder="Relationship" class="input input-bordered w-full" /></td>
+          <td class="border-b px-2 py-2">
+            <select v-model="member.maritalStatus" class="input input-bordered w-full">
+              <option value="">Select Marital Status</option>
+              <option value="single">Single</option>
+              <option value="married">Married</option>
+              <option value="widow">Widow</option>
+              <option value="separated">Separated</option>
+            </select>
+          </td>
+          <td class="border-b px-2 py-2">
+            <select v-model="member.educationAttainment" class="input input-bordered w-full">
+              <option value="">Select Education Attainment</option>
+              <option value="college_degree">College Degree</option>
+              <option value="associate_degree">Associate Degree</option>
+              <option value="high_school">High School Graduate</option>
+              <option value="elementary">Elementary Graduate</option>
+              <option value="post_graduate">Post Graduate</option>
+              <option value="no_formal_schooling">No Formal Schooling</option>
+            </select>
+          </td>
+          <td class="border-b px-2 py-2"><input v-model="member.occupation" type="text" placeholder="Occupation" class="input input-bordered w-full" /></td>
+          <td class="border-b px-2 py-2">
             <!-- Trash button to remove the family member -->
             <button @click="removeFamilyMember(index)" class="text-red-500 text-xl">
               <i class="fas fa-trash"></i>
@@ -834,19 +902,98 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
           <label for="Others" class="input-label">Others</label>
           <input type="number" id="Others" name="others_exp"placeholder="Others" class="input border border-gray-300 rounded-lg p-2" />
         </div>
-        <div class="flex flex-col mb-[-20px]">
-        <label for="totalExpenses" class="input-label">Total Expenses</label>
-        <input type="number" id="totalExpenses" placeholder="Total Expenses" class="input border border-gray-300 rounded-lg p-2" required />
       </div>
-      </div>
-      
-    <!-- Submit Button -->
-    <div class="flex justify-end mt-6">
-        <button @click="submitForm" class="btn">Submit</button>
     </div>
+   </div>
   </div>
-  </div>
-</form>
+
+    <!-- Step 2: Upload Documents -->
+    <div v-if="currentStep === 2" class="mx-7">
+      <h1 class="text-2xl font-semibold mb-4">Upload Documents</h1>
+
+      <div class="file-upload-container">
+        <div class="file-upload-item">
+          <label for="certificateOfPMESCompletion">Certificate of PMES Completion</label>
+          <input type="file" id="certificateOfPMESCompletion" @change="handleFileUpload('certificateOfPMESCompletion')" />
+        </div>
+        <div class="file-upload-item">
+          <label for="governmentId">Valid Government-issued ID</label>
+          <input type="file" id="governmentId" @change="handleFileUpload('governmentId')" />
+        </div>
+        <div class="file-upload-item">
+          <label for="taxIdentificationNumber">Tax Identification Number (TIN)</label>
+          <input type="file" id="taxIdentificationNumber" @change="handleFileUpload('taxIdentificationNumber')" />
+        </div>
+        <div class="file-upload-item">
+          <label for="proofOfBilling">Proof of Billing</label>
+          <input type="file" id="proofOfBilling" @change="handleFileUpload('proofOfBilling')" />
+        </div>
+        <div class="file-upload-item">
+          <label for="recent2x2Picture">Recent 2x2 ID Picture</label>
+          <input type="file" id="recent2x2Picture" @change="handleFileUpload('recent2x2Picture')" />
+        </div>
+      </div>
+    </div>
+
+
+     <!-- Step 3: Payment Proof -->
+      <div v-if="currentStep === 3">
+        <h1 class="text-2xl font-semibold mb-4">Payment Proof</h1>
+
+        <div class="payment-proof-container">
+          <!-- Payment Breakdown -->
+          <div class="payment-breakdown mb-4">
+            <h3 class="text-lg font-semibold">Payment Breakdown</h3>
+            <ul>
+              <li>Membership Fee: P 200.00</li>
+              <li>Initial Savings Deposit: P 500.00</li>
+              <li>Regular Member: P 2,000.00</li>
+              <li><b>Total: P 2,700</b></li>
+            </ul>
+
+            <!-- Info link to membership policy -->
+            <p class="mt-2 text-sm text-gray-600">
+              For more information about membership payment details, please see our
+              <a href="/member/cooperative/policy" class="text-red-600 underline hover:text-red-800">
+                Membership and Loan Policy
+              </a>.
+            </p>
+          </div>
+
+          <!-- Payment Mode select option first -->
+          <div class="payment-proof-item">
+            <label for="paymentMode">Payment Mode</label>
+            <select id="paymentMode" class="input" required>
+              <option value="" disabled selected>Select Payment Mode</option>
+              <option value="bank">Bank</option>
+              <option value="onlinePayment">Online Payment</option>
+              <option value="overTheCounter">Over the Counter</option>
+            </select>
+          </div>
+
+          <!-- Payment Reference input with placeholder examples -->
+          <div class="payment-proof-item">
+            <label for="paymentReference">Payment Reference</label>
+            <input type="text" v-model="form.paymentReference" id="paymentReference" class="input" placeholder="e.g., Transaction ID, Invoice Number, Reference Code" required />
+          </div>
+
+          <div class="payment-proof-item">
+            <label for="paymentProof">Upload Payment Proof</label>
+            <input type="file" id="paymentProof" @change="handleFileUpload('paymentProof')" />
+          </div>
+        </div>
+      </div>
+
+
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between gap-6 mt-6">
+          <button v-if="currentStep > 1" @click="goToPreviousStep" class="btn">Back</button>
+          <button v-if="currentStep < totalSteps" @click="goToNextStep" class="btn">Next</button>
+          <button v-if="currentStep === totalSteps" @click="submitForm" class="btn">Submit</button>
+        </div>
+      </div>
+    </form>
   </AppLayout>
 </template>
 
@@ -900,4 +1047,86 @@ const toNull = (v: string | null | undefined) => (v === '' || v == null ? null :
   margin-left: 16px;
   margin-right: 16px;
 }
+
+/* General File Upload Styling */
+.file-upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .file-upload-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .file-upload-item label {
+    font-weight: bold;
+    margin-bottom: 5px; /* Space between label and input */
+  }
+
+  .file-upload-item input[type="file"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+  }
+
+.file-upload-container label {
+  font-weight: bold;
+  color: #333;
+}
+
+.file-upload-container .file-upload-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.file-upload-container .file-upload-item input {
+  flex: 1;
+}
+
+/* Payment Proof Section Styling */
+.payment-proof-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.payment-proof-container input[type="text"] {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+}
+
+.payment-proof-container input[type="file"] {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+}
+
+.payment-proof-item {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #e5e7eb; /* light gray background */
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #ef4444; /* red fill color */
+  transition: width 0.3s ease-in-out;
+}
+
 </style>

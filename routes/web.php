@@ -68,12 +68,13 @@ Route::middleware('role:member')->prefix('member')->name('member.')->group(funct
 
     Route::prefix('cooperative')->name('cooperative.')->group(function () {
         Route::get('/account', [CooperativeController::class, 'account'])->name('account');
+        Route::get('/policy', [CooperativeController::class, 'policy'])->name('policy');  
     });
 
     Route::prefix('services')->name('services.')->group(function () {
         Route::get('/loan-application', [ServicesController::class, 'loanApplication'])->name('loan-application');
-        Route::get('/credit-scoring', [ServicesController::class, 'creditScoring'])->name('credit-scoring');  // Added Credit Scoring route
-        Route::get('/loan-status', [ServicesController::class, 'loanStatus'])->name('loan-status');  // Added Loan Status route
+        Route::get('/credit-scoring', [ServicesController::class, 'creditScoring'])->name('credit-scoring');  
+        Route::get('/loan-status', [ServicesController::class, 'loanStatus'])->name('loan-status');  
     });
 
     Route::prefix('requirements')->name('requirements.')->group(function () {

@@ -16,7 +16,7 @@ import {
 import { Link, usePage } from '@inertiajs/vue3'
 import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-vue'
 
-import { Calculator, Calendar, FilePlus, FileSignature, FileWarning, HandCoins, Home, LayoutGrid, User } from 'lucide-vue-next'
+import { Calculator, Calendar, FilePlus, FileSignature, FileText, FileWarning, HandCoins, Home, Landmark, LayoutGrid, User } from 'lucide-vue-next'
 
 import { computed } from 'vue'
 import AppLogo from './AppLogo.vue'
@@ -83,6 +83,11 @@ const mainNavSections = computed(() => {
             href: '/member/cooperative/account',
             icon: User,
           },
+          {
+            title: 'Policy',
+            href: '/member/cooperative/policy',  // Direct link to Loan Policy
+            icon: FileText,
+          },
         ],
       },
       {
@@ -98,15 +103,10 @@ const mainNavSections = computed(() => {
             href: '/member/services/credit-scoring',
             icon: FileSignature,  // You can choose an appropriate icon for Credit Scoring
           },
-        ],
-      },
-      {
-        label: 'Loan Status',
-        items: [
           {
             title: 'Loan Status',
             href: '/member/services/loan-status',
-            icon: FilePlus,  // Choose an appropriate icon for Loan Status
+            icon:  Landmark,  // Choose an appropriate icon for Loan Status
           },
         ],
       },

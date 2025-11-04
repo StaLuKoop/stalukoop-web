@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue'
 import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/vue3'
@@ -90,6 +90,135 @@ watch(employmentType, (value) => {
       break;
   }
 });
+
+// Track the phone number input
+const phone = ref('');
+
+// Method to sanitize the mobile number
+const sanitizePhone = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  let value = input.value;
+
+  // Only allow numbers and "+"
+  value = value.replace(/[^0-9+]/g, ''); // Remove any non-numeric and non "+" characters
+
+  // Ensure the value starts with "+63"
+  if (value.startsWith('+63')) {
+    input.value = value; // If it starts with +63, keep it
+  } else {
+    input.value = '+63'; // Otherwise, default to +63
+  }
+
+
+  if (input.value.length > 13) {
+    input.value = input.value.slice(0, 13);
+  }
+
+  // Update the model with the sanitized value
+  phone.value = input.value;
+};
+
+onMounted(() => {
+  const collateralYes = document.getElementById('collateral-yes') as HTMLInputElement | null;
+  const collateralNo = document.getElementById('collateral-no') as HTMLInputElement | null;
+
+  const collateralInfo = document.getElementById('collateral-info') as HTMLElement | null;
+  const guarantorInfo = document.getElementById('guarantor-info') as HTMLElement | null;
+
+  const collateralDocument = document.getElementById('collateral-document') as HTMLSelectElement | null;
+  const otherCollateral = document.getElementById('other-collateral') as HTMLElement | null;
+
+  const uploadCollateral = document.getElementById('upload-collateral-document') as HTMLElement | null;
+  const uploadInput = document.getElementById('collateral-document-upload') as HTMLInputElement | null;
+
+  const guarantorTableBody = document.getElementById('guarantorTableBody') as HTMLTableSectionElement | null;
+  const addRowButton = document.getElementById('add-row-button') as HTMLButtonElement | null;
+
+  // Helpers
+  const show = (el?: HTMLElement | null) => { if (el) el.style.display = 'block'; };
+  const hide = (el?: HTMLElement | null) => { if (el) el.style.display = 'none'; };
+
+  const requireUpload = (required: boolean) => {
+    if (!uploadInput) return;
+    if (required) uploadInput.setAttribute('required', '');
+    else uploadInput.removeAttribute('required');
+    if (!required) uploadInput.value = ''; // clear when turning off
+  };
+
+  // --- Radio change handlers ---
+  collateralYes?.addEventListener('change', () => {
+    show(collateralInfo);
+    hide(guarantorInfo);
+    show(uploadCollateral);
+    requireUpload(true);
+  });
+
+  collateralNo?.addEventListener('change', () => {
+    hide(collateralInfo);
+    show(guarantorInfo);
+    hide(uploadCollateral);
+    requireUpload(false);
+    // Optional: also hide "Other" field when switching to No
+    hide(otherCollateral);
+  });
+
+  // --- Collateral "Other" select toggle ---
+  collateralDocument?.addEventListener('change', (e) => {
+    const target = e.target as HTMLSelectElement;
+    if (target.value === 'other') show(otherCollateral);
+    else hide(otherCollateral);
+  });
+
+  // --- Add guarantor row ---
+  addRowButton?.addEventListener('click', () => {
+    if (!guarantorTableBody) return;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="border px-4 py-2">
+        <input type="text" name="guarantor_name[]" class="w-full border border-gray-300 rounded p-2" placeholder="Enter name" required />
+      </td>
+      <td class="border px-4 py-2">
+        <input type="text" name="guarantor_contact[]" class="w-full border border-gray-300 rounded p-2" placeholder="Enter contact" required />
+      </td>
+      <td class="border px-4 py-2 text-center">
+        <button type="button" class="btn-remove-guarantor text-red-500 hover:text-red-700" aria-label="Remove guarantor row">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    `;
+    guarantorTableBody.appendChild(row);
+  });
+
+  // --- Remove guarantor row (event delegation, works for all future rows) ---
+  guarantorTableBody?.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const removeBtn = target.closest('.btn-remove-guarantor') as HTMLButtonElement | null;
+    if (removeBtn) {
+      const tr = removeBtn.closest('tr');
+      tr?.remove();
+    }
+  });
+
+  // --- Initial state on load (handles pre-checked radios & existing values) ---
+  const init = () => {
+    // Radios
+    if (collateralYes?.checked) {
+      show(collateralInfo); hide(guarantorInfo); show(uploadCollateral); requireUpload(true);
+    } else if (collateralNo?.checked) {
+      hide(collateralInfo); show(guarantorInfo); hide(uploadCollateral); requireUpload(false);
+    } else {
+      // Default hidden until user chooses
+      hide(collateralInfo); hide(uploadCollateral); requireUpload(false);
+    }
+    // "Other" select
+    if (collateralDocument?.value === 'other') show(otherCollateral);
+    else hide(otherCollateral);
+  };
+  init();
+});
+
+
+
 </script>
 
 
@@ -123,6 +252,7 @@ watch(employmentType, (value) => {
 
         <form action="/submit-loan-application" method="POST" class="form-space">
           <!-- Personal Information Section -->
+          <h1 class="text-2xl font-semibold mb-[5px]">Personal Information</h1>
           <div class="space-y-4">
             <label class="input-label">Full Name</label><br>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -143,9 +273,18 @@ watch(employmentType, (value) => {
           <!-- Contact and Address -->
           <div class="space-y-4">
             <div class="flex items-center space-x-4">
-              <div>
-                <label for="contact-no" class="input-label">Contact No.</label>
-                <input type="text" id="contact-no" name="contact_no" required class="input-field w-50" />
+                  <div class="md:col-span-2">
+                <label for="contact-no" class="input-label">Mobile Number</label>
+                <input 
+                  type="tel" 
+                  id="mobile"
+                  name="contact_no"
+                  placeholder="+63XXXXXXXXX"
+                  class="input-field w-50"
+                  v-model="phone"
+                  @input="sanitizePhone"
+                  required
+                />
               </div>
 
               <div class="md:col-span-2">
@@ -166,8 +305,8 @@ watch(employmentType, (value) => {
                 <option value="renting">Renting</option>
               </select>
             </div>
-            </div>
           </div>
+        </div>
 
     <div class="space-y-4">
     <div class="grid grid-cols-2 gap-2 mb-2">
@@ -274,63 +413,42 @@ watch(employmentType, (value) => {
         
     </div>
   </div>
-          
+          <h1 class="text-2xl font-semibold mb-[5px] mt-10">Loan Information</h1>
           <!-- Membership, Capital, Type of Loan -->
-        <div class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-15"> <!-- Adjusted gap to 6 -->
-
-            <!-- Share Capital and Savings Section -->
-            <div class="flex flex-col space-y-2">
-              <label class="input-label">Current Investment</label>
-              <div class="flex items-center space-x-4">
-                <span class="w-42">Share Capital</span>
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-5"> <!-- 4 columns on medium screens and above -->
+              
+              <!-- Share Capital and Savings Section -->
+              <div class="flex flex-col">
+                <label class="input-label">Share Capital</label>
                 <input type="text" class="input-field w-full" placeholder="Enter amount" />
               </div>
-              <div class="flex items-center space-x-4">
-                <span class="w-42">Savings</span>
+
+              <div class="flex flex-col">
+                <label class="input-label">Savings</label>
                 <input type="text" class="input-field w-full" placeholder="Enter amount" />
               </div>
-            </div>
 
-            <!-- Loan Type Section -->
-            <div class="flex flex-col space-y-2">
-              <label class="input-label">Type of Loan</label>
-              <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2">
-                  <input type="radio" name="loan_type" value="productive" class="radio-input" />
-                  <span class="w-42">Productive Loan</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <input type="radio" name="loan_type" value="providential" class="radio-input" />
-                  <span class="w-42">Providential Loan</span>
-                </div>
+              <!-- Loan Type Section -->
+              <div class="flex flex-col">
+                <label class="input-label">Type of Loan</label>
+                <select class="input-field w-full">
+                  <option value="regular">Regular Loan</option>
+                </select>
               </div>
-                <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2">
-                  <input type="radio" name="loan_type" value="emergency" class="radio-input" />
-                  <span class="w-42">Emergency Loan</span>
-                </div>
-                <div class="flex items-center space-x-3">
-                  <span>Other/s</span>
-                  <input type="text" name="other_loan_type" placeholder="Enter other loan type" class="input-field w-50" />
-                </div>
-              </div>
-            </div>
 
-            <!-- Membership Type Section -->
-            <div class="flex flex-col space-y-2">
-              <label class="input-label">Type of Membership:</label>
-              <div class="flex items-center space-x-4">
-                <input type="radio" name="ownership" value="owner" class="radio-input" />
-                <span>Regular Member</span>
+              <!-- Membership Type Section -->
+              <div class="flex flex-col">
+                <label class="input-label">Type of Membership:</label>
+                <select name="ownership" class="input-field w-full">
+                  <option value="owner">Regular Member</option>
+                  <option value="tenant">Associate Member</option>
+                </select>
               </div>
-              <div class="flex items-center space-x-4">
-                <input type="radio" name="ownership" value="tenant" class="radio-input" />
-                <span>Associate Member</span>
-              </div>
-            </div>          
+
+            </div>
           </div>
-        </div>
+
 
         <!-- Loan Information Section -->
         <div class="space-y-4">
@@ -366,76 +484,164 @@ watch(employmentType, (value) => {
             </div>
           </div>
         </div>
+  
+        <h1 class="text-2xl font-semibold mb-[1px] mt-6 ">Loan Security</h1>
+        <div class="flex flex-col space-y-2">
+          <label for="collateral-question" class="input-label">Will you be providing collateral for this loan?</label>
+          
+          <!-- Collateral Option -->
+          <div class="flex items-center space-x-4">
+            <input type="radio" name="collateral_type" value="collateral" required class="radio-input" id="collateral-yes" />
+            <span>Yes, I will provide collateral</span>
+          </div>
+          
+          <!-- Non-Collateral Option -->
+          <div class="flex items-center space-x-4">
+            <input type="radio" name="collateral_type" value="non_collateral" required class="radio-input" id="collateral-no" />
+            <span>No, I will not provide collateral</span>
+          </div>
+        </div>
 
-        <!-- Collateral and Guarantor Information -->
-        <div class="space-y-4">
+        <!-- Collateral Information (only visible if 'Yes' is selected) -->
+        <div id="collateral-info" class="space-y-4" style="display: none;">
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <!-- Collateral Type -->
             <div>
-              <label for="contact-no" class="input-label">Collateral Type</label>
-              <input type="text" id="contact-no" name="contact_no" required class="input-field w-full" placeholder="e.g., property, vehicle, appliance" />
+              <label for="collateral-type" class="input-label">Collateral Type</label>
+              <input type="text" id="collateral-type" name="collateral_type" required class="input-field w-full" placeholder="e.g., property, vehicle, appliance" />
             </div>
-
-            
-
 
             <!-- Collateral Document Section -->
-          <div class="space-y-4">
-            <label for="collateral-document" class="input-label">Collateral Document</label>
-            <select id="collateral-document" name="collateral_document" @change="handleCollateralChange" required class="input-field w-full">
-              <option value="or-cr-franchise">OR/CR and Franchise (Vehicle)</option>
-              <option value="land-title">Land Title</option>
-              <option value="or-cr-only">OR/CR Only (Vehicle)</option>
-              <option value="pdc">PDC (Post-Dated Check)</option>
-              <option value="atm">ATM Card</option>
-              <option value="other">Other (Please Specify)</option>
-            </select>
-          </div>
-
-          <!-- 'Other' Collateral Description Field -->
-          <div v-if="showOtherCollateral" class="space-y-4">
-            <label for="other-collateral-description" class="input-label">Please specify the collateral document</label>
-            <input type="text" id="other-collateral-description" name="other_collateral_description" class="input-field w-full"  />
-          </div>
-
-            <div>
-              <label for="contact-no" class="input-label">Collateral Value</label>
-              <input type="text" id="contact-no" name="contact_no" required class="input-field w-70" placeholder="₱" />
+            <div class="space-y-4">
+              <label for="collateral-document" class="input-label">Collateral Document</label>
+              <select id="collateral-document" name="collateral_document" required class="input-field w-full">
+                <option value="or-cr-franchise">OR/CR and Franchise (Vehicle)</option>
+                <option value="land-title">Land Title</option>
+                <option value="or-cr-only">OR/CR Only (Vehicle)</option>
+                <option value="pdc">PDC (Post-Dated Check)</option>
+                <option value="atm">ATM Card</option>
+                <option value="other">Other (Please Specify)</option>
+              </select>
             </div>
-            
-            
+
+            <!-- 'Other' Collateral Description Field -->
+            <div id="other-collateral" class="space-y-4" style="display: none;">
+              <label for="other-collateral-description" class="input-label">Please specify the collateral document</label>
+              <input type="text" id="other-collateral-description" name="other_collateral_description" class="w-full border border-gray-300 rounded p-2" />
+            </div>
+
+            <!-- Collateral Value -->
+            <div>
+              <label for="collateral-value" class="input-label">Collateral Value</label>
+              <input type="text" id="collateral-value" name="collateral_value" required class="w-full border border-gray-300 rounded p-2 w-70" placeholder="₱" />
+            </div>
+          </div>
+
+          <!-- Document Upload Section (Visible only if 'Yes' is selected) -->
+          <div id="upload-collateral-document" class="space-y-4" style="display: none; ">
+            <label for="collateral-document-upload" class="input-label">Upload Collateral Document</label>
+            <input type="file" id="collateral-document-upload" name="collateral_document_upload" class="w-full border border-gray-300 rounded p-2" />
+            <span class="text-sm text-gray-500">Acceptable file formats: PDF, JPG, PNG, DOCX</span>
           </div>
         </div>
 
-        <!-- Guarantor Information -->
+        <!-- Guarantor Information (only visible if 'No' is selected) -->
+        <div id="guarantor-info" style="display: none;">
+          <h2 class="text-lg font-semibold mb-2 mt-5">Guarantor Information</h2>
+          <table id="guarantorTable" class="table-auto w-full border-collapse border">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="border px-4 py-2 text-lg" required>Guarantor Name</th>
+                <th class="border px-4 py-2 text-lg" required>Guarantor Contact</th>
+                <th class="border px-4 py-2 w-20">
+                  <button type="button" id="add-row-button" class="btn-add">+</button>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="guarantorTableBody">
+              <tr>
+                <td class="border px-4 py-2">
+                  <input type="text" name="guarantor_name[]" class="w-full border border-gray-300 rounded p-2" placeholder="Enter name" required />
+                </td>
+                <td class="border px-4 py-2">
+                  <input type="text" name="guarantor_contact[]" class="w-full border border-gray-300 rounded p-2" placeholder="Enter contact" required />
+                </td>
+                <td class="border px-4 py-2 text-center">
+                  <button type="button" class="btn-remove-guarantor text-red-500 hover:text-red-700">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+        <!-- Guarantor Information (only visible if 'No' is selected) -->
+        <div id="guarantor-info"style="display: none;">
+          <h2 class="text-lg font-semibold mb-2 mt-5">Guarantor Information</h2>
+
+          <table id="guarantorTable" class="table-auto w-full border-collapse border">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="border px-4 py-2 text-lg">Guarantor Name</th>
+                <th class="border px-4 py-2 text-lg">Guarantor Contact</th>
+                <th class="border px-4 py-2 w-20">
+                  <button type="button" id="add-row-button" class="btn-add">+</button>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="guarantorTableBody">
+              <tr>
+                <td class="border px-4 py-2">
+                  <input type="text" name="guarantor_name[]" class="w-full border border-gray-300 rounded p-2" placeholder="Enter name" required />
+                </td>
+                <td class="border px-4 py-2">
+                  <input type="text" name="guarantor_contact[]" class="w-full border border-gray-300 rounded p-2" placeholder="Enter contact" required />
+                </td>
+                <td class="border px-4 py-2 text-center">
+                  <button type="button" class="btn-remove-guarantor text-red-500 hover:text-red-700">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+
         <div class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label for="contact-no" class="input-label">Guarantor Name</label>
-              <input type="text" id="contact-no" name="contact_no" required class="input-field w-full" placeholder="Enter guarantor's name"/>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5"> <!-- Two columns on medium screens and above -->
+
+            <!-- Savings Purpose Section -->
+            <div class="flex flex-col">
+              <label for="savings-purpose" class="input-label">Is your savings intended for building your asset base or for the purpose of taking a loan?</label>
+              <div class="flex items-center space-x-4">
+                <input type="radio" name="savings_purpose" value="asset_growth" required class="radio-input" />
+                <span>Yes, my savings are for asset growth</span>
+              </div>
+              <div class="flex items-center space-x-4">
+                <input type="radio" name="savings_purpose" value="loan_purpose" required class="radio-input" />
+                <span>No, my savings are only for the purpose of taking a loan</span>
+              </div>
             </div>
 
-            <div>
-              <label for="contact-no" class="input-label">Guarantor Contact</label>
-              <input type="text" id="contact-no" name="contact_no" required class="input-field w-full" placeholder="Enter guarantor's contact number" />
+            <!-- Health Condition Impact Section -->
+            <div class="flex flex-col">
+              <label for="health-condition-impact" class="input-label">Will the member’s health condition affect loan status in the future?</label>
+              <div class="flex items-center space-x-4">
+                <input type="radio" name="health_condition_impact" value="yes" required class="radio-input" />
+                <span>Yes</span>
+              </div>
+              <div class="flex items-center space-x-4">
+                <input type="radio" name="health_condition_impact" value="no" required class="radio-input" />
+                <span>No</span>
+              </div>
             </div>
+
           </div>
         </div>
-
-        <div class="space-y-4">
-        <div>
-          <label for="savings-purpose" class="input-label">Is your savings intended for building your asset base or for the purpose of taking a loan?</label>
-          <div class="flex items-center space-x-4">
-            <input type="radio" name="savings_purpose" value="asset_growth" required class="radio-input" />
-            <span>Yes, my savings are for asset growth</span>
-          </div>
-          <div class="flex items-center space-x-4">
-            <input type="radio" name="savings_purpose" value="loan_purpose" required class="radio-input" />
-            <span>No, my savings are only for the purpose of taking a loan</span>
-          </div>
-        </div>
-      </div>
-
 
           <!-- Submit Section -->
           <div class="submit-container">
@@ -539,5 +745,23 @@ watch(employmentType, (value) => {
   display: flex;
   justify-content: flex-end;
   margin-top: 0.5rem;
+}
+
+/* Style for add and remove buttons */
+.btn-add, .btn-remove {
+  color: #DA251C;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.fas {
+  font-size: 16px; /* Adjust icon size */
+  transition: transform 0.3s ease; /* Smooth transition for icon size change */
+}
+
+.btn-add:hover .fas, .btn-remove:hover .fas {
+  transform: scale(1.2); /* Slightly enlarge the icon on hover */
 }
 </style>
