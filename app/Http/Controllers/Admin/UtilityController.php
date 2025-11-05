@@ -17,4 +17,9 @@ class UtilityController extends Controller
   {
     return Inertia::render('admin/utility/Calendar');
   }
+
+  public function reports(): Response
+  {
+    return Inertia::render('admin/utility/Reports');
+  }
 }
