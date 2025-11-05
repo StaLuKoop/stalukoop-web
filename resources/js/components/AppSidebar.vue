@@ -16,7 +16,7 @@ import {
 import { Link, usePage } from '@inertiajs/vue3'
 import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-vue'
 
-import { Calculator, Calendar, FilePlus, FileSignature, FileWarning, HandCoins, Home, LayoutGrid, User } from 'lucide-vue-next'
+import { Calculator, Calendar, FilePlus, FileSignature, FileWarning, Home, LayoutGrid, User } from 'lucide-vue-next'
 
 import { computed } from 'vue'
 import AppLogo from './AppLogo.vue'
