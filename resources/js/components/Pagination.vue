@@ -1,3 +1,11 @@
+<!--
+
+I'll start comments on what components/files do from here.
+Pagination.vue
+- A reusable pagination component that renders pagination links and handles navigation using Inertia.js router.
+
+-->
+
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3'
 
