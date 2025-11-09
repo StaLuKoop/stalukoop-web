@@ -3,165 +3,146 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
+import dayjs from 'dayjs'
 
+// 🔹 Breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/member/dashboard' },
   { title: 'Pre-Membership Education Seminar', href: '/member/requirements/pre-membership-seminar' },
 ]
 
+// 🔹 Mock schedule list (for demo)
+const schedules = ref([
+  { id: 1, date: '2025-11-10', time: '09:00 AM - 12:00 PM', mode: 'Online', code: 'PMES10A', meetingLink: 'https://zoom.us/j/123456789', certificateIssued: true },
+  { id: 2, date: '2025-11-15', time: '01:00 PM - 04:00 PM', mode: 'Face-to-Face', code: 'PMES15B', meetingLink: '', certificateIssued: false },
+])
+
+// 🔹 Current Month Filter
+const currentMonth = dayjs().format('YYYY-MM')
+const availableSchedules = computed(() =>
+  schedules.value.filter((s) => s.date.startsWith(currentMonth))
+)
+
+// 🔹 Form State
+const selectedScheduleId = ref<number | null>(null)
+const name = ref({ first: '', middle: '', last: '' })
 const email = ref('')
-const phone = ref('')
+const phone = ref('+63')
+const goals = ref('')
+const coopMeaning = ref('')
+const attendanceCode = ref('')
+const isAttended = ref(false)
+const canViewCertificate = ref(false)
+const showCode = ref<number | null>(null)
+const demoMessage = ref('')
 
-const minDate = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
-  return today
-})
+// 🔹 Validation (dummy for demo)
+const isValidForm = computed(() => selectedScheduleId.value && email.value && phone.value)
 
-const isValidEmail = computed(() => {
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-  return emailPattern.test(email.value)
-})
-
-const isValidPhone = computed(() => {
-  const phonePattern = /^\+63\d{9}$/
-  return phonePattern.test(phone.value)
-})
-
-const isValidForm = computed(() => {
-  return isValidEmail.value && isValidPhone.value
-})
-
+// 🔹 Sanitize Phone Input
 const sanitizePhone = (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  let value = input.value;
+  const input = event.target as HTMLInputElement
+  let value = input.value.replace(/[^0-9+]/g, '')
+  if (!value.startsWith('+63')) value = '+63'
+  phone.value = value
+  input.value = value
+}
 
-  // Only allow numbers and "+63"
-  value = value.replace(/[^0-9+]/g, ''); // Remove any non-numeric and non "+" characters
+// 🔹 Demo button handlers
+const toggleCode = (id: number) => {
+  showCode.value = showCode.value === id ? null : id
+  demoMessage.value = `Attendance code for schedule ${id} is revealed (demo).`
+}
 
-  // Enforce starting with +63
-  if (value.startsWith('+63')) {
-    input.value = value;
-  } else {
-    input.value = '+63'; // Ensure that it starts with +63
-  }
-
-  phone.value = input.value; // Update the model
-};
-
-// Function to handle form submission
-const submitForm = () => {
-  // Display confirmation popup
-  if (confirm('Are you sure you want to submit the form?')) {
-    // Display success message upon confirmation
-    alert('Form successfully submitted!');
+const demoClick = (action: string) => {
+  demoMessage.value = `${action} clicked (demo).`
+  if (action === 'Verify Attendance') {
+    isAttended.value = true
+    const chosen = schedules.value.find(s => s.id === selectedScheduleId.value)
+    canViewCertificate.value = chosen?.certificateIssued || false
   }
 }
 </script>
 
 <template>
   <Head title="Pre-Membership Education Seminar" />
-
   <AppLayout :breadcrumbs="breadcrumbs">
-    <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-6 mx-6">
-      <h1 class="text-xl font-semibold">Pre-Membership Education Seminar</h1>
+    <div class="flex flex-col gap-6 p-6">
 
-      <div class="space-y-6">
-        <h2 class="text-lg font-medium">Choose Your Preference</h2>
-        <div class="flex gap-4">
-          <label class="flex items-center">
-        <input type="radio" name="session" value="online" class="mr-2" />
-        PMES Digitally (Online)
-      </label>
+      <h1 class="text-xl font-semibold">Pre-Membership Education Seminar (PMES)</h1>
 
-      <label class="flex items-center">
-        <input type="radio" name="session" value="face-to-face" class="mr-2" />
-        Face to Face (F2F)
-      </label>
+      <!-- 🗓 SELECT SCHEDULE -->
+      <div class="bg-white p-4 rounded-lg border shadow-sm">
+        <h2 class="text-lg font-medium mb-3">Available Schedules</h2>
+        <div v-if="availableSchedules.length" class="space-y-2">
+          <label
+            v-for="sched in availableSchedules"
+            :key="sched.id"
+            class="flex flex-col border p-3 rounded-md hover:bg-gray-50 cursor-pointer"
+          >
+            <div class="flex items-center gap-3">
+              <input type="radio" name="schedule" :value="sched.id" v-model="selectedScheduleId" />
+              <div>
+                <p class="font-medium">{{ sched.mode }} – {{ sched.date }} ({{ sched.time }})</p>
+              </div>
+            </div>
 
+            <!-- Online Meeting Link -->
+            <div v-if="sched.mode === 'Online' && selectedScheduleId === sched.id" class="mt-1 text-blue-600 underline text-sm break-all">
+              Meeting Link: <a :href="sched.meetingLink" target="_blank">{{ sched.meetingLink }}</a>
+            </div>
+
+    
+          </label>
         </div>
-
-        <h2 class="text-lg font-medium">Schedule Your Session</h2>
-        <div class="flex gap-4">
-          <input
-            type="date"
-            name="session-date"
-            class="w-1/2 p-2 border rounded-lg"
-            :min="minDate"
-          />
-          <input
-            type="time"
-            name="session-time"
-            class="w-1/2 p-2 border rounded-lg"
-          />
-        </div>
-
-        <h2 class="text-lg font-medium">Provide your contact information</h2>
-        <div class="flex gap-4">
-          <input
-            type="text"
-            placeholder="First Name"
-            class="w-1/3 p-2 border rounded-lg"
-          />
-          <input
-            type="text"
-            placeholder="Middle Name"
-            class="w-1/3 p-2 border rounded-lg"
-          />
-          <input
-            type="text"
-            placeholder="Last Name"
-            class="w-1/3 p-2 border rounded-lg"
-          />
-        </div>
-        <div class="flex gap-4 mt-2">
-          <input
-            type="email"
-            placeholder="Email Address"
-            class="w-1/2 p-2 border rounded-lg"
-            v-model="email"
-          />
-          <input
-            type="tel"
-            placeholder="+63XXXXXXXXX"
-            class="w-1/2 p-2 border rounded-lg"
-            v-model="phone"
-            @input="sanitizePhone"
-          />
-        </div>
-
-        <h2 class="text-lg font-medium">Answer Initial Questions</h2>
-        <div class="space-y-4">
-          <div>
-            <label for="goals" class="block font-medium">What are your goals for joining the coop?</label>
-            <textarea id="goals" class="w-full p-2 border rounded-lg" rows="4"></textarea>
-          </div>
-
-          <div>
-            <label for="coop-meaning" class="block font-medium">What does coop mean to you?</label>
-            <textarea id="coop-meaning" class="w-full p-2 border rounded-lg" rows="4"></textarea>
-          </div>
-        </div>
-
-        <!-- Submit Button -->
-    <div class="flex justify-end mt-6">
-      <button @click="submitForm" :disabled="!isValidForm" class="btn btn-primary bg-blue-500 text-white py-2 px-6 rounded-lg">Submit</button>
-    </div>
+        <p v-else class="text-gray-500 italic">No available schedules this month.</p>
       </div>
+
+      <!-- 👤 USER DETAILS -->
+      <div class="bg-white p-4 rounded-lg border shadow-sm">
+        <h2 class="text-lg font-medium mb-3">Contact Information</h2>
+        <div class="flex gap-4 mb-2">
+          <input v-model="name.first" type="text" placeholder="First Name" class="w-1/3 p-2 border rounded-lg" />
+          <input v-model="name.middle" type="text" placeholder="Middle Name" class="w-1/3 p-2 border rounded-lg" />
+          <input v-model="name.last" type="text" placeholder="Last Name" class="w-1/3 p-2 border rounded-lg" />
+        </div>
+        <div class="flex gap-4">
+          <input v-model="email" type="email" placeholder="Email Address" class="w-1/2 p-2 border rounded-lg" />
+          <input v-model="phone" type="tel" placeholder="+63XXXXXXXXX" class="w-1/2 p-2 border rounded-lg" @input="sanitizePhone" />
+        </div>
+      </div>
+
+      <!-- 🧭 INITIAL QUESTIONS -->
+      <div class="bg-white p-4 rounded-lg border shadow-sm">
+        <h2 class="text-lg font-medium mb-3">Initial Questions</h2>
+        <textarea v-model="goals" placeholder="Your goals..." class="w-full p-2 border rounded-lg mb-2"></textarea>
+        <textarea v-model="coopMeaning" placeholder="What does a cooperative mean to you?" class="w-full p-2 border rounded-lg"></textarea>
+      </div>
+
+      <!-- 📩 SUBMIT -->
+      <div class="flex justify-end">
+        <button @click="demoClick('Submit Registration')" :disabled="!isValidForm" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 disabled:opacity-50">
+          Submit Registration
+        </button>
+      </div>
+
+      <!-- ✅ ATTENDANCE CODE -->
+      <div v-if="selectedScheduleId" class="bg-white p-4 rounded-lg border shadow-sm mt-6">
+        <h2 class="text-lg font-medium mb-3">Attendance Verification</h2>
+        <input v-model="attendanceCode" type="text" placeholder="Enter Attendance Code" class="p-2 border rounded-lg mr-2" />
+        <button @click="demoClick('Verify Attendance')" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg">Verify</button>
+
+        <!-- 🎓 Certificate -->
+        <div v-if="isAttended && canViewCertificate" class="mt-4 p-4 border rounded-lg bg-green-50 text-green-700">
+          <p class="font-medium">Congratulations! You can now view/download your certificate.</p>
+          <a href="#" class="text-blue-600 underline mt-2 block">View Certificate</a>
+        </div>
+        <div v-else-if="isAttended && !canViewCertificate" class="mt-4 p-4 border rounded-lg bg-yellow-50 text-yellow-700">
+          <p>Your attendance is verified. Certificate is not yet issued by admin.</p>
+        </div>
+      </div>
+
+
     </div>
   </AppLayout>
 </template>
-
-<style scoped>
-.btn {
-  padding: 0.75rem 2rem;
-  background-color: #DA251C;
-  border: none;
-  color: white;
-  border-radius: 0.375rem;
-  cursor: pointer;
-}
-
-.btn:hover {
-  background-color: lightcoral;
-}
-</style>

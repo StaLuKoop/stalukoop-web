@@ -27,6 +27,9 @@ type Member = {
   date_joined?: string
   total_sharing_capital?: number
   total_savings?: number
+  rejection_reason?: string // Added for rejection reason
+  membership_form_data?: any // Added to store submitted form data
+  pmes_status?: 'Completed' | 'Not Completed' // NEW: PMES attendance status
 }
 
 type PageProps = AppPageProps<{
@@ -37,7 +40,7 @@ type PageProps = AppPageProps<{
     search?: string
   }
   meta: {
-    links: any[]
+    links: any[] 
     current_page: number
     last_page: number
   }
@@ -49,6 +52,7 @@ const search = ref(page.props.filters.search ?? '')
 const members = ref<Member[]>([])
 const selectedMember = ref<Member | null>(null)
 const showProfile = ref(false)
+const rejectionReason = ref('') // Track the rejection reason
 
 watchEffect(() => {
   members.value = page.props.members.data
@@ -86,6 +90,7 @@ const viewMember = (member: Member) => {
 const closeModal = () => {
   selectedMember.value = null
   showProfile.value = false
+  rejectionReason.value = '' // Reset rejection reason when closing modal
 }
 
 const deleteMember = (id: number) => {
@@ -104,7 +109,12 @@ const approveMember = (id: number) => {
 }
 
 const rejectMember = (id: number) => {
-  router.post(`/admin/management/members/${id}/reject`, {}, {
+  if (rejectionReason.value.trim() === '') {
+    alert('Please provide a reason for rejection')
+    return
+  }
+
+  router.post(`/admin/management/members/${id}/reject`, { reason: rejectionReason.value }, {
     preserveScroll: true,
     onSuccess: () => (showProfile.value = false),
   })
@@ -172,6 +182,14 @@ const rejectMember = (id: number) => {
             <p><strong>Email:</strong> {{ selectedMember.email }}</p>
             <p><strong>Status:</strong> {{ selectedMember.membership_status }}</p>
 
+             <!-- PMES Attendance Status -->
+            <p>
+              <strong>PMES Attendance:</strong>
+              <span :class="selectedMember.pmes_status === 'Completed' ? 'text-green-600' : 'text-red-600'">
+                {{ selectedMember.pmes_status ?? 'Not Completed' }}
+              </span>
+            </p>
+
             <div v-if="selectedMember.membership_status === 'Regular'">
               <p><strong>Date Joined:</strong> {{ selectedMember.date_joined ?? '—' }}</p>
 
@@ -199,6 +217,17 @@ const rejectMember = (id: number) => {
               <div class="flex gap-2 mt-4">
                 <Button variant="default" @click="approveMember(selectedMember.id)">Approve</Button>
                 <Button variant="destructive" @click="rejectMember(selectedMember.id)">Reject</Button>
+              </div>
+
+              <!-- Rejection Reason Input -->
+              <div v-if="selectedMember.membership_status === 'Pending'">
+                <label for="rejectionReason" class="block font-medium text-gray-700">Reason for Rejection</label>
+                <textarea
+                  v-model="rejectionReason"
+                  id="rejectionReason"
+                  class="input border border-gray-300 rounded-lg p-2 w-full mt-2"
+                  placeholder="Enter reason for rejection"
+                ></textarea>
               </div>
             </div>
           </div>

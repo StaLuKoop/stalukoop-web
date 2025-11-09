@@ -804,68 +804,146 @@ const goToPreviousStep = () => {
     </div>
 
   <!-- Private Property Section -->
-    <div>
-      <h1 class="text-2xl font-semibold mb-5">Private Property</h1>
+<div>
+  <h1 class="text-2xl font-semibold mb-5">Private Property</h1>
 
-      <!-- Car Ownership Section -->
+  <!-- Car Ownership Section -->
   <div class="grid grid-cols-2 gap-6 mb-5">
     <div class="flex flex-col">
-    <label class="input-label">Car Ownership</label>
-    <div class="flex space-x-4"required>
-      <label class="flex items-center">
-        <input type="radio"  name="car_ownership"  value="yes" v-model="carOwnership" class="mr-2" /> Yes
-      </label>
-      <label class="flex items-center">
-        <input type="radio"  name="car_ownership"  value="no" v-model="carOwnership" class="mr-2" /> No
-      </label>
-      <label class="flex items-center">
-        <input type="radio"  name="car_ownership"  value="owned" v-model="carOwnership" class="mr-2" /> Owned
-      </label>
+      <label class="input-label">Car Ownership</label>
+      <div class="flex space-x-4" required>
+        <label class="flex items-center">
+          <input type="radio" name="car_ownership" value="yes" v-model="carOwnership" class="mr-2" /> Yes
+        </label>
+        <label class="flex items-center">
+          <input type="radio" name="car_ownership" value="no" v-model="carOwnership" class="mr-2" /> No
+        </label>
+        <label class="flex items-center">
+          <input type="radio" name="car_ownership" value="owned" v-model="carOwnership" class="mr-2" /> Owned
+        </label>
+      </div>
+
+      <!-- Monthly Amortization (Car) - Show only if "Yes" is selected for Car Ownership -->
+      <div v-if="carOwnership === 'yes'" class="flex flex-col col-span-2">
+        <label class="input-label mt-2">Monthly Amortization</label>
+        <input
+          type="text"
+          placeholder="₱"
+          v-model="monthlyAmortization"
+          @input="formatCurrencyCar"
+          :required="carOwnership === 'yes'"
+          class="input border border-gray-300 rounded-lg p-2"
+        />
+      </div>
+
+      <!-- Additional Fields for Car Ownership -->
+      <div v-if="carOwnership === 'yes'" class="flex flex-col">
+        <label class="input-label mt-2" >Vehicle Type</label>
+        <select class="input border border-gray-300 rounded-lg p-2" >
+          <option value="" disabled selected>Select Vehicle Type</option>
+          <option value="sedan">Sedan</option>
+          <option value="suv">SUV</option>
+          <option value="motorcycle">Motorcycle</option>
+        </select>
+      </div>
+
+      <div v-if="carOwnership === 'yes'" class="flex flex-col">
+        <label class="input-label mt-2">Year Acquired</label>
+        <input type="number" class="input border border-gray-300 rounded-lg p-2" placeholder="Enter Year Acquired" />
+      </div>
+
+      <div v-if="carOwnership === 'yes'" class="flex flex-col">
+        <label class="input-label mt-2">Financing Institution</label>
+        <input type="text" class="input border border-gray-300 rounded-lg p-2" placeholder="Enter the Name of the Bank or Lender" />
+      </div>
+
+      <div v-if="carOwnership === 'yes'" class="flex flex-col">
+        <label class="input-label mt-2">Loan Term</label>
+        <select class="input border border-gray-300 rounded-lg p-2">
+          <option value="" disabled selected>Select Loan Term</option>
+          <option value="3">3 years</option>
+          <option value="5">5 years</option>
+        </select>
+      </div>
+
+      <div v-if="carOwnership === 'yes'" class="flex flex-col">
+        <label class="input-label mt-2">Upload Supporting Document</label>
+        <input type="file" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
     </div>
 
-    <!-- Monthly Amortization (Car) - Show only if "Yes" is selected for Car Ownership -->
-    <div v-if="carOwnership === 'yes'" class="flex flex-col col-span-2">
-      <label class="input-label mt-2">Monthly Amortization</label>
-      <input
-        type="text"
-        placeholder="₱"
-        v-model="monthlyAmortization"
-        @input="formatCurrencyCar"
-        :required="carOwnership === 'yes'"
-        class="input border border-gray-300 rounded-lg p-2"
-      />
-    </div>
-  </div>
-
+    <!-- House and Lot Section -->
     <div class="flex flex-col">
-    <label class="input-label">House and Lot</label>
-    <div class="flex space-x-4"required >
-      <label class="flex items-center">
-        <input type="radio" name="house_ownership" value="yes" v-model="houseOwnership" class="mr-2" /> Yes
-      </label>
-      <label class="flex items-center">
-        <input type="radio" name="house_ownership" value="no" v-model="houseOwnership" class="mr-2" /> No
-      </label>
-      <label class="flex items-center">
-        <input type="radio" name="house_ownership" value="owned" v-model="houseOwnership" class="mr-2" /> Owned
-      </label>
-    </div>
+      <label class="input-label">House and Lot</label>
+      <div class="flex space-x-4" required>
+        <label class="flex items-center">
+          <input type="radio" name="house_ownership" value="yes" v-model="houseOwnership" class="mr-2" /> Yes
+        </label>
+        <label class="flex items-center">
+          <input type="radio" name="house_ownership" value="no" v-model="houseOwnership" class="mr-2" /> No
+        </label>
+        <label class="flex items-center">
+          <input type="radio" name="house_ownership" value="owned" v-model="houseOwnership" class="mr-2" /> Owned
+        </label>
+      </div>
 
-    <!-- Show Monthly Amortization only if "Yes" is selected -->
-    <div v-if="houseOwnership === 'yes'" class="flex flex-col col-span-2">
-      <label class="input-label mt-2">Monthly Amortization</label>
-      <input
-        type="text"
-        placeholder="₱"
-        v-model="monthlyAmortizationHouse"
-        :required="houseOwnership === 'yes'"
-        @input="formatCurrencyHouse"
-        class="input border border-gray-300 rounded-lg p-2"
-      />
+      <!-- Show Monthly Amortization only if "Yes" is selected -->
+      <div v-if="houseOwnership === 'yes'" class="flex flex-col col-span-2">
+        <label class="input-label mt-2">Monthly Amortization</label>
+        <input
+          type="text"
+          placeholder="₱"
+          v-model="monthlyAmortizationHouse"
+          :required="houseOwnership === 'yes'"
+          @input="formatCurrencyHouse"
+          class="input border border-gray-300 rounded-lg p-2"
+        />
+      </div>
+
+      <!-- Additional Fields for House and Lot -->
+      <div v-if="houseOwnership === 'yes'" class="flex flex-col">
+        <label class="input-label mt-2">Property Type</label>
+        <select class="input border border-gray-300 rounded-lg p-2">
+          <option value="" disabled selected>Select Property Type</option>
+          <option value="house_and_lot">House & Lot</option>
+          <option value="lot_only">Lot Only</option>
+          <option value="condo">Condo</option>
+        </select>
+      </div>
+
+      <div v-if="houseOwnership === 'yes'" class="flex flex-col">
+        <label class="input-label mt-2">Location</label>
+        <input type="text" class="input border border-gray-300 rounded-lg p-2" placeholder="Enter Property Location" />
+      </div>
+
+      <div v-if="houseOwnership === 'yes'" class="flex flex-col">
+        <label class="input-label mt-2">Year Acquired</label>
+        <input type="number" class="input border border-gray-300 rounded-lg p-2"  placeholder="Enter Year Acquired" />
+      </div> 
+
+      <div v-if="houseOwnership === 'yes'" class="flex flex-col">
+        <label class="input-label mt-2">Financing Institution</label>
+        <input type="text"  class="input border border-gray-300 rounded-lg p-2" placeholder="Enter the Name of the Bank or Lender"/>
+      </div>
+
+      <div v-if="houseOwnership === 'yes'" class="flex flex-col">
+        <label class="input-label mt-2">Loan Term</label>
+        <select class="input border border-gray-300 rounded-lg p-2">
+          <option value="" disabled selected>Select Loan Term</option>
+          <option value="10">10 years</option>
+          <option value="15">15 years</option>
+          <option value="20">20 years</option>
+        </select>
+      </div>
+
+      <div v-if="houseOwnership === 'yes'" class="flex flex-col">
+        <label class="input-label mt-2">Upload Supporting Document</label>
+        <input type="file" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
     </div>
   </div>
 </div>
-</div>
+
 
     <!-- Expenditures Section -->
     <div>
