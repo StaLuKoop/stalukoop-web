@@ -643,6 +643,82 @@ onMounted(() => {
           </div>
         </div>
 
+        <!-- Supporting Documents Section -->
+         <h1 class="text-2xl font-semibold mb-[5px] mt-10">Supporting Documents</h1>
+          <p class="text-gray-600 mb-3 text-sm italic">Please upload the following documents to verify your identity and financial capacity.</p>
+
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Valid ID -->
+              <div>
+                <label for="valid-id" class="input-label">Valid ID (Government-issued)</label>
+                <input
+                  type="file"
+                  id="valid-id"
+                  name="valid_id"
+                  accept=".pdf, .jpg, .jpeg, .png"
+                  required
+                  class="input-field w-full"
+                />
+                <span class="text-sm text-gray-500">Accepted formats: PDF, JPG, PNG (Max 5MB)</span>
+              </div>
+
+              <!-- Proof of Income -->
+              <div>
+                <label for="proof-income" class="input-label">Proof of Income</label>
+                <input
+                  type="file"
+                  id="proof-income"
+                  name="proof_income"
+                  accept=".pdf, .jpg, .jpeg, .png"
+                  required
+                  class="input-field w-full"
+                />
+                <span class="text-sm text-gray-500">Payslip, COE with Compensation, or ITR</span>
+              </div>
+
+              <!-- Proof of Billing -->
+              <div>
+                <label for="proof-billing" class="input-label">Proof of Billing</label>
+                <input
+                  type="file"
+                  id="proof-billing"
+                  name="proof_billing"
+                  accept=".pdf, .jpg, .jpeg, .png"
+                  required
+                  class="input-field w-full"
+                />
+                <span class="text-sm text-gray-500">Meralco, Water, or Internet bill (Max 5MB)</span>
+              </div>
+
+              <!-- Other Supporting Document (optional) -->
+              <div>
+                <label for="other-doc" class="input-label">Other Supporting Document (Optional)</label>
+                <input
+                  type="file"
+                  id="other-doc"
+                  name="other_document"
+                  accept=".pdf, .jpg, .jpeg, .png"
+                  class="input-field w-full"
+                />
+                <span class="text-sm text-gray-500">E.g., Business permit, Co-maker ID, etc.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Declaration & Agreement Section -->
+          <h1 class="text-2xl font-semibold mb-[5px] mt-10">Declaration & Agreement</h1>
+          <div class="space-y-3 text-gray-700">
+            <div class="flex items-center space-x-3">
+              <input type="checkbox" id="declaration" name="declaration" required class="checkbox-input" />
+              <label for="declaration" class="text-sm">I hereby declare that the above information is true and correct.</label>
+            </div>
+            <div class="flex items-center space-x-3">
+              <input type="checkbox" id="authorization" name="authorization" required class="checkbox-input" />
+              <label for="authorization" class="text-sm">I authorize the cooperative to verify and evaluate my loan application.</label>
+            </div>
+          </div>
+
           <!-- Submit Section -->
           <div class="submit-container">
             <button type="submit" class="submit-button">Submit</button>

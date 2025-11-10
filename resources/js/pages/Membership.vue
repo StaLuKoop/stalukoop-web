@@ -20,16 +20,6 @@ defineOptions({
 
       <!-- Membership Boxes Section -->
       <div class="membership-boxes">
-        <div class="membership-card">
-          <h3>Initial Membership</h3>
-          <ul>
-            <li>• Share Capital - 2000</li>
-            <li>• Savings Deposit - 650</li>
-            <li>• Membership Fee - 300</li>
-            <li>• Passbook - 50</li>
-            <li>Total: 3000 Php</li>
-          </ul>
-        </div>
 
         <div class="membership-card">
           <h3>Regular Membership</h3>
@@ -41,13 +31,6 @@ defineOptions({
             <li>• One Photocopy of Proof of Billing</li>
             <li>• Recent 2x2 ID Picture</li>
             <li>• Regular Membership Application Form</li>
-          </ul>
-        </div>
-
-        <div class="membership-card">
-          <h3>Associate Membership</h3>
-          <ul>
-            <li>• Same Requirements as Initial Membership</li>
           </ul>
         </div>
 
