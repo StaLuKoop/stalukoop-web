@@ -16,7 +16,7 @@ import {
 import { Link, usePage } from '@inertiajs/vue3'
 import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-vue'
 
-import { Calculator, Calendar, FilePlus, FileSignature, FileWarning, HandCoins, Home, LayoutGrid, User } from 'lucide-vue-next'
+import { Calculator, Calendar, FilePlus, FileSignature, FileWarning, Home, LayoutGrid, User } from 'lucide-vue-next'
 
 import { computed } from 'vue'
 import AppLogo from './AppLogo.vue'
@@ -46,21 +46,12 @@ const mainNavSections = computed(() => {
         items: [
           { title: 'Members', href: '/admin/management/members', icon: User },
           { title: 'Inquiries', href: '/admin/management/inquiries', icon: FileWarning },
-        ],
-      },
-      {
-        label: 'Records',
-        items: [
-          { title: 'Loans', href: '/admin/management/loans', icon: HandCoins },
-          { title: 'Loan Applications', href: '/admin/management/loanapplication', icon: FilePlus },
-          { title: 'PMES Scheduling', href: '/admin/management/pmes', icon: FileWarning },
-          { title: 'Credit Scoring', href: '/admin/management/creditscoring', icon: FileSignature },
+          // { title: 'Loans', href: '/admin/management/loans', icon: HandCoins },
         ],
       },
       {
         label: 'Utilities',
         items: [
-          { title: 'Reports', href: '/admin/utility/reports', icon: FileText },
           { title: 'Calendar', href: '/admin/utility/calendar', icon: Calendar },
           { title: 'Calculator', href: '/admin/utility/calculator', icon: Calculator },
         ],
@@ -92,11 +83,6 @@ const mainNavSections = computed(() => {
             href: '/member/cooperative/account',
             icon: User,
           },
-          {
-            title: 'Policy',
-            href: '/member/cooperative/policy',  // Direct link to Loan Policy
-            icon: FileText,
-          },
         ],
       },
       {
@@ -106,16 +92,6 @@ const mainNavSections = computed(() => {
             title: 'Loan Application',
             href: '/member/services/loan-application',
             icon: FilePlus,
-          },
-          {
-            title: 'Credit Scoring',
-            href: '/member/services/credit-scoring',
-            icon: FileSignature,  // You can choose an appropriate icon for Credit Scoring
-          },
-          {
-            title: 'Loan Status',
-            href: '/member/services/loan-status',
-            icon:  Landmark,  // Choose an appropriate icon for Loan Status
           },
         ],
       },

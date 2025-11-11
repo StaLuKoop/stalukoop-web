@@ -2,9 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue'
 import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/vue3'
-import { ref, watch } from 'vue';
-import { router } from '@inertiajs/vue3'
-import axios from 'axios'
+import { ref } from 'vue'
 
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/member/dashboard' },
@@ -13,10 +11,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const housingChoicePresent = ref(''); // Track the user's housing choice for Present Home Address (Own House, Living w/ Relative, Renting)
 const housingChoicePermanent = ref(''); // Track the user's housing choice for Permanent Address (Own House, Living w/ Relative, Renting)
-const maritalStatus = ref(''); // Track the selected marital status
-const carOwnership = ref(''); // Tracks Car Ownership selection
-const houseOwnership = ref(''); // Tracks House Ownership selection
-const govIdType = ref('');
 
 // Create a reactive array to store family members' data
 const familyMembers = ref([
@@ -49,234 +43,14 @@ const removeFamilyMember = (index: number) => {
   familyMembers.value.splice(index, 1)
 }
 
-const rentingAmountPermanent = ref(''); // For storing the renting amount input
 
-// Method to format the input as currency
-const formatCurrency = () => {
-  let value = rentingAmountPermanent.value;
-
-  // Remove any non-numeric characters except for the decimal point
-  value = value.replace(/[^\d.]/g, '');
-
-  // Limit to two decimal places
-  const [whole, decimal] = value.split('.');  
-  if (decimal && decimal.length > 2) {
-    value = `${whole}.${decimal.slice(0, 2)}`;
+// Function to handle form submission
+const submitForm = () => {
+  // Display confirmation popup
+  if (confirm('Are you sure you want to submit the form?')) {
+    // Display success message upon confirmation
+    alert('Form successfully submitted!');
   }
-
-  // Format value as currency (e.g., ₱1,234.56)
-  rentingAmountPermanent.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-};
-
-
-// Track the selected employment type
-const employmentType = ref<string>('');
-
-// Track the income options for each employment type
-const permanentJobIncome = ref('');
-const businessIncome = ref('');
-const pensionerIncome = ref('');
-const contractualIncome = ref('');
-const selfEmployedIncome = ref('');
-const governmentIncome = ref('');
-const housewifeUnemployedIncome = ref('no-income');
-
-// Define the type of the sections object
-interface EmploymentSections {
-  permanentJob: boolean;
-  business: boolean;
-  pensioner: boolean;
-  contractual: boolean;
-  selfEmployed: boolean;
-  government: boolean;
-  housewifeUnemployed: boolean;
-}
-
-// Initialize employmentSections as a ref with the correct type
-const employmentSections = ref<EmploymentSections>({
-  permanentJob: false,
-  business: false,
-  pensioner: false,
-  contractual: false,
-  selfEmployed: false,
-  government: false,
-  housewifeUnemployed: false,
-});
-
-// Watch employmentType changes to update the display of relevant sections
-watch(employmentType, (value) => {
-  // Reset all sections to hidden
-  for (let key in employmentSections.value) {
-    employmentSections.value[key as keyof EmploymentSections] = false;
-  }
-
-  // Show relevant section based on selected employment type
-  switch (value) {
-    case 'permanent-job':
-      employmentSections.value.permanentJob = true;
-      break;
-    case 'business':
-      employmentSections.value.business = true;
-      break;
-    case 'pensioner':
-    case 'retired':
-      employmentSections.value.pensioner = true;
-      break;
-    case 'contractual-minimum':
-    case 'contractual-piece-rate':
-      employmentSections.value.contractual = true;
-      break;
-    case 'self-employed':
-      employmentSections.value.selfEmployed = true;
-      break;
-    case 'government':
-      employmentSections.value.government = true;
-      break;
-    case 'housewife':
-    case 'unemployed':
-      employmentSections.value.housewifeUnemployed = true;
-      break;
-  }
-});
-
-const monthlyAmortization = ref('') // For storing and formatting the amortization input
-
-// Method to format the amortization input as currency
-const formatCurrencyCar = () => {
-  let value = monthlyAmortization.value
-
-  // Remove any non-numeric characters except for the decimal point
-  value = value.replace(/[^\d.]/g, '')
-
-  // Limit to two decimal places
-  const [whole, decimal] = value.split('.')
-  if (decimal && decimal.length > 2) {
-    value = `${whole}.${decimal.slice(0, 2)}`
-  }
-
-  // Format as currency with commas
-  monthlyAmortization.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-}
-
-const monthlyAmortizationHouse = ref('') // For storing the amortization input
-
-// Method to format the house amortization input as currency
-const formatCurrencyHouse = () => {
-  let value = monthlyAmortizationHouse.value
-
-  // Remove any non-numeric characters except the decimal
-  value = value.replace(/[^\d.]/g, '')
-
-  // Limit to two decimal places
-  const [whole, decimal] = value.split('.')
-  if (decimal && decimal.length > 2) {
-    value = `${whole}.${decimal.slice(0, 2)}`
-  }
-
-  // Add commas for thousands
-  monthlyAmortizationHouse.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-} 
-
-// ADD: helpers (no UI changes)
-const mapHousing = (v: string) =>
-  v === 'ownHouse' ? 'own_house'
-  : v === 'livingWithRelative' ? 'living_with_relative'
-  : v === 'renting' ? 'renting'
-  : ''
-
-const moneyToNumber = (v: string | number | null) => {
-  if (v == null) return null
-  const n = String(v).replace(/[₱,\s]/g, '')
-  return n === '' ? null : Number(n)
-}
-
-const toNull = (v: string | null | undefined) => (v === '' || v == null ? null : v)
-
-// Track the phone number input
-const phone = ref('');
-
-// Method to sanitize the mobile number
-const sanitizePhone = (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  let value = input.value;
-
-  // Only allow numbers and "+"
-  value = value.replace(/[^0-9+]/g, ''); // Remove any non-numeric and non "+" characters
-
-  // Ensure the value starts with "+63"
-  if (value.startsWith('+63')) {
-    input.value = value; // If it starts with +63, keep it
-  } else {
-    input.value = '+63'; // Otherwise, default to +63
-  }
-
-  // Ensure that the value does not exceed 13 characters
-  if (input.value.length > 13) {
-    input.value = input.value.slice(0, 13);
-  }
-
-  // Update the model with the sanitized value
-  phone.value = input.value;
-};
-
-// --- Added reactive state and handlers to satisfy template references ---
-const currentStep = ref<number>(1)
-const totalSteps = 3
-
-const form = ref({
-  paymentReference: ''
-})
-
-// store uploaded files by key
-const fileUploads = ref<Record<string, File | null>>({
-  idFront: null,
-  idBack: null,
-  proofOfAddress: null,
-  paymentProof: null
-})
-
-/**
- * submitForm - simple client-side handler to avoid TS compile errors.
- * You can replace the implementation with actual POST (axios or Inertia) as needed.
- */
-const submitForm = async () => {
-  // Example: gather minimal payload
-  const payload = {
-    paymentReference: form.value.paymentReference,
-    phone: phone.value,
-    maritalStatus: maritalStatus.value,
-    // map other needed fields here...
-  }
-
-  console.log('Submitting form', payload, fileUploads.value)
-
-  // Example: If you want to submit, uncomment and adjust the route:
-  // const data = new FormData()
-  // data.append('paymentReference', form.value.paymentReference)
-  // if (fileUploads.value.paymentProof) data.append('paymentProof', fileUploads.value.paymentProof)
-  // await axios.post('/your-endpoint', data)
-}
-
-/**
- * handleFileUpload - called from template when a file input changes.
- * Template calls with an id string (e.g. 'idFront'), so we read the input by id.
- */
-const handleFileUpload = (key: string) => {
-  // try to find the input element by id and read its files
-  const el = document.getElementById(key) as HTMLInputElement | null
-  if (!el || !el.files || el.files.length === 0) {
-    fileUploads.value[key] = null
-    return
-  }
-  fileUploads.value[key] = el.files[0]
-}
-
-/** Step navigation helpers used by template buttons */
-const goToNextStep = () => {
-  if (currentStep.value < totalSteps) currentStep.value++
-}
-const goToPreviousStep = () => {
-  if (currentStep.value > 1) currentStep.value--
 }
 </script>
 
@@ -284,68 +58,33 @@ const goToPreviousStep = () => {
   <Head title="Membership Form" />
 
   <AppLayout :breadcrumbs="breadcrumbs">
-  <form @submit.prevent="submitForm">
-  <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-7">
-    
-  <div class="w-full mb-6">
-    <!-- Step Labels (floating above bar) -->
-    <div class="relative flex justify-between text-l font-semibold mt-5 mb-1">
-      <div class="flex-1 text-center mb-5">
-        <span :class="{'text-red-600': currentStep >= 1, 'text-gray-500': currentStep < 1}">
-          Personal Information
-        </span>
-      </div>
-      <div class="flex-1 text-center">
-        <span :class="{'text-red-600': currentStep >= 2, 'text-gray-500': currentStep < 2}">
-          Document Uploads
-        </span>
-      </div>
-      <div class="flex-1 text-center">
-        <span :class="{'text-red-600': currentStep >= 3, 'text-gray-500': currentStep < 3}">
-          Membership Payment
-        </span>
-      </div>
-    </div>
-
-    <!-- Progress Bar -->
-    <div class="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-      <div
-        class="absolute top-0 left-0 h-full bg-red-500 rounded-full transition-all duration-500"
-        :style="{ width: `${(currentStep / totalSteps) * 100}%` }"
-      ></div>
-    </div>
-  </div>
-
-
-    <!-- Step 1: Personal Information -->
-    <div v-if="currentStep === 1">
-      <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-1 mt-[-30px]">
-      <h1 class="text-2xl font-semibold mb-[-20px]">Personal Information</h1>
+    <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
+      <h1 class="text-2xl font-semibold mb-4">Personal Information</h1>
 
       <!-- Full Name Section -->
-      <div class="grid grid-cols-3 gap-6 mb-[-30px]">
+      <div class="grid grid-cols-3 gap-6 mb-2">
         <div class="flex flex-col col-span-3">
-          <label class="input-label">Full Name</label>
+          <label class="font-medium text-lg mb-2">Full Name</label>
           <div class="flex space-x-6">
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" name="first_name"placeholder="First Name" class="input border border-gray-300 rounded-lg p-2" required />
+              <input type="text" placeholder="First Name" class="input border border-gray-300 rounded-lg p-2" />
             </div>
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" name="middle_name" placeholder="Middle Name" class="input border border-gray-300 rounded-lg p-2" required />
+              <input type="text" placeholder="Middle Name" class="input border border-gray-300 rounded-lg p-2" />
             </div>
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" name="last_name" placeholder="Last Name" class="input border border-gray-300 rounded-lg p-2" required />
+              <input type="text" placeholder="Last Name" class="input border border-gray-300 rounded-lg p-2" />
             </div>
           </div>
         </div>
       </div>
 
       <!-- Civil Status, Gender, Nationality, and No. of Dependents Section -->
-      <div class="grid grid-cols-4 gap-6 mb-[-30px]">
+      <div class="grid grid-cols-4 gap-6 mb-2">
         <!-- Civil Status -->
         <div class="flex flex-col">
-          <label for="civilStatus" class="input-label">Civil Status</label>
-          <select id="civilStatus" v-model="maritalStatus" class="input border border-gray-300 rounded-lg p-2" required>
+          <label for="civilStatus" class="font-medium text-lg mb-2">Civil Status</label>
+          <select id="civilStatus" class="input border border-gray-300 rounded-lg p-2">
             <option value="">Select Civil Status</option>
             <option value="single">Single</option>
             <option value="married">Married</option>
@@ -356,8 +95,8 @@ const goToPreviousStep = () => {
 
         <!-- Gender -->
         <div class="flex flex-col">
-          <label for="gender" class="input-label" required>Gender</label>
-          <select id="gender" name="gender" class="input border border-gray-300 rounded-lg p-2">
+          <label for="gender" class="font-medium text-lg mb-2">Gender</label>
+          <select id="gender" class="input border border-gray-300 rounded-lg p-2">
             <option value="">Select Gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
@@ -366,66 +105,52 @@ const goToPreviousStep = () => {
 
         <!-- Nationality -->
         <div class="flex flex-col">
-          <label for="nationality" class="input-label" required>Nationality</label>
-          <input type="text" name="nationality" id="nationality" class="input border border-gray-300 rounded-lg p-2" />
+          <label for="nationality" class="font-medium text-lg mb-2">Nationality</label>
+          <input type="text" id="nationality" class="input border border-gray-300 rounded-lg p-2" />
         </div>
 
         <!-- No. of Dependents -->
         <div class="flex flex-col">
-          <label for="noOfDependents" class="input-label">No. of Dependents</label>
+          <label for="noOfDependents" class="font-medium text-lg mb-2">No. of Dependents</label>
           <div class="flex flex-col">
-            <input type="text" name="dependents_children" id="children" placeholder="(Children) if applicable" class="input border border-gray-300 rounded-lg p-2 mb-2" />
-            <input type="text"  name="dependents_others_text" id="others" placeholder="Others (Relationship)" class="input border border-gray-300 rounded-lg p-2" />
+            <input type="text" id="children" placeholder="(Children) if applicable" class="input border border-gray-300 rounded-lg p-2 mb-2" />
+            <input type="text" id="others" placeholder="Others (Relationship)" class="input border border-gray-300 rounded-lg p-2" />
           </div>
         </div>
       </div>
 
-       <!-- Date of Birth, Age, Place of Birth, and Religion in one row -->
-        <div class="grid grid-cols-3 gap-6 mb-[-10px]">
-          <div class="flex flex-col">
-            <label for="dob" class="input-label" required>Date of Birth</label>
-            <input
-              type="date"
-              id="dob"
-              class="input border border-gray-300 rounded-lg p-2"
-              name="dob"
-            />
-          </div>
-
-          <div class="flex flex-col">
-            <label for="placeOfBirth" class="input-label" required>Place of Birth</label>
-            <input
-              type="text"
-              id="placeOfBirth"
-              class="input border border-gray-300 rounded-lg p-2"
-              name="place_of_birth"
-            />
-          </div>
-
-          <div class="flex flex-col">
-            <label for="religion" class="input-label" required>Religion</label>
-            <input
-              type="text"
-              id="religion"
-              class="input border border-gray-300 rounded-lg p-2"
-              name="religion"
-            />
-          </div>
+      <!-- Date of Birth, Age, Place of Birth, and Religion in one row -->
+      <div class="grid grid-cols-4 gap-6 mb-2">
+        <div class="flex flex-col">
+          <label for="dob" class="font-medium text-lg mb-2">Date of Birth</label>
+          <input type="date" id="dob" class="input border border-gray-300 rounded-lg p-2" />
         </div>
-
+        <div class="flex flex-col">
+          <label for="age" class="font-medium text-lg mb-2">Age</label>
+          <input type="number" id="age" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        <div class="flex flex-col">
+          <label for="placeOfBirth" class="font-medium text-lg mb-2">Place of Birth</label>
+          <input type="text" id="placeOfBirth" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        <div class="flex flex-col">
+          <label for="religion" class="font-medium text-lg mb-2">Religion</label>
+          <input type="text" id="religion" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+      </div>
 
       <!-- Present Home Address, Housing and Renting Section in one row -->
-      <div class="grid grid-cols-3 gap-6 mb-[-20px]">
-        <div class="flex flex-col col-span-2">
-          <label for="presentHomeAddress" class="input-label">Present Home Address</label>
-          <input type="text" name="address_present" id="presentHomeAddress" class="input border border-gray-300 rounded-lg p-2" required />
+      <div class="grid grid-cols-4 gap-6 mb-2">
+        <div class="flex flex-col col-span-3">
+          <label for="presentHomeAddress" class="font-medium text-lg mb-2">Present Home Address</label>
+          <input type="text" id="presentHomeAddress" class="input border border-gray-300 rounded-lg p-2" />
         </div>
 
         <div class="flex flex-col col-span-1">
-          <label class="input-label">Housing Status</label>
-          <div class="flex space-x-4" required>
+          <label class="font-medium text-lg mb-2">Housing Status</label>
+          <div class="flex space-x-4">
             <label class="flex items-center">
-              <input type="radio" name="housing" value="ownHouse" v-model="housingChoicePresent" class="mr-2"  /> Own House
+              <input type="radio" name="housing" value="ownHouse" v-model="housingChoicePresent" class="mr-2" /> Own House
             </label>
             <label class="flex items-center">
               <input type="radio" name="housing" value="livingWithRelative" v-model="housingChoicePresent" class="mr-2" /> Living w/ Relative
@@ -440,36 +165,29 @@ const goToPreviousStep = () => {
       <!-- Renting Fields (shown only if Renting is selected) -->
       <div v-if="housingChoicePresent === 'renting'" class="grid grid-cols-3 gap-6 mb-2">
         <div class="flex flex-col">
-        <label for="rentingAmountPermanent" class="input-label" >Monthly Rent</label>
-        <input
-          type="text"
-          id="rentingAmountPermanent"
-          class="input border border-gray-300 rounded-lg p-2"
-          v-model="rentingAmountPermanent"
-          @input="formatCurrency"
-          placeholder="₱0.00"
-          :required="housingChoicePermanent === 'renting'"
-          inputmode="decimal"
-          autocomplete="off"
-          pattern="^\d{1,3}(,\d{3})*(\.\d{1,2})?$"
-        />
-      </div>
+          <label for="rentingAmount" class="font-medium text-lg mb-2">Renting How Much</label>
+          <input type="text" id="rentingAmount" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
         <div class="flex flex-col">
-          <label for="monthsRenting" class="input-label">No. of Months Renting</label>
-          <input type="number" id="monthsRenting" class="input border border-gray-300 rounded-lg p-2"required />
+          <label for="yearsRenting" class="font-medium text-lg mb-2">No. of Years Renting</label>
+          <input type="number" id="yearsRenting" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        <div class="flex flex-col">
+          <label for="monthsRenting" class="font-medium text-lg mb-2">No. of Months Renting</label>
+          <input type="number" id="monthsRenting" class="input border border-gray-300 rounded-lg p-2" />
         </div>
       </div>
 
       <!-- Permanent Home Address, Housing and Renting Section in one row -->
-      <div class="grid grid-cols-3 gap-6 mb-[-10px]">
-        <div class="flex flex-col col-span-2">
-          <label for="permanentHomeAddress" class="input-label">Permanent Home Address</label>
-          <input type="text" name="address_permanent" id="permanentHomeAddress" class="input border border-gray-300 rounded-lg p-2" required/>
+      <div class="grid grid-cols-4 gap-6 mb-2">
+        <div class="flex flex-col col-span-3">
+          <label for="permanentHomeAddress" class="font-medium text-lg mb-2">Permanent Home Address</label>
+          <input type="text" id="permanentHomeAddress" class="input border border-gray-300 rounded-lg p-2" />
         </div>
 
         <div class="flex flex-col col-span-1">
-          <label class="input-label">Permanent Housing Status</label>
-          <div class="flex space-x-4" required>
+          <label class="font-medium text-lg mb-2">Permanent Housing Status</label>
+          <div class="flex space-x-4">
             <label class="flex items-center">
               <input type="radio" name="housingPermanent" value="ownHouse" v-model="housingChoicePermanent" class="mr-2" /> Own House
             </label>
@@ -486,85 +204,98 @@ const goToPreviousStep = () => {
       <!-- Renting Fields for Permanent Address (shown only if Renting is selected) -->
       <div v-if="housingChoicePermanent === 'renting'" class="grid grid-cols-3 gap-6 mb-2">
         <div class="flex flex-col">
-        <label for="rentingAmountPermanent" class="input-label">Monthly Rent</label>
-        <input
-          type="text"
-          id="rentingAmountPermanent"
-          class="input border border-gray-300 rounded-lg p-2"
-          :required="housingChoicePermanent === 'renting'"
-          v-model="rentingAmountPermanent"
-          @input="formatCurrency"
-          placeholder="₱0.00"
-        />
+          <label for="rentingAmountPermanent" class="font-medium text-lg mb-2">Renting How Much</label>
+          <input type="text" id="rentingAmountPermanent" class="input border border-gray-300 rounded-lg p-2" />
         </div>
         <div class="flex flex-col">
-          <label for="monthsRentingPermanent" class="input-label">No. of Months Renting</label>
-          <input type="number" id="monthsRentingPermanent" class="input border border-gray-300 rounded-lg p-2" required/>
+          <label for="yearsRentingPermanent" class="font-medium text-lg mb-2">No. of Years Renting</label>
+          <input type="number" id="yearsRentingPermanent" class="input border border-gray-300 rounded-lg p-2" />
+        </div>
+        <div class="flex flex-col">
+          <label for="monthsRentingPermanent" class="font-medium text-lg mb-2">No. of Months Renting</label>
+          <input type="number" id="monthsRentingPermanent" class="input border border-gray-300 rounded-lg p-2" />
         </div>
       </div>
 
       <!-- Father Information Section -->
-      <div class="grid grid-cols-3 gap-6 mb-[-30px]">
+      <div class="grid grid-cols-3 gap-6 mb-2">
         <div class="flex flex-col col-span-3">
-          <label class="input-label">Name of Father</label>
+          <label class="font-medium text-lg mb-2">Name of Father</label>
           <div class="flex space-x-6">
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="First Name" class="input border border-gray-300 rounded-lg p-2" required />
+              <input type="text" placeholder="First Name" class="border border-gray-300 rounded-lg p-2" />
             </div>
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="Middle Name" class="input border border-gray-300 rounded-lg p-2" required/>
+              <input type="text" placeholder="Middle Name" class="border border-gray-300 rounded-lg p-2" />
             </div>
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="Last Name" class="input border border-gray-300 rounded-lg p-2" required/>
+              <input type="text" placeholder="Last Name" class="border border-gray-300 rounded-lg p-2" />
             </div>
           </div>
         </div>
       </div>
 
       <!-- Mother Information Section -->
-      <div class="grid grid-cols-3 gap-6 mb-[-10px]">
+      <div class="grid grid-cols-3 gap-6 mb-2">
         <div class="flex flex-col col-span-3">
-          <label class="input-label">Name of Mother</label>
+          <label class="font-medium text-lg mb-2">Name of Mother</label>
           <div class="flex space-x-6">
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="First Name" class="input border border-gray-300 rounded-lg p-2" required/>
+              <input type="text" placeholder="First Name" class="border border-gray-300 rounded-lg p-2" />
             </div>
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="Middle Name" class="input border border-gray-300 rounded-lg p-2" required/>
+              <input type="text" placeholder="Middle Name" class="border border-gray-300 rounded-lg p-2" />
             </div>
             <div class="flex flex-col mb-4 w-1/3">
-              <input type="text" placeholder="Last Name" class="input border border-gray-300 rounded-lg p-2" required />
+              <input type="text" placeholder="Last Name" class="border border-gray-300 rounded-lg p-2" />
             </div>
           </div>
         </div>
       </div>
       
       <!-- Contact Information Section -->
-      <div class="mb-[-20px]">
-        <h1 class="text-2xl font-semibold mb-[10px]">Contact Information</h1>
-        <div class="grid grid-cols-4 gap-6 mb-[20px]">
+      <div class="mb-2">
+        <h2 class="font-medium text-lg mb-2">Contact Information</h2>
+        <div class="grid grid-cols-4 gap-6">
           <div class="flex flex-col">
-            <label for="mobile" class="input-label">Mobile Number</label>
-            <input 
-              type="tel" 
-              id="mobile"
-              placeholder="+63XXXXXXXXX"
-              class="border border-gray-300 rounded-lg p-2"
-              v-model="phone"
-              @input="sanitizePhone"
-            />
+            <input type="text" placeholder="Telephone No." class="border border-gray-300 rounded-lg p-2" />
           </div>
           <div class="flex flex-col">
-            <label for="mobile" class="input-label">Telephone Number</label>
-            <input type="number" name="landline" placeholder="e.g., (02) 1234 5678" class="border border-gray-300 rounded-lg p-2" />
+            <input type="text" placeholder="Mobile No." class="border border-gray-300 rounded-lg p-2" />
           </div>
           <div class="flex flex-col">
-            <label for="mobile" class="input-label">Email Address</label>
-            <input type="email" name="email" placeholder="Enter your email address" class="border border-gray-300 rounded-lg p-2" required />
+            <input type="email" placeholder="E-mail Add" class="border border-gray-300 rounded-lg p-2" />
           </div>
           <div class="flex flex-col">
-          <label for="gov_id_type" class="input-label">Educational Attainment</label>
-          <select class="border border-gray-300 rounded-lg p-2" name="highest_education" r required>
+            <input type="text" placeholder="Others (Please Specify)" class="border border-gray-300 rounded-lg p-2" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Government ID Information Section -->
+      <div class="mb-2">
+        <h2 class="font-medium text-lg mb-2">Government ID's Information</h2>
+        <div class="grid grid-cols-4 gap-6">
+          <div class="flex flex-col">
+            <input type="text" placeholder="Driver's License No." class="border border-gray-300 rounded-lg p-2" />
+          </div>
+          <div class="flex flex-col">
+            <input type="text" placeholder="SSS No." class="border border-gray-300 rounded-lg p-2" />
+          </div>
+          <div class="flex flex-col">
+            <input type="text" placeholder="TIN No." class="border border-gray-300 rounded-lg p-2" />
+          </div>
+          <div class="flex flex-col">
+            <input type="text" placeholder="Others (Please Specify)" class="border border-gray-300 rounded-lg p-2" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Educational Attainment Section -->
+      <div class="mb-2">
+        <h2 class="font-medium text-lg mb-2">Educational Attainment</h2>
+        <div class="flex flex-col">
+          <select class="border border-gray-300 rounded-lg p-2">
             <option value="">Select Educational Attainment</option>
             <option value="collegeDegree">College Degree</option>
             <option value="associateDegree">Associate Degree</option>
@@ -574,154 +305,185 @@ const goToPreviousStep = () => {
             <option value="noFormalSchooling">No Formal Schooling</option>
           </select>
         </div>
-        </div>
       </div>
-
-    <div>
-    <h1 class="text-2xl font-semibold mb-5">Employment Information</h1>
-    <div class="grid grid-cols-2 gap-6 mb-2">
-        <div class="flex flex-col mb-[-10px]">
-            <label for="employerName" class="input-label">Employer/Business Name</label>
-            <input id="employerName" name="employer_or_business_name" type="text" placeholder="Name" class="input input-bordered" required />
+    </div>
+    
+    <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
+    <h1 class="text-2xl font-semibold mb-4">Employment Information</h1>
+    <div class="grid grid-cols-2 gap-6">
+        <!-- Employer / Business Name -->
+        <div class="flex flex-col">
+            <label for="employerName" class="mb-2">Employer/Business Name</label>
+            <input id="employerName" type="text" placeholder="Name" class="input input-bordered" />
         </div>
 
-        <div class="flex flex-col mb-[-10px]">
-            <label for="employerAddress" class="input-label">Employer / Business Address</label>
-            <input id="employerAddress" name="employer_or_business_address" type="text" placeholder="Address" class="input input-bordered" required/>
+        <!-- Employer / Business Address -->
+        <div class="flex flex-col">
+            <label for="employerAddress" class="mb-2">Employer / Business Address</label>
+            <input id="employerAddress" type="text" placeholder="Address" class="input input-bordered" />
         </div>
 
         <!-- Type of Employment -->
-        <div class="flex flex-col mb-[-10px]">
-            <label for="employmentType" class="input-label">Type of Employment</label>
-            <select id="employment-type" name="employment-type" v-model="employmentType" required class="input input-bordered">
-              <option value="">Select Employment Type</option>
-              <option value="permanent-job">Permanent Job</option>
-              <option value="business">Business</option> 
-              <option value="contractual-minimum">Contractual (Minimum 3 years)</option>
-              <option value="contractual-piece-rate">Contractual, Piece Rate, On Call Basis</option>
-              <option value="housewife">Housewife</option> 
-              <option value="self-employed">Self-Employed</option>
-              <option value="government">Government</option>
-              <option value="unemployed">Unemployed</option> 
-              <option value="retired">Retired</option> 
-          </select>
-        </div>
-
-        <!-- Permanent Job -->
-        <div v-show="employmentType === 'permanent-job'" class="flex flex-col">
-            <label for="permanent-job-income" class="input-label">Years of Experience & Net Income</label>
-            <select id="permanent-job-income" name="income_band" required class="input input-bordered">
-                <option value="more-than-15-years-16k-20k">More than 15 years with net income of at least ₱16,000 to ₱20,000</option>
-                <option value="less-than-10-years-11k-15k">Less than 10 years with net income of at least ₱11,000 to ₱15,000</option>
-                <option value="less-than-5-years-6k-10k">Less than 5 years with net income of at least ₱6,000 to ₱10,000</option>
-                <option value="less-than-5-years-5k-below">Less than 5 years with net income of at least ₱5,000 and below</option>
+        <div class="flex flex-col">
+            <label for="employmentType" class="mb-2">Type of Employment</label>
+            <select id="employmentType" class="input input-bordered">
+                <option value="private">Private</option>
+                <option value="government">Government</option>
+                <option value="professional">Professional</option>
+                <option value="housewife">Housewife</option>
+                <option value="private">Self - Employed</option>
+                <option value="government">Unemployed</option>
+                <option value="selfEmployed">Retired</option>
+                <option value="professional">Others</option>
             </select>
         </div>
 
-        <!-- Business -->
-        <div v-show="employmentType === 'business'" class="flex flex-col">
-            <label for="business-income" class="input-label">Monthly Net Income</label>
-            <select id="business-income" name="income_band" required class="input input-bordered">
-                <option value="16k-20k">Monthly net income of at least ₱16,000 to ₱20,000</option>
-                <option value="11k-15k">Monthly net income of at least ₱11,000 to 15,000</option>
-                <option value="10k">Monthly net income of at least ₱10,000</option>
-                <option value="5k-below">Monthly net income of ₱5,000 and below</option>
+        <!-- Employment Status -->
+        <div class="flex flex-col">
+            <label for="employmentStatus" class="mb-2">Employment Status</label>
+            <select id="employmentStatus" class="input input-bordered">
+                <option value="permanent">Permanent</option>
+                <option value="probationary">Probationary</option>
+                <option value="contractual">Contractual</option>
+                <option value="professional">Professional</option>
+                <option value="consultant">Consultant</option>
+                <option value="consultant">Others</option>
             </select>
         </div>
 
-        <!-- Pensioner / Retired (Same Options) -->
-        <div v-show="employmentType === 'pensioner' || employmentType === 'retired'" class="flex flex-col">
-            <label for="pensioner-retired-income" class="input-label">Pension</label>
-            <select id="pensioner-retired-income" name="income_band" required class="input input-bordered">
-                <option value="above-20k">Above ₱20,000</option>
-                <option value="15k-19k">₱15,000 to 19,000</option>
-                <option value="6k-14k">₱6,000 to ₱14,000</option>
-                <option value="3k-5k-below">₱3,000 to ₱5,000 and below</option>
-                <option value="2k-below">₱2,000 and below</option>
+        <!-- Rank -->
+        <div class="flex flex-col">
+            <label for="rank" class="mb-2">Rank</label>
+            <select id="rank" class="input input-bordered">
+                <option value="rankFile">Rank & File</option>
+                <option value="juniorOfficer">Junior Officer</option>
+                <option value="middleManager">Middle Manager</option>
+                <option value="seniorExecutive">Senior Executive</option>
+                <option value="seniorExecutive">Self - Employed</option>
+                <option value="seniorExecutive">Others</option>
             </select>
         </div>
 
-        <!-- Contractual -->
-        <div v-show="employmentType === 'contractual-minimum' || employmentType === 'contractual-piece-rate'"class="flex flex-col">
-            <label for="contractual-income" class="input-label">Income Level</label>
-            <select id="contractual-income" name="income_band" required class="input input-bordered">
-                <option value="minimum-pay">Minimum pay</option>
-                <option value="below-minimum">Below minimum</option>
-            </select>
+        <!-- Position -->
+        <div class="flex flex-col">
+            <label for="position" class="mb-2">Position</label>
+            <input id="position" type="text" placeholder="Position" class="input input-bordered" />
         </div>
 
-        <!-- Self-Employed -->
-        <div v-show="employmentType === 'self-employed'" class="flex flex-col">
-            <label for="self-employed-income" class="input-label">Monthly Net Income</label>
-            <select id="self-employed-income" name="income_band" required class="input input-bordered">
-                <option value="16k-20k">Monthly net income of at least ₱16,000 to ₱20,000</option>
-                <option value="11k-15k">Monthly net income of at least ₱11,000 to ₱15,000</option>
-                <option value="10k">Monthly net income of at least ₱10,000</option>
-                <option value="5k-below">Monthly net income of ₱5,000 and below</option>
-            </select>
+        <!-- Total Years Working -->
+        <div class="flex flex-col">
+            <label class="mb-2">Total Years Working</label>
+            <div class="flex gap-4">
+                <input type="number" placeholder="Years" class="input input-bordered" />
+                <input type="number" placeholder="Months" class="input input-bordered" />
+            </div>
         </div>
 
-        <!-- Government -->
-        <div v-show="employmentType === 'government'"class="flex flex-col">
-            <label for="government-income" class="input-label">Monthly Salary Range</label>
-            <select id="government-income" name="income_band" required class="input input-bordered">
-                <option value="20k-above">Above ₱20,000</option>
-                <option value="15k-19k">₱15,000 to ₱19,000</option>
-                <option value="10k-14k">₱10,000 to ₱14,000</option>
-                <option value="below-10k">Below ₱10,000</option>
-            </select>
+        <!-- Immediate Supervisor/HR Contact Person -->
+        <div class="flex flex-col">
+            <label for="supervisor" class="mb-2">Immediate Supervisor/HR Contact Person</label>
+            <input id="supervisor" type="text" placeholder="Name" class="input input-bordered" />
         </div>
 
-        <!-- Unemployed / Housewife (Same Options) -->
-        <div v-show="employmentType === 'housewife' || employmentType === 'unemployed'" class="flex flex-col">
-            <label for="housewife-unemployed-income" class="input-label">Income Status</label>
-            <select id="housewife-unemployed-income" name="income_band" required class="input input-bordered">
-                <option value="no-income">No income</option>
-            </select>
+        <!-- Office Phone Number -->
+        <div class="flex flex-col">
+            <label for="officePhone" class="mb-2">Office Phone Number</label>
+            <input id="officePhone" type="text" placeholder="Number" class="input input-bordered" />
         </div>
 
-        
+        <!-- Office Email Address -->
+        <div class="flex flex-col">
+            <label for="officeEmail" class="mb-2">Office Email Address</label>
+            <input id="officeEmail" type="email" placeholder="Email Address" class="input input-bordered" />
+        </div>
     </div>
   </div>
 
-  <div v-if="maritalStatus === 'married'">
-  <h1 class="text-2xl font-semibold mb-5">Spouse Information</h1>
-  <div class="grid grid-cols-3 gap-6">
-    <!-- First Name -->
-    <div class="flex flex-col">
-      <label for="firstName" class="input-label">First Name</label>
-      <input id="firstName" name="spouse_first_name" type="text" placeholder="First Name" class="input input-bordered" required/>
-    </div>
+ <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
+    <h1 class="text-2xl font-semibold mb-4">Business Information</h1>
+    <div class="grid grid-cols-2 gap-6">
+        <!-- Business Name -->
+        <div class="flex flex-col">
+            <label for="businessName" class="mb-2">Business Name</label>
+            <input id="businessName" type="text" placeholder="Name" class="input input-bordered" />
+        </div>
 
-    <!-- Middle Name -->
-    <div class="flex flex-col">
-      <label for="middleName" class="input-label">Middle Name</label>
-      <input id="middleName" name="spouse_middle_name" type="text" placeholder="Middle Name" class="input input-bordered" required/>
-    </div>
-
-    <!-- Last Name -->
-    <div class="flex flex-col">
-      <label for="lastName" class="input-label">Last Name</label>
-      <input id="lastName" type="text" name="spouse_last_name" placeholder="Last Name" class="input input-bordered" required />
+        <!-- Business Address -->
+        <div class="flex flex-col">
+            <label for="businessAddress" class="mb-2">Business Address</label>
+            <input id="businessAddress" type="text" placeholder="Address" class="input input-bordered" />
+        </div>
     </div>
   </div>
-  <div class="grid grid-cols-2 gap-6">
-    <!-- Employer / Business Name -->
-    <div class="flex flex-col">
-      <label for="employerName" class="input-label">Employer/Business Name</label>
-      <input id="employerName" type="text" name="spouse_employer_name" placeholder="Employer/Business Name" class="input input-bordered" required/>
-    </div>
 
-    <!-- Employer / Business Address -->
-    <div class="flex flex-col">
-      <label for="employerAddress" class="input-label">Employer / Business Address</label>
-      <input id="employerAddress"  name="spouse_employer_address" type="text" placeholder="Employer/Business Address" class="input input-bordered" required/>
+  <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
+    <h1 class="text-2xl font-semibold mb-4">Financial Information</h1>
+    <div class="grid grid-cols-4 gap-6">
+        <!-- Source of Income Funds -->
+        <div class="flex flex-col">
+            <label for="salary" class="mb-2">Salary</label>
+            <input id="salary" type="text" placeholder="Salary" class="input input-bordered" />
+        </div>
+
+        <div class="flex flex-col">
+            <label for="business" class="mb-2">Business</label>
+            <input id="business" type="text" placeholder="Business" class="input input-bordered" />
+        </div>
+
+        <div class="flex flex-col">
+            <label for="pension" class="mb-2">Pension</label>
+            <input id="pension" type="text" placeholder="Pension" class="input input-bordered" />
+        </div>
+
+        <div class="flex flex-col">
+            <label for="regularRemittance" class="mb-2">Regular Remittance</label>
+            <input id="regularRemittance" type="text" placeholder="Regular Remittance" class="input input-bordered" />
+        </div>
+
+        <div class="flex flex-col col-span-4">
+            <label for="others" class="mb-2">Others (Specify)</label>
+            <input id="others" type="text" placeholder="Specify" class="input input-bordered" />
+        </div>
     </div>
   </div>
+
+  <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
+    <h1 class="text-2xl font-semibold mb-4">Spouse Information</h1>
+    <div class="grid grid-cols-4 gap-6">
+        <!-- First Name -->
+        <div class="flex flex-col">
+            <label for="firstName" class="mb-2">First Name</label>
+            <input id="firstName" type="text" placeholder="First Name" class="input input-bordered" />
+        </div>
+
+        <!-- Middle Name -->
+        <div class="flex flex-col">
+            <label for="middleName" class="mb-2">Middle Name</label>
+            <input id="middleName" type="text" placeholder="Middle Name" class="input input-bordered" />
+        </div>
+
+        <!-- Last Name -->
+        <div class="flex flex-col">
+            <label for="lastName" class="mb-2">Last Name</label>
+            <input id="lastName" type="text" placeholder="Last Name" class="input input-bordered" />
+        </div>
+
+        <!-- Employer / Business Name -->
+        <div class="flex flex-col">
+            <label for="employerName" class="mb-2">Employer/Business Name</label>
+            <input id="employerName" type="text" placeholder="Employer/Business Name" class="input input-bordered" />
+        </div>
+
+        <!-- Employer / Business Address -->
+        <div class="flex flex-col col-span-4">
+            <label for="employerAddress" class="mb-2">Employer / Business Address</label>
+            <input id="employerAddress" type="text" placeholder="Employer/Business Address" class="input input-bordered" />
+        </div>
+    </div>
 </div>
 
-    <div>
-    <div class="flex justify-between items-center mb-5">
+<div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
+    <div class="flex justify-between items-center mb-4">
         <h1 class="text-2xl font-semibold">Family Information</h1>
          <!-- Icon button to add a new family member -->
         <button @click="addFamilyMember" class="btn1 bg-transparent p-2 border border-green-500 text-green-500 rounded-lg flex items-center text-3xl">
@@ -738,44 +500,22 @@ const goToPreviousStep = () => {
                 <th class="border-b px-4 py-2">Relationship to Member</th>
                 <th class="border-b px-4 py-2">Marital Status</th>
                 <th class="border-b px-4 py-2">Education Attainment</th>
-                <th class="border-b px-4 py-2">Occupation</th>
+                <th class="border-b px-4 py-2">Occupation/Income</th>
+                <th class="border-b px-4 py-2">Cooperative Membership</th>
                 <th class="border-b px-4 py-2"></th>
             </tr>
         </thead>
          <tbody>
         <!-- Loop through the familyMembers array and display data dynamically -->
         <tr v-for="(member, index) in familyMembers" :key="index">
-          <td class="border-b px-1 py-2"><input v-model="member.name" type="text" placeholder="Name" class="input input-bordered w-full" /></td>
-          <td class="border-b px-2 py-2">
-            <select v-model="member.gender" class="input input-bordered w-full">
-              <option value="">Select Gender</option>
-              <option value="female">Female</option>
-              <option value="male">Male</option>
-            </select>
-          </td>
-          <td class="border-b px-2 py-2"><input v-model="member.relationship" type="text" placeholder="Relationship" class="input input-bordered w-full" /></td>
-          <td class="border-b px-2 py-2">
-            <select v-model="member.maritalStatus" class="input input-bordered w-full">
-              <option value="">Select Marital Status</option>
-              <option value="single">Single</option>
-              <option value="married">Married</option>
-              <option value="widow">Widow</option>
-              <option value="separated">Separated</option>
-            </select>
-          </td>
-          <td class="border-b px-2 py-2">
-            <select v-model="member.educationAttainment" class="input input-bordered w-full">
-              <option value="">Select Education Attainment</option>
-              <option value="college_degree">College Degree</option>
-              <option value="associate_degree">Associate Degree</option>
-              <option value="high_school">High School Graduate</option>
-              <option value="elementary">Elementary Graduate</option>
-              <option value="post_graduate">Post Graduate</option>
-              <option value="no_formal_schooling">No Formal Schooling</option>
-            </select>
-          </td>
-          <td class="border-b px-2 py-2"><input v-model="member.occupation" type="text" placeholder="Occupation" class="input input-bordered w-full" /></td>
-          <td class="border-b px-2 py-2">
+          <td class="border-b px-4 py-2"><input v-model="member.name" type="text" placeholder="Name" class="input input-bordered w-full" /></td>
+          <td class="border-b px-4 py-2"><input v-model="member.gender" type="text" placeholder="Gender" class="input input-bordered w-full" /></td>
+          <td class="border-b px-4 py-2"><input v-model="member.relationship" type="text" placeholder="Relationship" class="input input-bordered w-full" /></td>
+          <td class="border-b px-4 py-2"><input v-model="member.maritalStatus" type="text" placeholder="Status" class="input input-bordered w-full" /></td>
+          <td class="border-b px-4 py-2"><input v-model="member.educationAttainment" type="text" placeholder="Attainment" class="input input-bordered w-full" /></td>
+          <td class="border-b px-4 py-2"><input v-model="member.occupation" type="text" placeholder="Occupation" class="input input-bordered w-full" /></td>
+          <td class="border-b px-4 py-2"><input v-model="member.cooperativeMembership" type="text" placeholder="Membership" class="input input-bordered w-full" /></td>
+          <td class="border-b px-4 py-2">
             <!-- Trash button to remove the family member -->
             <button @click="removeFamilyMember(index)" class="text-red-500 text-xl">
               <i class="fas fa-trash"></i>
@@ -786,230 +526,153 @@ const goToPreviousStep = () => {
     </table>
 </div>
     
+
+  <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
+    <h1 class="text-2xl font-semibold mb-4">Are you related to any SLPMPC Officers or Employees? If YES, kindly provide the name and relationship:</h1>
+
+    <!-- Name and Relationship Fields -->
+    <div class="grid grid-cols-2 gap-6 mb-2">
+      <div class="flex flex-col">
+        <label for="name" class="font-medium text-lg mb-2">Name</label>
+        <input type="text" id="name" placeholder="Name" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
       
-  <!-- Relation to SLPMPC Officers or Employees Section -->
-    <div>
-      <h1 class="text-1 font-semibold mb-5">Are you related to any SLPMPC Officers or Employees? If YES, kindly provide the name and relationship:</h1>
-      <div class="grid grid-cols-2 gap-6 mb-5">
-        <div class="flex flex-col">
-          <label for="name" class="input-label">Name</label>
-          <input type="text" name="related_name_officer" id="name" placeholder="Name" class="input border border-gray-300 rounded-lg p-2" />
-        </div>
-        
-        <div class="flex flex-col">
-          <label for="relationship" class="input-label">Relationship</label>
-          <input type="text"  name="relationship_officer" id="relationship" placeholder="Relationship" class="input border border-gray-300 rounded-lg p-2" />
-        </div>
+      <div class="flex flex-col">
+        <label for="relationship" class="font-medium text-lg mb-2">Relationship</label>
+        <input type="text" id="relationship" placeholder="Relationship" class="input border border-gray-300 rounded-lg p-2" />
       </div>
-    </div>
-
-  <!-- Private Property Section -->
-    <div>
-      <h1 class="text-2xl font-semibold mb-5">Private Property</h1>
-
-      <!-- Car Ownership Section -->
-  <div class="grid grid-cols-2 gap-6 mb-5">
-    <div class="flex flex-col">
-    <label class="input-label">Car Ownership</label>
-    <div class="flex space-x-4"required>
-      <label class="flex items-center">
-        <input type="radio"  name="car_ownership"  value="yes" v-model="carOwnership" class="mr-2" /> Yes
-      </label>
-      <label class="flex items-center">
-        <input type="radio"  name="car_ownership"  value="no" v-model="carOwnership" class="mr-2" /> No
-      </label>
-      <label class="flex items-center">
-        <input type="radio"  name="car_ownership"  value="owned" v-model="carOwnership" class="mr-2" /> Owned
-      </label>
-    </div>
-
-    <!-- Monthly Amortization (Car) - Show only if "Yes" is selected for Car Ownership -->
-    <div v-if="carOwnership === 'yes'" class="flex flex-col col-span-2">
-      <label class="input-label mt-2">Monthly Amortization</label>
-      <input
-        type="text"
-        placeholder="₱"
-        v-model="monthlyAmortization"
-        @input="formatCurrencyCar"
-        :required="carOwnership === 'yes'"
-        class="input border border-gray-300 rounded-lg p-2"
-      />
     </div>
   </div>
 
-    <div class="flex flex-col">
-    <label class="input-label">House and Lot</label>
-    <div class="flex space-x-4"required >
-      <label class="flex items-center">
-        <input type="radio" name="house_ownership" value="yes" v-model="houseOwnership" class="mr-2" /> Yes
-      </label>
-      <label class="flex items-center">
-        <input type="radio" name="house_ownership" value="no" v-model="houseOwnership" class="mr-2" /> No
-      </label>
-      <label class="flex items-center">
-        <input type="radio" name="house_ownership" value="owned" v-model="houseOwnership" class="mr-2" /> Owned
-      </label>
+  <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
+    <h1 class="text-2xl font-semibold mb-4">Private Property</h1>
+
+    <!-- Car Ownership Section -->
+    <div class="grid grid-cols-3 gap-6 mb-6">
+      <div class="flex flex-col">
+        <label class="font-medium text-lg mb-2">Car Ownership</label>
+        <div class="flex space-x-4">
+          <label class="flex items-center">
+            <input type="radio" name="carOwnership" value="yes" class="mr-2" /> Yes
+          </label>
+          <label class="flex items-center">
+            <input type="radio" name="carOwnership" value="no" class="mr-2" /> No
+          </label>
+          <label class="flex items-center">
+            <input type="radio" name="carOwnership" value="owned" class="mr-2" /> Owned
+          </label>
+        </div>
+      </div>
+
+      <!-- Monthly Amortization (Car) -->
+      <div class="flex flex-col col-span-2">
+        <label class="font-medium text-lg mb-2">Monthly Amortization</label>
+        <input type="text" placeholder="P" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
     </div>
 
-    <!-- Show Monthly Amortization only if "Yes" is selected -->
-    <div v-if="houseOwnership === 'yes'" class="flex flex-col col-span-2">
-      <label class="input-label mt-2">Monthly Amortization</label>
-      <input
-        type="text"
-        placeholder="₱"
-        v-model="monthlyAmortizationHouse"
-        :required="houseOwnership === 'yes'"
-        @input="formatCurrencyHouse"
-        class="input border border-gray-300 rounded-lg p-2"
-      />
+    <!-- House and Lot Section -->
+    <div class="grid grid-cols-3 gap-6 mb-6">
+      <div class="flex flex-col">
+        <label class="font-medium text-lg mb-2">House and Lot</label>
+        <div class="flex space-x-4">
+          <label class="flex items-center">
+            <input type="radio" name="houseOwnership" value="yes" class="mr-2" /> Yes
+          </label>
+          <label class="flex items-center">
+            <input type="radio" name="houseOwnership" value="no" class="mr-2" /> No
+          </label>
+          <label class="flex items-center">
+            <input type="radio" name="houseOwnership" value="owned" class="mr-2" /> Owned
+          </label>
+        </div>
+      </div>
+
+      <!-- Monthly Amortization (House) -->
+      <div class="flex flex-col col-span-2">
+        <label class="font-medium text-lg mb-2">Monthly Amortization</label>
+        <input type="text" placeholder="P" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
     </div>
   </div>
-</div>
-</div>
+<div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
+    <h1 class="text-2xl font-semibold mb-4">Expenditures</h1>
 
-    <!-- Expenditures Section -->
-    <div>
-      <h1 class="text-2xl font-semibold mb-5">Monthly Expenses</h1>
-      
-
-      <!-- Expenses Section -->
-      <div class="grid grid-cols-4 gap-6 mb-[-20px]">
-        <div class="flex flex-col">
-          <label for="food" class="input-label">Food</label>
-          <input type="number" id="food" name="food" placeholder="Food" class="input border border-gray-300 rounded-lg p-2" required />
-        </div>
-        <div class="flex flex-col">
-          <label for="electricBill" class="input-label">Electric Bill</label>
-          <input type="number" id="electricBill" name="electric_bill" placeholder="Electric Bill" class="input border border-gray-300 rounded-lg p-2" required />
-        </div>
-        <div class="flex flex-col">
-          <label for="creditCard" class="input-label">Credit Card</label>
-          <input type="number" id="creditCard" name="credit_card"  placeholder="Credit Card" class="input border border-gray-300 rounded-lg p-2"  />
-        </div>
-        <div class="flex flex-col">
-          <label for="waterBill" class="input-label">Water Bill</label>
-          <input type="number" id="waterBill" name="water_bill"  placeholder="Water Bill" class="input border border-gray-300 rounded-lg p-2" required />
-        </div>
-        <div class="flex flex-col">
-          <label for="cableInternet" class="input-label">Cable/Internet</label>
-          <input type="number" id="cableInternet" name="cable_internet" placeholder="Cable/Internet" class="input border border-gray-300 rounded-lg p-2" />
-        </div>
-        <div class="flex flex-col">
-          <label for="tuitionFee" class="input-label">Tuition Fee</label>
-          <input type="number" id="tuitionFee" name="tuition_fee"  placeholder="Tuition Fee" class="input border border-gray-300 rounded-lg p-2" />
-        </div>
-        <div class="flex flex-col">
-          <label for="Others" class="input-label">Others</label>
-          <input type="number" id="Others" name="others_exp"placeholder="Others" class="input border border-gray-300 rounded-lg p-2" />
-        </div>
+    <!-- Income Section -->
+    <div class="grid grid-cols-3 gap-6 mb-6">
+      <div class="flex flex-col">
+        <label for="monthlySalary" class="font-medium text-lg mb-2">Monthly Salary</label>
+        <input type="text" id="monthlySalary" placeholder="Monthly Salary" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
+      <div class="flex flex-col">
+        <label for="otherIncome" class="font-medium text-lg mb-2">Other Income</label>
+        <input type="text" id="otherIncome" placeholder="Other income" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
+      <div class="flex flex-col">
+        <label for="remittance" class="font-medium text-lg mb-2">Remittance</label>
+        <input type="text" id="remittance" placeholder="Remittance" class="input border border-gray-300 rounded-lg p-2" />
       </div>
     </div>
-   </div>
+
+    <!-- Total Income Section -->
+    <div class="flex flex-col mb-6">
+      <label for="totalIncome" class="font-medium text-lg mb-2">Total Income</label>
+      <input type="text" id="totalIncome" placeholder="Total Income" class="input border border-gray-300 rounded-lg p-2" />
+    </div>
+
+    <!-- Expenses Section -->
+    <div class="grid grid-cols-3 gap-6 mb-6">
+      <div class="flex flex-col">
+        <label for="food" class="font-medium text-lg mb-2">Food</label>
+        <input type="text" id="food" placeholder="Food" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
+      <div class="flex flex-col">
+        <label for="electricBill" class="font-medium text-lg mb-2">Electric Bill</label>
+        <input type="text" id="electricBill" placeholder="Electric Bill" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
+      <div class="flex flex-col">
+        <label for="creditCard" class="font-medium text-lg mb-2">Credit Card</label>
+        <input type="text" id="creditCard" placeholder="Credit Card" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
+      <div class="flex flex-col">
+        <label for="waterBill" class="font-medium text-lg mb-2">Water Bill</label>
+        <input type="text" id="waterBill" placeholder="Water Bill" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
+      <div class="flex flex-col">
+        <label for="cableInternet" class="font-medium text-lg mb-2">Cable/Internet</label>
+        <input type="text" id="cableInternet" placeholder="Cable/Internet" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
+      <div class="flex flex-col">
+        <label for="tuitionFee" class="font-medium text-lg mb-2">Tuition Fee</label>
+        <input type="text" id="tuitionFee" placeholder="Tuition Fee" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
+       <div class="flex flex-col">
+      <label for="Others" class="font-medium text-lg mb-2">Others:</label>
+      <input type="text" id="Others" placeholder="Others" class="input border border-gray-300 rounded-lg p-2" />
+      </div>
+    </div>
+
+    <!-- Total Expenses Section -->
+    <div class="flex flex-col mb-6">
+      <label for="totalExpenses" class="font-medium text-lg mb-2">Total Expenses</label>
+      <input type="text" id="totalExpenses" placeholder="Total Expenses" class="input border border-gray-300 rounded-lg p-2" />
+    </div>
+
+    <!-- Submit Button -->
+    <div class="flex justify-end mt-6">
+      <button @click="submitForm" class="btn btn-primary bg-blue-500 text-white py-2 px-6 rounded-lg">Submit</button>
+    </div>
   </div>
 
-    <!-- Step 2: Upload Documents -->
-    <div v-if="currentStep === 2" class="mx-7">
-      <h1 class="text-2xl font-semibold mb-4">Upload Documents</h1>
-
-      <div class="file-upload-container">
-        <div class="file-upload-item">
-          <label for="certificateOfPMESCompletion">Certificate of PMES Completion</label>
-          <input type="file" id="certificateOfPMESCompletion" @change="handleFileUpload('certificateOfPMESCompletion')" />
-        </div>
-        <div class="file-upload-item">
-          <label for="governmentId">Valid Government-issued ID</label>
-          <input type="file" id="governmentId" @change="handleFileUpload('governmentId')" />
-        </div>
-        <div class="file-upload-item">
-          <label for="taxIdentificationNumber">Tax Identification Number (TIN)</label>
-          <input type="file" id="taxIdentificationNumber" @change="handleFileUpload('taxIdentificationNumber')" />
-        </div>
-        <div class="file-upload-item">
-          <label for="proofOfBilling">Proof of Billing</label>
-          <input type="file" id="proofOfBilling" @change="handleFileUpload('proofOfBilling')" />
-        </div>
-        <div class="file-upload-item">
-          <label for="recent2x2Picture">Recent 2x2 ID Picture</label>
-          <input type="file" id="recent2x2Picture" @change="handleFileUpload('recent2x2Picture')" />
-        </div>
-      </div>
-    </div>
-
-
-     <!-- Step 3: Payment Proof -->
-      <div v-if="currentStep === 3">
-        <h1 class="text-2xl font-semibold mb-4">Payment Proof</h1>
-
-        <div class="payment-proof-container">
-          <!-- Payment Breakdown -->
-          <div class="payment-breakdown mb-4">
-            <h3 class="text-lg font-semibold">Payment Breakdown</h3>
-            <ul>
-              <li>Membership Fee: P 200.00</li>
-              <li>Initial Savings Deposit: P 500.00</li>
-              <li>Regular Member: P 2,000.00</li>
-              <li><b>Total: P 2,700</b></li>
-            </ul>
-
-            <!-- Info link to membership policy -->
-            <p class="mt-2 text-sm text-gray-600">
-              For more information about membership payment details, please see our
-              <a href="/member/cooperative/policy" class="text-red-600 underline hover:text-red-800">
-                Membership and Loan Policy
-              </a>.
-            </p>
-          </div>
-
-          <!-- Payment Mode select option first -->
-          <div class="payment-proof-item">
-            <label for="paymentMode">Payment Mode</label>
-            <select id="paymentMode" class="input" required>
-              <option value="" disabled selected>Select Payment Mode</option>
-              <option value="bank">Bank</option>
-              <option value="onlinePayment">Online Payment</option>
-              <option value="overTheCounter">Over the Counter</option>
-            </select>
-          </div>
-
-          <!-- Payment Reference input with placeholder examples -->
-          <div class="payment-proof-item">
-            <label for="paymentReference">Payment Reference</label>
-            <input type="text" v-model="form.paymentReference" id="paymentReference" class="input" placeholder="e.g., Transaction ID, Invoice Number, Reference Code" required />
-          </div>
-
-          <div class="payment-proof-item">
-            <label for="paymentProof">Upload Payment Proof</label>
-            <input type="file" id="paymentProof" @change="handleFileUpload('paymentProof')" />
-          </div>
-        </div>
-      </div>
-
-
-
-        <!-- Navigation Buttons -->
-        <div class="flex justify-between gap-6 mt-6">
-          <button v-if="currentStep > 1" @click="goToPreviousStep" class="btn">Back</button>
-          <button v-if="currentStep < totalSteps" @click="goToNextStep" class="btn">Next</button>
-          <button v-if="currentStep === totalSteps" @click="submitForm" class="btn">Submit</button>
-        </div>
-      </div>
-    </form>
   </AppLayout>
 </template>
 
 
 <style scoped>
-.input-label {
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 10px;
-  color: #000;
-}
-
 .input {
   width: 100%;
   height: 40px; /* Ensure consistent height */
-  padding: 5px;
+  padding: 10px;
   border: 1px solid #d1d5db;
   border-radius: 0.375rem;
   font-size: 1rem;
@@ -1047,86 +710,4 @@ const goToPreviousStep = () => {
   margin-left: 16px;
   margin-right: 16px;
 }
-
-/* General File Upload Styling */
-.file-upload-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .file-upload-item {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .file-upload-item label {
-    font-weight: bold;
-    margin-bottom: 5px; /* Space between label and input */
-  }
-
-  .file-upload-item input[type="file"] {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f8f9fa;
-  }
-
-.file-upload-container label {
-  font-weight: bold;
-  color: #333;
-}
-
-.file-upload-container .file-upload-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.file-upload-container .file-upload-item input {
-  flex: 1;
-}
-
-/* Payment Proof Section Styling */
-.payment-proof-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.payment-proof-container input[type="text"] {
-  padding: 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-}
-
-.payment-proof-container input[type="file"] {
-  padding: 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-}
-
-.payment-proof-item {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 10px;
-  background-color: #e5e7eb; /* light gray background */
-  border-radius: 5px;
-  overflow: hidden;
-  margin-bottom: 20px;
-}
-
-.progress-bar-fill {
-  height: 100%;
-  background-color: #ef4444; /* red fill color */
-  transition: width 0.3s ease-in-out;
-}
-
 </style>
