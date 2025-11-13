@@ -252,7 +252,7 @@ const submitForm = () => {
           </div>
         </div>
       </div>
-      
+
       <!-- Contact Information Section -->
       <div class="mb-2">
         <h2 class="font-medium text-lg mb-2">Contact Information</h2>
@@ -307,7 +307,7 @@ const submitForm = () => {
         </div>
       </div>
     </div>
-    
+
     <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
     <h1 class="text-2xl font-semibold mb-4">Employment Information</h1>
     <div class="grid grid-cols-2 gap-6">
@@ -490,7 +490,7 @@ const submitForm = () => {
           +
         </button>
     </div>
-    
+
     <!-- Family Information Table -->
     <table id="familyTable" class="table-auto w-full border-collapse">
         <thead>
@@ -525,10 +525,10 @@ const submitForm = () => {
       </tbody>
     </table>
 </div>
-    
+
 
   <div class="flex h-full flex-1 flex-col gap-8 p-6 mx-20">
-    <h1 class="text-2xl font-semibold mb-4">Are you related to any SLPMPC Officers or Employees? If YES, kindly provide the name and relationship:</h1>
+    <h1 class="text-2xl font-semibold mb-4">Are you related to any SLPMC Officers or Employees? If YES, kindly provide the name and relationship:</h1>
 
     <!-- Name and Relationship Fields -->
     <div class="grid grid-cols-2 gap-6 mb-2">
@@ -536,7 +536,7 @@ const submitForm = () => {
         <label for="name" class="font-medium text-lg mb-2">Name</label>
         <input type="text" id="name" placeholder="Name" class="input border border-gray-300 rounded-lg p-2" />
       </div>
-      
+
       <div class="flex flex-col">
         <label for="relationship" class="font-medium text-lg mb-2">Relationship</label>
         <input type="text" id="relationship" placeholder="Relationship" class="input border border-gray-300 rounded-lg p-2" />
