@@ -6,6 +6,9 @@ use App\Http\Controllers\Public\InquiryController as PublicInquiryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\LoanController;
+use App\Http\Controllers\Admin\LoanApplicationController;
+use App\Http\Controllers\Admin\PMESController;
+use App\Http\Controllers\Admin\CreditScoreController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\UtilityController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
@@ -52,33 +55,42 @@ Route::middleware(['auth', 'verified', 'prevent-back'])->group(function () {
       Route::resource('members', MemberController::class);
       Route::resource('inquiries', InquiryController::class);
       Route::resource('loans', LoanController::class);
+      Route::resource('loanapplication', LoanApplicationController::class);
+      Route::resource('pmes', PMESController::class);
+      Route::resource('creditscoring', CreditScoreController::class);
+ 
     });
 
     Route::prefix('utility')->name('utility.')->group(function () {
       Route::get('calendar', [UtilityController::class, 'calendar'])->name('calendar');
       Route::get('calculator', [UtilityController::class, 'calculator'])->name('calculator');
+      Route::get('reports', [UtilityController::class, 'reports'])->name('reports');
     });
   });
 
-  // ------------------
-  // Member Routes
-  // ------------------
-  Route::middleware('role:member')->prefix('member')->name('member.')->group(function () {
+// ------------------
+// Member Routes
+// ------------------
+Route::middleware('role:member')->prefix('member')->name('member.')->group(function () {
     Route::get('dashboard', [MemberDashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('cooperative')->name('cooperative.')->group(function () {
-      Route::get('/account', [CooperativeController::class, 'account'])->name('account');
+        Route::get('/account', [CooperativeController::class, 'account'])->name('account');
+        Route::get('/policy', [CooperativeController::class, 'policy'])->name('policy');  
     });
 
     Route::prefix('services')->name('services.')->group(function () {
-      Route::get('/loan-application', [ServicesController::class, 'loanApplication'])->name('loan-application');
+        Route::get('/loan-application', [ServicesController::class, 'loanApplication'])->name('loan-application');
+        Route::get('/credit-scoring', [ServicesController::class, 'creditScoring'])->name('credit-scoring');  
+        Route::get('/loan-status', [ServicesController::class, 'loanStatus'])->name('loan-status');  
     });
 
     Route::prefix('requirements')->name('requirements.')->group(function () {
-      Route::get('/membership-form', [RequirementsController::class, 'membershipForm'])->name('membership-form');
-      Route::get('/pmes', [RequirementsController::class, 'pmes'])->name('pmes');
+        Route::get('/membership-form', [RequirementsController::class, 'membershipForm'])->name('membership-form');
+        Route::get('/pmes', [RequirementsController::class, 'pmes'])->name('pmes');
     });
-  });
+});
+
 });
 
 require __DIR__ . '/settings.php';
