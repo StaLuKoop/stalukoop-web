@@ -10,43 +10,13 @@ use Inertia\Response;
 
 class ServicesController extends Controller
 {
-    /**
-     * Show loan application page
-     */
-    public function loanApplication(): Response
-    {
-        $user = Auth::user();
-        $status = $user->member?->membership_status ?? 'none'; // Get user membership status
+  public function loanApplication(): Response
+  {
+    $user = Auth::user();
+    $status = $user->member?->membership_status ?? 'none';
 
-        return Inertia::render('member/services/LoanApplication', [
-            'status' => $status, // Pass status to the frontend
-        ]);
-    }
-
-    /**
-     * Show credit scoring page
-     */
-    public function creditScoring(): Response
-    {
-        $user = Auth::user();
-        $status = $user->member?->membership_status ?? 'none'; // Get user membership status
-
-        return Inertia::render('member/services/CreditScoring', [
-            'status' => $status, // Pass status to the frontend
-        ]);
-    }
-
-    /**
-     * Show loan status page
-     */
-    public function loanStatus(): Response
-    {
-        $user = Auth::user();
-        $status = $user->member?->membership_status ?? 'none'; // Get user membership status
-
-        return Inertia::render('member/services/LoanStatus', [
-            'status' => $status, // Pass status to the frontend
-        ]);
-    }
+    return Inertia::render('member/services/LoanApplication', [
+      'status' => $status,
+    ]);
+  }
 }
-

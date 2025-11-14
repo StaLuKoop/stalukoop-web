@@ -10,20 +10,13 @@ use Inertia\Response;
 
 class CooperativeController extends Controller
 {
-    public function account(): Response
-    {
-        $user = Auth::user();
-        $status = $user->member?->membership_status ?? 'none';
+  public function account(): Response
+  {
+    $user = Auth::user();
+    $status = $user->member?->membership_status ?? 'none';
 
-        return Inertia::render('member/cooperative/Account', [
-            'status' => $status,
-        ]);
-    }
-
-    // Method to render the Loan Policy page
-    public function policy()
-    {
-        return Inertia::render('member/cooperative/Policy');  // Renders the Policy.vue component
-    }
+    return Inertia::render('member/cooperative/Account', [
+      'status' => $status,
+    ]);
+  }
 }
-
