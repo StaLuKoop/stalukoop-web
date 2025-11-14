@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
-import AppLayout from '@/layouts/AppLayout.vue'
-import { type BreadcrumbItem } from '@/types'
-import { Head } from '@inertiajs/vue3'
-
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/vue3';
+import { onMounted, ref, watch } from 'vue';
 
 defineProps<{ status: string }>()
 
@@ -13,25 +12,25 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 // Reactive reference to control the visibility of "Other" collateral description
-const showOtherCollateral = ref(false);
+// const showOtherCollateral = ref(false);
 
 // Method to toggle visibility of "Other" collateral input field
-const handleCollateralChange = (event: Event) => {
-  const selectedValue = (event.target as HTMLSelectElement).value;
-  showOtherCollateral.value = selectedValue === 'other';
-}
+// const handleCollateralChange = (event: Event) => {
+//   const selectedValue = (event.target as HTMLSelectElement).value;
+//   showOtherCollateral.value = selectedValue === 'other';
+// }
 
 // Track the selected employment type
 const employmentType = ref<string>('');
 
 // Track the income options for each employment type
-const permanentJobIncome = ref('');
-const businessIncome = ref('');
-const pensionerIncome = ref('');
-const contractualIncome = ref('');
-const selfEmployedIncome = ref('');
-const governmentIncome = ref('');
-const housewifeUnemployedIncome = ref('no-income');
+// const permanentJobIncome = ref('');
+// const businessIncome = ref('');
+// const pensionerIncome = ref('');
+// const contractualIncome = ref('');
+// const selfEmployedIncome = ref('');
+// const governmentIncome = ref('');
+// const housewifeUnemployedIncome = ref('no-income');
 
 // Define the type of the sections object
 interface EmploymentSections {
@@ -58,7 +57,7 @@ const employmentSections = ref<EmploymentSections>({
 // Watch employmentType changes to update the display of relevant sections
 watch(employmentType, (value) => {
   // Reset all sections to hidden
-  for (let key in employmentSections.value) {
+  for (const key in employmentSections.value) {
     employmentSections.value[key as keyof EmploymentSections] = false;
   }
 
@@ -275,8 +274,8 @@ onMounted(() => {
             <div class="flex items-center space-x-4">
                   <div class="md:col-span-2">
                 <label for="contact-no" class="input-label">Mobile Number</label>
-                <input 
-                  type="tel" 
+                <input
+                  type="tel"
                   id="mobile"
                   name="contact_no"
                   placeholder="+63XXXXXXXXX"
@@ -326,14 +325,14 @@ onMounted(() => {
             <select id="employment-type" name="employment-type" v-model="employmentType" required class="input-field input-bordered">
               <option value="">Select Employment Type</option>
               <option value="permanent-job">Permanent Job</option>
-              <option value="business">Business</option> 
+              <option value="business">Business</option>
               <option value="contractual-minimum">Contractual (Minimum 3 years)</option>
               <option value="contractual-piece-rate">Contractual, Piece Rate, On Call Basis</option>
-              <option value="housewife">Housewife</option> 
+              <option value="housewife">Housewife</option>
               <option value="self-employed">Self-Employed</option>
               <option value="government">Government</option>
-              <option value="unemployed">Unemployed</option> 
-              <option value="retired">Retired</option> 
+              <option value="unemployed">Unemployed</option>
+              <option value="retired">Retired</option>
           </select>
         </div>
 
@@ -372,7 +371,7 @@ onMounted(() => {
         </div>
 
         <!-- Contractual -->
-        <div v-show="employmentType === 'contractual-minimum' || employmentType === 'contractual-piece-rate'"class="flex flex-col">
+        <div v-show="employmentType === 'contractual-minimum' || employmentType === 'contractual-piece-rate'" class="flex flex-col">
             <label for="contractual-income" class="input-label">Income Level</label>
             <select id="contractual-income" name="contractual-income" required class="input-field input-bordered">
                 <option value="minimum-pay">Minimum pay</option>
@@ -392,7 +391,7 @@ onMounted(() => {
         </div>
 
         <!-- Government -->
-        <div v-show="employmentType === 'government'"class="flex flex-col">
+        <div v-show="employmentType === 'government'" class="flex flex-col">
             <label for="government-income" class="input-label">Monthly Salary Range</label>
             <select id="government-income" name="government-income" required class="input-field input-bordered">
                 <option value="20k-above">Above ₱20,000</option>
@@ -410,14 +409,14 @@ onMounted(() => {
             </select>
         </div>
 
-        
+
     </div>
   </div>
           <h1 class="text-2xl font-semibold mb-[5px] mt-10">Loan Information</h1>
           <!-- Membership, Capital, Type of Loan -->
           <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-5"> <!-- 4 columns on medium screens and above -->
-              
+
               <!-- Share Capital and Savings Section -->
               <div class="flex flex-col">
                 <label class="input-label">Share Capital</label>
@@ -484,17 +483,17 @@ onMounted(() => {
             </div>
           </div>
         </div>
-  
+
         <h1 class="text-2xl font-semibold mb-[1px] mt-6 ">Loan Security</h1>
         <div class="flex flex-col space-y-2">
           <label for="collateral-question" class="input-label">Will you be providing collateral for this loan?</label>
-          
+
           <!-- Collateral Option -->
           <div class="flex items-center space-x-4">
             <input type="radio" name="collateral_type" value="collateral" required class="radio-input" id="collateral-yes" />
             <span>Yes, I will provide collateral</span>
           </div>
-          
+
           <!-- Non-Collateral Option -->
           <div class="flex items-center space-x-4">
             <input type="radio" name="collateral_type" value="non_collateral" required class="radio-input" id="collateral-no" />
@@ -578,7 +577,7 @@ onMounted(() => {
 
 
         <!-- Guarantor Information (only visible if 'No' is selected) -->
-        <div id="guarantor-info"style="display: none;">
+        <div id="guarantor-info" style="display: none;">
           <h2 class="text-lg font-semibold mb-2 mt-5">Guarantor Information</h2>
 
           <table id="guarantorTable" class="table-auto w-full border-collapse border">
@@ -642,6 +641,82 @@ onMounted(() => {
 
           </div>
         </div>
+
+        <!-- Supporting Documents Section -->
+         <h1 class="text-2xl font-semibold mb-[5px] mt-10">Supporting Documents</h1>
+          <p class="text-gray-600 mb-3 text-sm italic">Please upload the following documents to verify your identity and financial capacity.</p>
+
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Valid ID -->
+              <div>
+                <label for="valid-id" class="input-label">Valid ID (Government-issued)</label>
+                <input
+                  type="file"
+                  id="valid-id"
+                  name="valid_id"
+                  accept=".pdf, .jpg, .jpeg, .png"
+                  required
+                  class="input-field w-full"
+                />
+                <span class="text-sm text-gray-500">Accepted formats: PDF, JPG, PNG (Max 5MB)</span>
+              </div>
+
+              <!-- Proof of Income -->
+              <div>
+                <label for="proof-income" class="input-label">Proof of Income</label>
+                <input
+                  type="file"
+                  id="proof-income"
+                  name="proof_income"
+                  accept=".pdf, .jpg, .jpeg, .png"
+                  required
+                  class="input-field w-full"
+                />
+                <span class="text-sm text-gray-500">Payslip, COE with Compensation, or ITR</span>
+              </div>
+
+              <!-- Proof of Billing -->
+              <div>
+                <label for="proof-billing" class="input-label">Proof of Billing</label>
+                <input
+                  type="file"
+                  id="proof-billing"
+                  name="proof_billing"
+                  accept=".pdf, .jpg, .jpeg, .png"
+                  required
+                  class="input-field w-full"
+                />
+                <span class="text-sm text-gray-500">Meralco, Water, or Internet bill (Max 5MB)</span>
+              </div>
+
+              <!-- Other Supporting Document (optional) -->
+              <div>
+                <label for="other-doc" class="input-label">Other Supporting Document (Optional)</label>
+                <input
+                  type="file"
+                  id="other-doc"
+                  name="other_document"
+                  accept=".pdf, .jpg, .jpeg, .png"
+                  class="input-field w-full"
+                />
+                <span class="text-sm text-gray-500">E.g., Business permit, Co-maker ID, etc.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Declaration & Agreement Section -->
+          <h1 class="text-2xl font-semibold mb-[5px] mt-10">Declaration & Agreement</h1>
+          <div class="space-y-3 text-gray-700">
+            <div class="flex items-center space-x-3">
+              <input type="checkbox" id="declaration" name="declaration" required class="checkbox-input" />
+              <label for="declaration" class="text-sm">I hereby declare that the above information is true and correct.</label>
+            </div>
+            <div class="flex items-center space-x-3">
+              <input type="checkbox" id="authorization" name="authorization" required class="checkbox-input" />
+              <label for="authorization" class="text-sm">I authorize the cooperative to verify and evaluate my loan application.</label>
+            </div>
+          </div>
 
           <!-- Submit Section -->
           <div class="submit-container">

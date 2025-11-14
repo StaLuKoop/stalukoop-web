@@ -220,43 +220,27 @@ onMounted(() => {
         </Card>
       </div>
 
-      <!-- Recent Loan Applications Table -->
+      <!-- Pending Tasks Table -->
       <Card>
         <CardHeader>
-          <CardTitle>Recent Loan Applications</CardTitle>
+          <CardTitle>Pending Tasks</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Member</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Term</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>Task</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               <TableRow>
-                <TableCell>Juan Dela Cruz</TableCell>
-                <TableCell>₱50,000</TableCell>
-                <TableCell>12 months</TableCell>
-                <TableCell>Pending</TableCell>
-                <TableCell>2025-07-19</TableCell>
+                <TableCell>Membership form of Juan Dela Cruz needs approval.</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Maria Santos</TableCell>
-                <TableCell>₱30,000</TableCell>
-                <TableCell>6 months</TableCell>
-                <TableCell>Approved</TableCell>
-                <TableCell>2025-07-18</TableCell>
+                <TableCell>Loan application for Maria Santos needs review.</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Pedro Ramos</TableCell>
-                <TableCell>₱80,000</TableCell>
-                <TableCell>24 months</TableCell>
-                <TableCell>Rejected</TableCell>
-                <TableCell>2025-07-16</TableCell>
+                <TableCell>Payment verification required for Pedro Ramos.</TableCell>
               </TableRow>
             </TableBody>
           </Table>

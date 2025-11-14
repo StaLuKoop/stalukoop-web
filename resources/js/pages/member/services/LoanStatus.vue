@@ -4,23 +4,27 @@ import { type BreadcrumbItem } from '@/types'
 import { Head } from '@inertiajs/vue3'
 import { ref } from 'vue'
 
-// Breadcrumbs for navigation
 const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Dashboard', href: '/member/dashboard' },
   { title: 'Loan Status', href: '/member/services/loan-status' },
 ]
 
-// Dummy loan data for illustration (Replace with dynamic data from backend)
+// Dummy data (replace later with backend)
 const loanHistory = ref([
   {
     loanId: 'L-1023',
     loanType: 'Regular Loan',
-    amount: 5000,
-    balance: 3000,
+    amount: 25000,
+    balance: 21086,
     status: 'Ongoing',
-    nextDueDate: '2025-12-01',
-    maturityDate: '2026-12-01',
-    remainingMonths: 12,
+    nextDueDate: '2025-12-10',
+    interest: 2.5,
+    startDate: '2025-11-10',
+    savingsDeposit: 500,
+    shareCapital: 500,
+    lpp: 150,
+    serviceFee: 750,
+    netProceeds: 23100,
   },
   {
     loanId: 'L-1024',
@@ -28,9 +32,6 @@ const loanHistory = ref([
     amount: 10000,
     balance: 10000,
     status: 'Pending',
-    nextDueDate: '',
-    maturityDate: '2027-01-01',
-    remainingMonths: 24,
   },
   {
     loanId: 'L-1025',
@@ -38,9 +39,6 @@ const loanHistory = ref([
     amount: 15000,
     balance: 0,
     status: 'Completed',
-    nextDueDate: '',
-    maturityDate: '2025-01-01',
-    remainingMonths: 0,
   },
   {
     loanId: 'L-1026',
@@ -48,57 +46,55 @@ const loanHistory = ref([
     amount: 8000,
     balance: 2000,
     status: 'Rejected',
-    nextDueDate: '',
-    maturityDate: '',
-    remainingMonths: 0,
+    rejectionReason: 'Insufficient proof of income.',
   },
 ])
 
-const filteredLoans = ref(loanHistory.value)  // Filtered loans based on status
-const selectedStatus = ref('All')  // Track the selected filter status
+const selectedStatus = ref('All')
+const filteredLoans = ref(loanHistory.value)
 
-// Filter loans by status
 const filterLoans = (status: string) => {
-  if (status === 'All') {
-    filteredLoans.value = loanHistory.value
-  } else {
-    filteredLoans.value = loanHistory.value.filter(loan => loan.status === status)
-  }
+  selectedStatus.value = status
+  filteredLoans.value =
+    status === 'All'
+      ? loanHistory.value
+      : loanHistory.value.filter((loan) => loan.status === status)
 }
 
-// Loan details modal visibility
+// Modals
 const showLoanDetailsModal = ref(false)
-const selectedLoan = ref<any>(null)  // Store selected loan details for modal
-
-// Payment modal visibility
 const showPaymentModal = ref(false)
-const selectedPaymentLoan = ref<any>(null)  // Store selected loan for payment
+const showRejectionModal = ref(false)
 
-// Show Loan Details Modal
+const selectedLoan = ref<any>(null)
+const selectedPaymentLoan = ref<any>(null)
+const selectedRejectedLoan = ref<any>(null)
+
 const showLoanDetails = (loan: any) => {
   selectedLoan.value = loan
   showLoanDetailsModal.value = true
 }
-
-// Show Payment Modal
 const showPayment = (loan: any) => {
   selectedPaymentLoan.value = loan
   showPaymentModal.value = true
 }
+const showRejectionReason = (loan: any) => {
+  selectedRejectedLoan.value = loan
+  showRejectionModal.value = true
+}
 
-// Close Modals
 const closeModal = () => {
   showLoanDetailsModal.value = false
   showPaymentModal.value = false
+  showRejectionModal.value = false
 }
 
-// Handle payment proof change (for file input)
+// Handle file input
+const paymentProof = ref<File | null>(null)
 const handlePaymentProofChange = (e: Event) => {
-  const target = e.target as HTMLInputElement | null;  // Cast the event target as an HTMLInputElement
-  const file = target?.files?.[0] ?? null;  // Get the first file, if any
-  const paymentProof = file;  // Assign the selected file to the reactive variable
+  const file = (e.target as HTMLInputElement)?.files?.[0] ?? null
+  paymentProof.value = file
 }
-
 </script>
 
 <template>
@@ -106,153 +102,188 @@ const handlePaymentProofChange = (e: Event) => {
 
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="flex flex-col gap-6 p-6">
-      
-      <!-- Loan History Filter -->
-      <div class="flex justify-between items-center mb-6">
-        <div class="flex gap-4">
-          <button @click="filterLoans('All')" :class="{'bg-gray-300': selectedStatus === 'All'}" class="py-2 px-4 rounded">All</button>
-          <button @click="filterLoans('Completed')" :class="{'bg-green-300': selectedStatus === 'Completed'}" class="py-2 px-4 rounded">Completed</button>
-          <button @click="filterLoans('Ongoing')" :class="{'bg-blue-300': selectedStatus === 'Ongoing'}" class="py-2 px-4 rounded">Ongoing</button>
-          <button @click="filterLoans('Pending')" :class="{'bg-yellow-300': selectedStatus === 'Pending'}" class="py-2 px-4 rounded">Pending</button>
-          <button @click="filterLoans('Rejected')" :class="{'bg-red-300': selectedStatus === 'Rejected'}" class="py-2 px-4 rounded">Rejected</button>
-        </div>
+      <!-- Filter Buttons -->
+      <div class="flex gap-2 mb-4">
+        <button
+          v-for="status in ['All','Completed','Ongoing','Pending','Rejected']"
+          :key="status"
+          @click="filterLoans(status)"
+          :class="[
+            'py-2 px-4 rounded text-sm font-semibold',
+            selectedStatus === status ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
+          ]"
+        >
+          {{ status }}
+        </button>
       </div>
 
       <!-- Loan History Table -->
-      <div class="bg-white p-6 rounded-lg shadow-lg">
+      <div class="bg-white p-6 rounded-lg shadow">
         <h2 class="text-xl font-semibold mb-4">Loan History</h2>
-        <table class="min-w-full table-auto text-sm">
-          <thead>
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+          <thead class="bg-gray-50 text-gray-700">
             <tr>
-              <th class="py-2 px-4 text-left">Loan ID</th>
-              <th class="py-2 px-4 text-left">Type</th>
-              <th class="py-2 px-4 text-left">Amount</th>
-              <th class="py-2 px-4 text-left">Balance</th>
-              <th class="py-2 px-4 text-left">Status</th>
-              <th class="py-2 px-4 text-left">Next Due Date</th>
-              <th class="py-2 px-4 text-left">Action</th>
+              <th class="px-4 py-2 text-left">Loan ID</th>
+              <th class="px-4 py-2 text-left">Type</th>
+              <th class="px-4 py-2 text-left">Amount</th>
+              <th class="px-4 py-2 text-left">Balance</th>
+              <th class="px-4 py-2 text-left">Status</th>
+              <th class="px-4 py-2 text-left">Next Due Date</th>
+              <th class="px-4 py-2 text-left">Action</th>
             </tr>
           </thead>
-          <tbody>
-          <tr v-for="loan in filteredLoans" :key="loan.loanId">
-            <td class="py-2 px-4">{{ loan.loanId }}</td>
-            <td class="py-2 px-4">{{ loan.loanType }}</td>
-            <td class="py-2 px-4">₱{{ loan.amount }}</td>
-            <td class="py-2 px-4">₱{{ loan.balance }}</td>
-            <td class="py-2 px-4">
-              <span
-                :class="{
-                  'bg-green-100 text-green-700': loan.status === 'Completed',
-                  'bg-blue-100 text-blue-700': loan.status === 'Ongoing',
-                  'bg-yellow-100 text-yellow-700': loan.status === 'Pending',
-                  'bg-red-100 text-red-700': loan.status === 'Rejected'
-                }"
-                class="py-1 px-2 rounded-full"
-              >
-                {{ loan.status }}
-              </span>
-            </td>
-
-            <!-- Show next due date only for ongoing loans; otherwise show "-" -->
-            <td class="py-2 px-4">
-              {{ loan.status === 'Ongoing' ? loan.nextDueDate : '-' }}
-            </td>
-
-            <!-- Actions -->
-            <td class="py-2 px-4">
-              <button
-                @click="showLoanDetails(loan)"
-                v-if="loan.status === 'Ongoing' || loan.status === 'Completed'"
-                class="text-blue-600 hover:underline"
-              >
-                View
-              </button>
-
-              <button
-                @click="showPayment(loan)"
-                v-if="loan.status === 'Ongoing'"
-                class="ml-2 text-green-600 hover:underline"
-              >
-                Make Payment
-              </button>
-
-              <span v-if="loan.status === 'Rejected'" class="text-red-600">
-                Reason Only
-              </span>
-
-              <span v-if="loan.status === 'Pending'" class="text-yellow-600">
-                Awaiting Approval
-              </span>
-            </td>
-          </tr>
-        </tbody>
+          <tbody class="divide-y divide-gray-100">
+            <tr v-for="loan in filteredLoans" :key="loan.loanId">
+              <td class="px-4 py-2">{{ loan.loanId }}</td>
+              <td class="px-4 py-2">{{ loan.loanType }}</td>
+              <td class="px-4 py-2">₱{{ loan.amount.toLocaleString() }}</td>
+              <td class="px-4 py-2">₱{{ loan.balance.toLocaleString() }}</td>
+              <td class="px-4 py-2">
+                <span
+                  :class="{
+                    'bg-green-100 text-green-700': loan.status === 'Completed',
+                    'bg-blue-100 text-blue-700': loan.status === 'Ongoing',
+                    'bg-yellow-100 text-yellow-700': loan.status === 'Pending',
+                    'bg-red-100 text-red-700': loan.status === 'Rejected'
+                  }"
+                  class="rounded-full px-3 py-1 text-xs font-semibold"
+                >
+                  {{ loan.status }}
+                </span>
+              </td>
+              <td class="px-4 py-2">
+                {{ loan.status === 'Ongoing' ? loan.nextDueDate : '-' }}
+              </td>
+              <td class="px-4 py-2 space-x-2">
+                <button
+                  v-if="loan.status === 'Ongoing' || loan.status === 'Completed'"
+                  @click="showLoanDetails(loan)"
+                  class="text-blue-600 hover:underline"
+                >
+                  View
+                </button>
+                <button
+                  v-if="loan.status === 'Ongoing'"
+                  @click="showPayment(loan)"
+                  class="text-green-600 hover:underline"
+                >
+                  Pay
+                </button>
+                <button
+                  v-if="loan.status === 'Rejected'"
+                  @click="showRejectionReason(loan)"
+                  class="text-red-600 hover:underline"
+                >
+                  Reason Only
+                </button>
+                <span v-if="loan.status === 'Pending'" class="text-yellow-600">Awaiting Approval</span>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
       <!-- Loan Details Modal -->
-      <div v-if="showLoanDetailsModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-        <div class="bg-white p-6 rounded-lg shadow-lg w-1/3 relative">
-          <h2 class="text-2xl font-semibold mb-3">Loan Details ({{ selectedLoan.loanId }})</h2>
-          <p><strong>Loan Type:</strong> {{ selectedLoan.loanType }}</p>
-          <p><strong>Amount:</strong> ₱{{ selectedLoan.amount }}</p>
-          <p><strong>Interest Rate:</strong> 5%</p>
-          <p><strong>Start Date:</strong> {{ selectedLoan.date }}</p>
-          <p><strong>Maturity Date:</strong> {{ selectedLoan.maturityDate }}</p>
-          
-          <!-- Amortization Table -->
-          <h3 class="mt-4 text-lg font-semibold">Amortization Table</h3>
-          <table class="min-w-full table-auto text-sm mt-2">
-            <thead>
+      <div v-if="showLoanDetailsModal" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-xl w-full max-w-3xl shadow-lg relative animate-fadeIn">
+          <h2 class="text-xl font-bold mb-4">
+            Loan Details — {{ selectedLoan.loanId }}
+          </h2>
+          <div class="grid grid-cols-2 gap-3 text-sm text-gray-700">
+            <p><strong>Loan Type:</strong> {{ selectedLoan.loanType }}</p>
+            <p><strong>Interest Rate:</strong> {{ selectedLoan.interest }}%</p>
+            <p><strong>Start Date:</strong> {{ selectedLoan.startDate }}</p>
+            <p><strong>Next Due Date:</strong> {{ selectedLoan.nextDueDate }}</p>
+            <p><strong>Savings Deposit:</strong> ₱{{ selectedLoan.savingsDeposit }}</p>
+            <p><strong>Share Capital:</strong> ₱{{ selectedLoan.shareCapital }}</p>
+            <p><strong>LPP:</strong> ₱{{ selectedLoan.lpp }}</p>
+            <p><strong>Service Fee:</strong> ₱{{ selectedLoan.serviceFee }}</p>
+            <p><strong>Total Deduction:</strong> ₱1900.00</p>
+            <p><strong>Net Proceeds:</strong> ₱{{ selectedLoan.netProceeds }}</p>
+          </div>
+
+          <h3 class="mt-5 font-semibold">Amortization Schedule</h3>
+          <table class="min-w-full mt-2 text-xs border">
+            <thead class="bg-gray-50">
               <tr>
-                <th class="py-2 px-4">Due Date</th>
-                <th class="py-2 px-4">Payment</th>
-                <th class="py-2 px-4">Interest</th>
-                <th class="py-2 px-4">Principal</th>
-                <th class="py-2 px-4">Balance</th>
-                <th class="py-2 px-4">Status</th>
+                <th class="py-2 px-2">No</th>
+                <th class="py-2 px-2">Date</th>
+                <th class="py-2 px-2">Amount</th>
+                <th class="py-2 px-2">Interest</th>
+                <th class="py-2 px-2">Principal</th>
+                <th class="py-2 px-2">Balance</th>
+                <th class="py-2 px-2">Status</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td class="py-2 px-4">2025-12-01</td>
-                <td class="py-2 px-4">₱500</td>
-                <td class="py-2 px-4">₱100</td>
-                <td class="py-2 px-4">₱400</td>
-                <td class="py-2 px-4">₱2500</td>
-                <td class="py-2 px-4">Pending</td>
+                <td class="py-1 px-2">1</td>
+                <td class="py-1 px-2">2025-12-10</td>
+                <td class="py-1 px-2">₱4539</td>
+                <td class="py-1 px-2">₱625</td>
+                <td class="py-1 px-2">₱3914</td>
+                <td class="py-1 px-2">₱21086</td>
+                <td class="py-1 px-2 text-blue-600">Paid</td>
               </tr>
             </tbody>
           </table>
-          <div class="mt-4 flex gap-4">
-            <button @click="closeModal" class="bg-gray-600 text-white py-2 px-4 rounded-md">Close</button>
+
+          <div class="mt-5 flex justify-end">
+            <button @click="closeModal" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Close</button>
           </div>
         </div>
       </div>
 
       <!-- Payment Modal -->
-  <div v-if="showPaymentModal" class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3 relative">
-      <h2 class="text-2xl font-semibold mb-3">Make a Payment for Loan ({{ selectedPaymentLoan.loanId }})</h2>
-      <form>
-        <div class="space-y-4">
-          <div>
-            <label for="paymentProof" class="block text-sm font-semibold">Upload Proof of Payment</label>
-            <input
-              type="file"
-              id="paymentProof"
-              @change="handlePaymentProofChange"  
-              required
-            />
-          </div>
-          <div class="mt-4 flex gap-4">
-            <button class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">Submit Payment</button>
-            <button @click="closeModal" type="button" class="bg-gray-600 text-white py-2 px-4 rounded-md">Cancel</button>
-          </div>
-        </div>
-      </form>
+      <div v-if="showPaymentModal" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-lg relative animate-fadeIn">
+          <h2 class="text-xl font-bold mb-4">
+            Pay Loan — {{ selectedPaymentLoan.loanId }}
+          </h2>
+          <form class="space-y-4">
+            <div>
+              <label class="block text-sm font-semibold mb-1">Amount Paid</label>
+              <input type="number" placeholder="₱" class="w-full border rounded p-2" required />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1">Mode of Payment</label>
+              <select class="w-full border rounded p-2" required>
+                <option value="">Select Mode</option>
+                <option>Cash</option>
+                <option>GCash</option>
+                <option>Bank Transfer</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1">Upload Proof</label>
+              <input type="file" @change="handlePaymentProofChange" class="w-full" required />
+            </div>
+            <div class="flex justify-end gap-3 mt-4">
+              <button type="button" @click="closeModal" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
+              <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit</button>
+            </div>
+          </form>
         </div>
       </div>
 
+      <!-- Rejection Reason Modal -->
+      <div v-if="showRejectionModal" class="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-lg relative animate-fadeIn">
+          <h2 class="text-xl font-bold mb-3">Rejection Reason</h2>
+          <p class="text-gray-700">{{ selectedRejectedLoan.rejectionReason }}</p>
+          <div class="mt-5 flex justify-end">
+            <button @click="closeModal" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
   </AppLayout>
 </template>
+
+<style scoped>
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn { animation: fadeIn 0.25s ease-out; }
+</style>

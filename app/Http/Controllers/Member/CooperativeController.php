@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,5 +17,10 @@ class CooperativeController extends Controller
     return Inertia::render('member/cooperative/Account', [
       'status' => $status,
     ]);
+  }
+
+  public function policy(): Response
+  {
+    return Inertia::render('member/cooperative/Policy');
   }
 }
