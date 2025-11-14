@@ -17,26 +17,28 @@ defineOptions({
       apply and start enjoying the benefits of membership.
     </p>
 
-    <div class="membership-types">
-      <div class="membership-type">
-        <img src="/images/INMEM.png" alt="Initial Membership Icon" />
-        <h4>Initial Membership</h4>
-        <p>Ideal for first-time members. Includes a membership fee and basic requirements.</p>
-      </div>
-      <div class="membership-type">
-        <img src="/images/REGUMEM.png" alt="Regular Membership Icon" />
-        <h4>Regular Membership</h4>
-        <p>Includes a membership fee and basic requirements for all our members.</p>
-      </div>
-      <div class="membership-type">
-        <img src="/images/ASSOMEM.png" alt="Associate Membership Icon" />
-        <h4>Associate Membership</h4>
-        <p>
-          Available for members who wish to support the cooperative without full participation in the profit-sharing
-          scheme.
-        </p>
-      </div>
-    </div>
+<div class="membership-types">
+  <!-- Regular Membership Card -->
+  <div class="membership-type">
+    <img src="/images/REGUMEM.png" alt="Regular Membership Icon" />
+    <h4>Regular Membership</h4>
+    <p>Includes a membership fee and basic requirements for all our members.</p>
+  </div>
+
+  <!-- Loan Services Card -->
+  <div class="membership-type">
+    <img src="/images/LOANSERVICES.jpg" alt="Loan Services Icon" />
+    <h4>Loan Services</h4>
+    <p>Access various loan programs with flexible repayment terms. Available exclusively to members.</p>
+  </div>
+
+  <!-- Savings Programs Card -->
+  <div class="membership-type">
+    <img src="/images/SAVINGS.jpg" alt="Savings Programs Icon" />
+    <h4>Savings Programs</h4>
+    <p>Save for your future with our attractive interest rates and savings plans.</p>
+  </div>
+</div>
 
     <h3 class="how-member-title">How to Become a Member?</h3>
     <p class="how-member-desc">Follow these easy steps to complete your membership application.</p>
@@ -61,10 +63,9 @@ defineOptions({
       <div class="step reverse">
         <div class="step-text">
           <p>02</p>
-          <h4>Submit Initial Membership Payment</h4>
+          <h4>Schedule PMES and Complete Membership Form</h4>
           <p>
-            Pay a total of ₱3,000 and upload your proof of payment through your account. This includes your share
-            capital, savings deposit, membership fee, and passbook cost to be tagged as an Initial Member.
+            Schedule your PMES seminar and attend the session to receive your certificate. Afterward, fill out the membership form with the required fields and upload your proof of payment along with the necessary documents.
           </p>
         </div>
         <div class="step-image">
@@ -81,8 +82,7 @@ defineOptions({
           <p>03</p>
           <h4>Wait for Admin Approval</h4>
           <p>
-            Our team will carefully review your payment and submission. Once verified, you will receive an official
-            confirmation via email or SMS, and your status will be updated to Initial Member.
+             Our team will carefully review your payment and submission. Once verified, you can check your account portal for an official confirmation, and your status will be updated to Regular Member.
           </p>
         </div>
       </div>
@@ -91,10 +91,10 @@ defineOptions({
       <div class="step reverse">
         <div class="step-text">
           <p>04</p>
-          <h4>Upgrade to Regular Membership</h4>
+          <h4>Get Full Access to Services</h4>
           <p>
-            To become a full Regular Member, submit the required documents through the system and attend the mandatory
-            PMES seminar onsite at the cooperative office.
+            After completing all the requirements and being approved as a Regular Member, you will see your full access to cooperative services,
+            including loan applications, directly in your account portal.
           </p>
         </div>
         <div class="step-image">
@@ -102,21 +102,6 @@ defineOptions({
         </div>
       </div>
 
-      <!-- Step 5 (Image on Left) -->
-      <div class="step">
-        <div class="step-image">
-          <img src="/images/MEM5.png" alt="Step 5 Image" />
-        </div>
-        <div class="step-text">
-          <p>05</p>
-          <h4>Get Full Access to Services</h4>
-          <p>
-            After completing all the requirements and being approved as a Regular Member, you will receive a
-            verification email, and your account will be granted full access to cooperative services, including loan
-            applications.
-          </p>
-        </div>
-      </div>
     </div>
   </div>
 </template>

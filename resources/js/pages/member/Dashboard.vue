@@ -69,28 +69,35 @@ function linePoints(key: 'savings' | 'capital', w = 480, h = 140) {
 <template>
   <Head title="Dashboard" />
   <AppLayout :breadcrumbs="breadcrumbs">
+    <template v-if="status === 'pending'">
+      <div class="space-y-4 rounded-lg border border-yellow-400 bg-yellow-100 p-6 text-yellow-800 shadow">
+        <h2 class="text-lg font-semibold">Membership Pending</h2>
+
+        <p>
+          Your membership is still pending approval. To access your <u>full account details</u>, please complete the
+          following requirements:
+        </p>
+
+        <ul class="list-inside list-disc space-y-1">
+          <li>Attend the PMES (Pre-Membership Education Seminar)</li>
+          <li>Fill out and submit the Membership Application Form</li>
+          <li>Submit a valid government-issued ID</li>
+          <li>Pay the initial membership fee</li>
+        </ul>
+
+        <p>
+          You may fill out the membership form online:
+          <a href="/member/requirements/membership-form" class="ml-1 text-blue-700 underline hover:text-blue-900">
+            Complete Member Form
+          </a>
+        </p>
+
+        <p class="text-sm italic">For further assistance, please contact the cooperative office.</p>
+      </div>
+    </template>
+
+    <template v-else-if="status === 'regular'">
     <div class="dashboard-container">
-      <!-- Pending Membership Section (commented out) -->
-      <!--
-      <template v-if="status === 'pending'">
-        <div class="pending-section">
-          <h2 class="text-lg font-semibold">Membership Pending</h2>
-          <p>Your membership is still pending approval. To proceed with a loan application, please complete the following requirements:</p>
-          <ul class="list-inside list-disc space-y-1">
-            <li>Attend the PMES (Pre-Membership Education Seminar)</li>
-            <li>Fill out and submit the Membership Application Form</li>
-            <li>Submit a valid government-issued ID</li>
-            <li>Pay the initial membership fee</li>
-          </ul>
-          <p>You may fill out the membership form online: 
-            <a href="/member/requirements/membership-form" class="ml-1 text-blue-700 underline hover:text-blue-900">
-              Complete Member Form
-            </a>
-          </p>
-          <p class="text-sm italic">For further assistance, please contact the cooperative office.</p>
-        </div>
-      </template>
-      -->
       <h1 class="title">Welcome back!</h1>
 
       <!-- Summary Cards -->
@@ -186,6 +193,34 @@ function linePoints(key: 'savings' | 'capital', w = 480, h = 140) {
         </div>
       </div>
     </div>
+    </template>
+
+    <template v-else>
+      <div class="space-y-4 rounded-lg border border-red-400 bg-red-100 p-6 text-red-800 shadow">
+        <h2 class="text-lg font-semibold">Account Closed</h2>
+
+        <p>
+          Your membership account has been marked as <strong>closed</strong>. Access to member services, savings, share
+          capital, and loan-related features is no longer available through the portal.
+        </p>
+
+        <p>
+          If you believe this status is incorrect, or if you need clarification regarding the reason for account
+          closure, please contact the cooperative office for verification and assistance.
+        </p>
+
+        <ul class="list-inside list-disc space-y-1">
+          <li>Request a status review or account reactivation (if applicable)</li>
+          <li>Verify any remaining obligations or balances</li>
+          <li>Update your personal or membership information if required</li>
+        </ul>
+
+        <p class="text-sm italic">
+          For further assistance, you may reach the Membership Officer or visit the cooperative office during business
+          hours.
+        </p>
+      </div>
+    </template>
   </AppLayout>
 </template>
 

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,5 +17,15 @@ class ServicesController extends Controller
     return Inertia::render('member/services/LoanApplication', [
       'status' => $status,
     ]);
+  }
+
+  public function creditScoring(): Response
+  {
+    return Inertia::render('member/services/CreditScoring');
+  }
+
+  public function loanStatus(): Response
+  {
+    return Inertia::render('member/services/LoanStatus');
   }
 }
