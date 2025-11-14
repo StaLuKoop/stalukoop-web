@@ -33,7 +33,7 @@ const coopMeaning = ref('')
 const attendanceCode = ref('')
 const isAttended = ref(false)
 const canViewCertificate = ref(false)
-const showCode = ref<number | null>(null)
+// const showCode = ref<number | null>(null)
 const demoMessage = ref('')
 
 // 🔹 Validation (dummy for demo)
@@ -49,10 +49,10 @@ const sanitizePhone = (event: Event) => {
 }
 
 // 🔹 Demo button handlers
-const toggleCode = (id: number) => {
-  showCode.value = showCode.value === id ? null : id
-  demoMessage.value = `Attendance code for schedule ${id} is revealed (demo).`
-}
+// const toggleCode = (id: number) => {
+//   showCode.value = showCode.value === id ? null : id
+//   demoMessage.value = `Attendance code for schedule ${id} is revealed (demo).`
+// }
 
 const demoClick = (action: string) => {
   demoMessage.value = `${action} clicked (demo).`

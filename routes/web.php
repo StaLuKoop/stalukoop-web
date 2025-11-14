@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\LoanController;
 use App\Http\Controllers\Admin\LoanApplicationController;
-use App\Http\Controllers\Admin\PMESController;
+use App\Http\Controllers\Admin\PmesController;
 use App\Http\Controllers\Admin\CreditScoreController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\UtilityController;
@@ -56,9 +56,9 @@ Route::middleware(['auth', 'verified', 'prevent-back'])->group(function () {
       Route::resource('inquiries', InquiryController::class);
       Route::resource('loans', LoanController::class);
       Route::resource('loanapplication', LoanApplicationController::class);
-      Route::resource('pmes', PMESController::class);
+      Route::resource('pmes', PmesController::class);
       Route::resource('creditscoring', CreditScoreController::class);
- 
+
     });
 
     Route::prefix('utility')->name('utility.')->group(function () {
@@ -76,13 +76,13 @@ Route::middleware('role:member')->prefix('member')->name('member.')->group(funct
 
     Route::prefix('cooperative')->name('cooperative.')->group(function () {
         Route::get('/account', [CooperativeController::class, 'account'])->name('account');
-        Route::get('/policy', [CooperativeController::class, 'policy'])->name('policy');  
+        Route::get('/policy', [CooperativeController::class, 'policy'])->name('policy');
     });
 
     Route::prefix('services')->name('services.')->group(function () {
         Route::get('/loan-application', [ServicesController::class, 'loanApplication'])->name('loan-application');
-        Route::get('/credit-scoring', [ServicesController::class, 'creditScoring'])->name('credit-scoring');  
-        Route::get('/loan-status', [ServicesController::class, 'loanStatus'])->name('loan-status');  
+        Route::get('/credit-scoring', [ServicesController::class, 'creditScoring'])->name('credit-scoring');
+        Route::get('/loan-status', [ServicesController::class, 'loanStatus'])->name('loan-status');
     });
 
     Route::prefix('requirements')->name('requirements.')->group(function () {
