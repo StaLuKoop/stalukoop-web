@@ -23,6 +23,3 @@ yarn-error.log
 /.vscode
 /.zed
 /.docs
-/_ide_helper.php
-/_ide_helper_models.php
-/.phpstorm.meta.php
