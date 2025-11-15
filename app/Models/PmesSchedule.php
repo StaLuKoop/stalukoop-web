@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class PmesSchedule extends Model
 {
   use HasFactory;
-
+  
   protected $fillable = [
     'date',
     'time',

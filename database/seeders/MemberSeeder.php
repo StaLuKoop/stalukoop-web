@@ -16,9 +16,9 @@ class MemberSeeder extends Seeder
     {
         $members = [
             [
-                'name' => 'Daniel Vasquez',
-                'email' => 'daniel@gmail.com',
-                'password' => 'Daniel@123',
+                'name' => 'Daniel V. Vasquez',
+                'email' => 'vasquez_danielvictor@plpasig.edu.ph',
+                'password' => 'Daniel@456',
                 'membership_status' => 'pending',
             ],
             [

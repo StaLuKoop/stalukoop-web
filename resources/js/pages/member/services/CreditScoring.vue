@@ -65,7 +65,7 @@ const scoreStyle = computed(() => {
         <div class="score-details">
           <h2>Overall Rating: <span>{{ rating }}</span></h2>
           <p>
-            Your credit score reflects your payment history, share capital, and savings record. 
+            Your credit score reflects your payment history, share capital, and savings record.
             A higher score increases your loan eligibility and approval speed.
           </p>
         </div>

@@ -9,9 +9,10 @@ return new class extends Migration
   public function up(): void
   {
     Schema::create('pmes_attendees', function (Blueprint $table) {
-      $table->id();
-      $table->foreignId('user_id')->constrained('users');
-      $table->foreignId('schedule_id')->constrained('pmes_schedules');
+      $table->uuid('id')->primary();
+
+      $table->foreignId('user_id')->constrained('users'); // users.id is BIGINT
+      $table->foreignUuid('schedule_id')->constrained('pmes_schedules'); // UUID FK
 
       $table->string('email', 255);
       $table->string('contact', 20);
