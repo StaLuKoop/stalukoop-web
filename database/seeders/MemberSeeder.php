@@ -22,9 +22,9 @@ class MemberSeeder extends Seeder
                 'membership_status' => 'pending',
             ],
             [
-                'name' => 'Maria Santos',
-                'email' => 'maria@gmail.com',
-                'password' => 'Maria@123',
+                'name' => 'Nicole Pizarro',
+                'email' => 'nicolepizarro41@gmail.com',
+                'password' => 'KahitAno@123',
                 'membership_status' => 'regular',
             ],
             [
