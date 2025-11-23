@@ -43,9 +43,24 @@ return [
       'scheme' => env('MAIL_SCHEME'),
       'url' => env('MAIL_URL'),
       'host' => env('MAIL_HOST', '127.0.0.1'),
-      // 'port' => env('MAIL_PORT', 2525), // Uncomment when in Development
-      'port' => env('MAIL_PORT', 587),
-      'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+
+      /**
+       * Comment and Uncomment those below depending on environment.
+       * Consequently, do the same at .env
+       *
+       * After changing those two do `php artisan config:clear`
+       * or just `php artisan optimize`, really
+       */
+
+      // --- Uncomment when in DEVELOPMENT
+      'port' => env('MAIL_PORT', 2525),
+      //
+
+      // --- Uncomment when in PRODUCTION
+      // 'port' => env('MAIL_PORT', 587),
+      // 'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+      // ---
+
       'username' => env('MAIL_USERNAME'),
       'password' => env('MAIL_PASSWORD'),
       'timeout' => null,
