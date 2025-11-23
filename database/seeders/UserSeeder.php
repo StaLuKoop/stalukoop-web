@@ -22,10 +22,16 @@ class UserSeeder extends Seeder
         'membership_status' => 'pending',
       ],
       [
-        'name' => 'Daniel V. Vasquez',
-        'email' => 'vasquez_danielvictor@plpasig.edu.ph',
-        'password' => 'Daniel@456',
+        'name' => 'Daniel Vasquez',
+        'email' => 'danielvictorv.vasquez18@gmail.com',
+        'password' => 'Daniel@123',
         'membership_status' => 'pending',
+      ],
+      [
+        'name' => 'Daniel Vasquez',
+        'email' => 'vasquez_danielvictor@plpasig.edu.ph',
+        'password' => 'Daniel@123',
+        'membership_status' => 'regular',
       ],
       [
         'name' => 'Nicole Pizarro',
